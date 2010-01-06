@@ -7,7 +7,6 @@ import java.util.Map;
  * Interface for template data providers.
  * 
  * @author Tihomir Surdilovic
- * 
  */
 public interface TemplateDataProvider
 {
