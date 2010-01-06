@@ -139,8 +139,7 @@ public class KnowledgeBaseManager
             addEventListener(kbase, eventListener);
          }
       }
-   }
-   
+   } 
    
    private void addEventListener(org.drools.KnowledgeBase kbase, String eventListener) {
       try {
