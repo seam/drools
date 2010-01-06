@@ -2,12 +2,13 @@ package org.jboss.seam.drools;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Bean;
@@ -15,34 +16,32 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.security.auth.login.Configuration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseConfiguration;
-import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.KnowledgeBaseFactory;
-import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
-import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.KnowledgeBuilder;
+import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderError;
 import org.drools.builder.KnowledgeBuilderErrors;
+import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
+import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.io.ResourceFactory;
 import org.drools.template.ObjectDataCompiler;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manager component for a Drools KnowledgeBase.
  * 
  * @author Tihomir Surdilovic
  */
-@ApplicationScoped
-public class KnowledgeBase implements Serializable
+@Dependent
+public class KnowledgeBaseManager
 {
-   private static final long serialVersionUID = 8165645910387861887L;
-
-   private static final Logger log = LoggerFactory.getLogger(org.jboss.seam.drools.KnowledgeBase.class);
+   private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManager.class);
 
    private static final Pattern DIVIDER = Pattern.compile(";");
    private static final int RESOURCE_PATH = 0;
@@ -57,21 +56,25 @@ public class KnowledgeBase implements Serializable
    private String knowledgeBaseConfig;
    private String[] ruleResources;
    private String[] eventListeners;
-   private org.drools.KnowledgeBase kbase;
+   private KnowledgeBase kbase;
 
-   @Inject BeanManager manager;
-   
-   @Produces org.drools.KnowledgeBase getKnowledgeBase() {
+   @Inject
+   BeanManager manager;
+
+   @Produces
+   @ApplicationScoped
+   public KnowledgeBase getKBase()
+   {
       return kbase;
    }
-   
-   public void dispose(@Disposes org.drools.KnowledgeBase kbase) {
+
+   public void disposeKBase(@Disposes KnowledgeBase kbase)
+   {
       kbase = null;
    }
 
-
-   // @Inject
-   public void create() throws Exception
+   @PostConstruct
+   private void createKBase() throws Exception
    {
       KnowledgeBuilderConfiguration kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration();
       // Only allow resource for .properties files
@@ -98,7 +101,7 @@ public class KnowledgeBase implements Serializable
             addResource(kbuilder, nextResource);
          }
       }
-      
+
       KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
       if (kbuildererrors.size() > 0)
       {
@@ -108,9 +111,9 @@ public class KnowledgeBase implements Serializable
          }
          manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
       }
-      
+
       KnowledgeBaseConfiguration kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
-      
+
       // Only allow resource for .properties files
       if (knowledgeBaseConfig != null && knowledgeBaseConfig.endsWith(".properties"))
       {
@@ -125,19 +128,23 @@ public class KnowledgeBase implements Serializable
          kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseProp, null);
          log.debug("KnowledgeBaseConfiguration loaded: " + knowledgeBaseConfig);
       }
-      
+
       kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseconfig);
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-      
-      if(eventListeners != null) {
-         for(String eventListener : eventListeners) {
+
+      if (eventListeners != null)
+      {
+         for (String eventListener : eventListeners)
+         {
             addEventListener(kbase, eventListener);
          }
       }
    }
    
-   protected void addEventListener(org.drools.KnowledgeBase kbase, String eventListener) {
+   
+   private void addEventListener(org.drools.KnowledgeBase kbase, String eventListener) {
       try {
+         @SuppressWarnings("unchecked")
          Class eventListenerClass = Class.forName(eventListener);
          Object eventListenerObject = eventListenerClass.newInstance();
         
@@ -150,7 +157,7 @@ public class KnowledgeBase implements Serializable
          log.error("Error adding event listener " + e.getMessage());
       }
    }
-
+   
    protected void addResource(KnowledgeBuilder kbuilder, String resource) throws Exception
    {
       String[] resourceParts = DIVIDER.split(resource.trim());
@@ -214,6 +221,7 @@ public class KnowledgeBase implements Serializable
       return knowledgeBuilderConfig;
    }
 
+   @Inject
    public void setKnowledgeBuilderConfig(String knowledgeBuilderConfig)
    {
       this.knowledgeBuilderConfig = knowledgeBuilderConfig;
@@ -224,6 +232,7 @@ public class KnowledgeBase implements Serializable
       return knowledgeBaseConfig;
    }
 
+   @Inject
    public void setKnowledgeBaseConfig(String knowledgeBaseConfig)
    {
       this.knowledgeBaseConfig = knowledgeBaseConfig;
@@ -234,6 +243,7 @@ public class KnowledgeBase implements Serializable
       return ruleResources;
    }
 
+   @Inject
    public void setRuleResources(String[] ruleResources)
    {
       this.ruleResources = ruleResources;
@@ -244,9 +254,11 @@ public class KnowledgeBase implements Serializable
       return eventListeners;
    }
 
+   @Inject
    public void setEventListeners(String[] eventListeners)
    {
       this.eventListeners = eventListeners;
    }
-
+   
+   
 }
