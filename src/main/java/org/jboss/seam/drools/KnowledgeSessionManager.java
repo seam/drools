@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@Dependent
 public class KnowledgeSessionManager
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeSessionManager.class);

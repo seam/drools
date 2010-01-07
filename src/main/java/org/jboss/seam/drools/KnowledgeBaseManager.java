@@ -3,12 +3,9 @@ package org.jboss.seam.drools;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Properties;
-import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Bean;
@@ -17,10 +14,8 @@ import javax.inject.Inject;
 import javax.security.auth.login.Configuration;
 
 import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseConfiguration;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderError;
 import org.drools.builder.KnowledgeBuilderErrors;
 import org.drools.builder.KnowledgeBuilderFactory;
@@ -38,28 +33,23 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@Dependent
 public class KnowledgeBaseManager
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManager.class);
-
-   private static final Pattern DIVIDER = Pattern.compile(";");
-   private static final int RESOURCE_PATH = 0;
-   private static final int RESOURCE = 1;
-   private static final int RESOURCE_TYPE = 2;
-   private static final int RESOURCE_TEMPLATE_DATA = 3;
    private static final String RESOURCE_TYPE_URL = "url";
    private static final String RESOURCE_TYPE_FILE = "file";
    private static final String RESOURCE_TYPE_CLASSPATH = "classpath";
-
-   private String knowledgeBuilderConfig;
-   private String knowledgeBaseConfig;
-   private String[] ruleResources;
-   private String[] eventListeners;
+   
+   private KnowledgeBaseManagerConfig kbaseManagerConfig;
    private KnowledgeBase kbase;
 
    @Inject
    BeanManager manager;
+   
+   @Inject 
+   public KnowledgeBaseManager(KnowledgeBaseManagerConfig kbaseManagerConfig) {
+      this.kbaseManagerConfig = kbaseManagerConfig;
+   }
 
    @Produces
    @ApplicationScoped
@@ -76,32 +66,13 @@ public class KnowledgeBaseManager
    @PostConstruct
    private void createKBase() throws Exception
    {
-      KnowledgeBuilderConfiguration kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration();
-      // Only allow resource for .properties files
-      if (knowledgeBuilderConfig != null && knowledgeBuilderConfig.endsWith(".properties"))
+      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(kbaseManagerConfig.getKnowledgeBuilderConfiguration());
+      
+      for (String nextResource : kbaseManagerConfig.getRuleResources())
       {
-         Properties kbuilderProp = new Properties();
-         InputStream in = this.getClass().getClassLoader().getResourceAsStream(knowledgeBuilderConfig);
-         if (in == null)
-         {
-            throw new IllegalStateException("Could not locate knowledgeBuilderConfig: " + knowledgeBuilderConfig);
-         }
-         kbuilderProp.load(in);
-         in.close();
-         kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbuilderProp, null);
-         log.debug("KnowledgeBuilderConfiguration loaded: " + knowledgeBuilderConfig);
+         addResource(kbuilder, nextResource);
       }
-
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(kbuilderconfig);
-
-      if (ruleResources != null)
-      {
-         for (String nextResource : ruleResources)
-         {
-            addResource(kbuilder, nextResource);
-         }
-      }
-
+      
       KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
       if (kbuildererrors.size() > 0)
       {
@@ -112,29 +83,12 @@ public class KnowledgeBaseManager
          manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
       }
 
-      KnowledgeBaseConfiguration kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
-
-      // Only allow resource for .properties files
-      if (knowledgeBaseConfig != null && knowledgeBaseConfig.endsWith(".properties"))
-      {
-         Properties kbaseProp = new Properties();
-         InputStream in = this.getClass().getClassLoader().getResourceAsStream(knowledgeBaseConfig);
-         if (in == null)
-         {
-            throw new IllegalStateException("Could not locate knowledgeBaseConfig: " + knowledgeBaseConfig);
-         }
-         kbaseProp.load(in);
-         in.close();
-         kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseProp, null);
-         log.debug("KnowledgeBaseConfiguration loaded: " + knowledgeBaseConfig);
-      }
-
-      kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseconfig);
+      kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseManagerConfig.getKnowledgeBaseConfiguration());
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
-      if (eventListeners != null)
+      if (kbaseManagerConfig.getEventListeners() != null)
       {
-         for (String eventListener : eventListeners)
+         for (String eventListener : kbaseManagerConfig.getEventListeners())
          {
             addEventListener(kbase, eventListener);
          }
@@ -159,27 +113,18 @@ public class KnowledgeBaseManager
    
    protected void addResource(KnowledgeBuilder kbuilder, String resource) throws Exception
    {
-      String[] resourceParts = DIVIDER.split(resource.trim());
-
-      if (resourceParts.length < 3)
-      {
-         log.error("Invalid resource definition: " + resource);
-      }
-      else
-      {
-         ResourceType resourceType = ResourceType.getResourceType(resourceParts[RESOURCE_TYPE]);
-
-         if (resourceParts.length == 4)
-         {
+      if(kbaseManagerConfig.isValidResource(resource)) {
+         ResourceType resourceType = ResourceType.getResourceType(kbaseManagerConfig.getResourceType(resource));
+         if(kbaseManagerConfig.isRuleTemplate(resource)) {
             @SuppressWarnings("unchecked")
-            Bean<TemplateDataProvider> templateDataProviderBean = (Bean<TemplateDataProvider>) manager.getBeans(resourceParts[RESOURCE_TEMPLATE_DATA]).iterator().next();
+            Bean<TemplateDataProvider> templateDataProviderBean = (Bean<TemplateDataProvider>) manager.getBeans(kbaseManagerConfig.getTemplateData(resource)).iterator().next();
 
             TemplateDataProvider templateDataProvider = (TemplateDataProvider) manager.getReference(templateDataProviderBean, Configuration.class, manager.createCreationalContext(templateDataProviderBean));
 
-            InputStream templateStream = this.getClass().getClassLoader().getResourceAsStream(resourceParts[RESOURCE]);
+            InputStream templateStream = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getRuleResource(resource));
             if (templateStream == null)
             {
-               throw new IllegalStateException("Could not locate rule resource: " + resourceParts[RESOURCE]);
+               throw new IllegalStateException("Could not locate rule resource: " + kbaseManagerConfig.getRuleResource(resource));
             }
 
             ObjectDataCompiler converter = new ObjectDataCompiler();
@@ -189,75 +134,29 @@ public class KnowledgeBaseManager
             Reader rdr = new StringReader(drl);
 
             kbuilder.add(ResourceFactory.newReaderResource(rdr), resourceType);
-         }
-         else
-         {
-            if (resourceParts[RESOURCE_PATH].equals(RESOURCE_TYPE_URL))
+         } else {
+            if (kbaseManagerConfig.getResourcePath(resource).equals(RESOURCE_TYPE_URL))
             {
-               kbuilder.add(ResourceFactory.newUrlResource(resourceParts[RESOURCE]), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(resourceParts[RESOURCE]));
+               kbuilder.add(ResourceFactory.newUrlResource(kbaseManagerConfig.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(kbaseManagerConfig.getRuleResource(resource)));
             }
-            else if (resourceParts[RESOURCE_PATH].equals(RESOURCE_TYPE_FILE))
+            else if (kbaseManagerConfig.getResourcePath(resource).equals(RESOURCE_TYPE_FILE))
             {
-               kbuilder.add(ResourceFactory.newFileResource(resourceParts[RESOURCE]), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(resourceParts[RESOURCE]));
+               kbuilder.add(ResourceFactory.newFileResource(kbaseManagerConfig.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(kbaseManagerConfig.getRuleResource(resource)));
             }
-            else if (resourceParts[RESOURCE_PATH].equals(RESOURCE_TYPE_CLASSPATH))
+            else if (kbaseManagerConfig.getResourcePath(resource).equals(RESOURCE_TYPE_CLASSPATH))
             {
-               kbuilder.add(ResourceFactory.newClassPathResource(resourceParts[RESOURCE]), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(resourceParts[RESOURCE]));
+               kbuilder.add(ResourceFactory.newClassPathResource(kbaseManagerConfig.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(kbaseManagerConfig.getRuleResource(resource)));
             }
             else
             {
-               log.error("Invalid resource path: " + resourceParts[RESOURCE_PATH]);
+               log.error("Invalid resource path: " + kbaseManagerConfig.getResourcePath(resource));
             }
          }
+      } else {
+         log.error("Invalid resource definition: " + resource);         
       }
    }
-
-   public String getKnowledgeBuilderConfig()
-   {
-      return knowledgeBuilderConfig;
-   }
-
-   @Inject
-   public void setKnowledgeBuilderConfig(String knowledgeBuilderConfig)
-   {
-      this.knowledgeBuilderConfig = knowledgeBuilderConfig;
-   }
-
-   public String getKnowledgeBaseConfig()
-   {
-      return knowledgeBaseConfig;
-   }
-
-   @Inject
-   public void setKnowledgeBaseConfig(String knowledgeBaseConfig)
-   {
-      this.knowledgeBaseConfig = knowledgeBaseConfig;
-   }
-
-   public String[] getRuleResources()
-   {
-      return ruleResources;
-   }
-
-   @Inject
-   public void setRuleResources(String[] ruleResources)
-   {
-      this.ruleResources = ruleResources;
-   }
-
-   public String[] getEventListeners()
-   {
-      return eventListeners;
-   }
-
-   @Inject
-   public void setEventListeners(String[] eventListeners)
-   {
-      this.eventListeners = eventListeners;
-   }
-   
-   
 }
