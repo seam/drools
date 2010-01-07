@@ -3,6 +3,7 @@ package org.jboss.seam.drools;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -14,8 +15,10 @@ import javax.inject.Inject;
 import javax.security.auth.login.Configuration;
 
 import org.drools.KnowledgeBase;
+import org.drools.KnowledgeBaseConfiguration;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
+import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderError;
 import org.drools.builder.KnowledgeBuilderErrors;
 import org.drools.builder.KnowledgeBuilderFactory;
@@ -36,9 +39,6 @@ import org.slf4j.LoggerFactory;
 public class KnowledgeBaseManager
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManager.class);
-   private static final String RESOURCE_TYPE_URL = "url";
-   private static final String RESOURCE_TYPE_FILE = "file";
-   private static final String RESOURCE_TYPE_CLASSPATH = "classpath";
    
    private KnowledgeBaseManagerConfig kbaseManagerConfig;
    private KnowledgeBase kbase;
@@ -66,7 +66,7 @@ public class KnowledgeBaseManager
    @PostConstruct
    private void createKBase() throws Exception
    {
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(kbaseManagerConfig.getKnowledgeBuilderConfiguration());
+      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration());
       
       for (String nextResource : kbaseManagerConfig.getRuleResources())
       {
@@ -83,7 +83,7 @@ public class KnowledgeBaseManager
          manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
       }
 
-      kbase = KnowledgeBaseFactory.newKnowledgeBase(kbaseManagerConfig.getKnowledgeBaseConfiguration());
+      kbase = KnowledgeBaseFactory.newKnowledgeBase(getKnowledgeBaseConfiguration());
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
       if (kbaseManagerConfig.getEventListeners() != null)
@@ -113,18 +113,18 @@ public class KnowledgeBaseManager
    
    protected void addResource(KnowledgeBuilder kbuilder, String resource) throws Exception
    {
-      if(kbaseManagerConfig.isValidResource(resource)) {
-         ResourceType resourceType = ResourceType.getResourceType(kbaseManagerConfig.getResourceType(resource));
-         if(kbaseManagerConfig.isRuleTemplate(resource)) {
+      if(KnowledgeBaseManagerConfig.isValidResource(resource)) {
+         ResourceType resourceType = ResourceType.getResourceType(KnowledgeBaseManagerConfig.getResourceType(resource));
+         if(KnowledgeBaseManagerConfig.isRuleTemplate(resource)) {
             @SuppressWarnings("unchecked")
-            Bean<TemplateDataProvider> templateDataProviderBean = (Bean<TemplateDataProvider>) manager.getBeans(kbaseManagerConfig.getTemplateData(resource)).iterator().next();
+            Bean<TemplateDataProvider> templateDataProviderBean = (Bean<TemplateDataProvider>) manager.getBeans(KnowledgeBaseManagerConfig.getTemplateData(resource)).iterator().next();
 
             TemplateDataProvider templateDataProvider = (TemplateDataProvider) manager.getReference(templateDataProviderBean, Configuration.class, manager.createCreationalContext(templateDataProviderBean));
 
-            InputStream templateStream = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getRuleResource(resource));
+            InputStream templateStream = this.getClass().getClassLoader().getResourceAsStream(KnowledgeBaseManagerConfig.getRuleResource(resource));
             if (templateStream == null)
             {
-               throw new IllegalStateException("Could not locate rule resource: " + kbaseManagerConfig.getRuleResource(resource));
+               throw new IllegalStateException("Could not locate rule resource: " + KnowledgeBaseManagerConfig.getRuleResource(resource));
             }
 
             ObjectDataCompiler converter = new ObjectDataCompiler();
@@ -135,28 +135,69 @@ public class KnowledgeBaseManager
 
             kbuilder.add(ResourceFactory.newReaderResource(rdr), resourceType);
          } else {
-            if (kbaseManagerConfig.getResourcePath(resource).equals(RESOURCE_TYPE_URL))
+            if (KnowledgeBaseManagerConfig.getResourcePath(resource).equals(KnowledgeBaseManagerConfig.RESOURCE_TYPE_URL))
             {
-               kbuilder.add(ResourceFactory.newUrlResource(kbaseManagerConfig.getRuleResource(resource)), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(kbaseManagerConfig.getRuleResource(resource)));
+               kbuilder.add(ResourceFactory.newUrlResource(KnowledgeBaseManagerConfig.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(KnowledgeBaseManagerConfig.getRuleResource(resource)));
             }
-            else if (kbaseManagerConfig.getResourcePath(resource).equals(RESOURCE_TYPE_FILE))
+            else if (KnowledgeBaseManagerConfig.getResourcePath(resource).equals(KnowledgeBaseManagerConfig.RESOURCE_TYPE_FILE))
             {
-               kbuilder.add(ResourceFactory.newFileResource(kbaseManagerConfig.getRuleResource(resource)), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(kbaseManagerConfig.getRuleResource(resource)));
+               kbuilder.add(ResourceFactory.newFileResource(KnowledgeBaseManagerConfig.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(KnowledgeBaseManagerConfig.getRuleResource(resource)));
             }
-            else if (kbaseManagerConfig.getResourcePath(resource).equals(RESOURCE_TYPE_CLASSPATH))
+            else if (KnowledgeBaseManagerConfig.getResourcePath(resource).equals(KnowledgeBaseManagerConfig.RESOURCE_TYPE_CLASSPATH))
             {
-               kbuilder.add(ResourceFactory.newClassPathResource(kbaseManagerConfig.getRuleResource(resource)), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(kbaseManagerConfig.getRuleResource(resource)));
+               kbuilder.add(ResourceFactory.newClassPathResource(KnowledgeBaseManagerConfig.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(KnowledgeBaseManagerConfig.getRuleResource(resource)));
             }
             else
             {
-               log.error("Invalid resource path: " + kbaseManagerConfig.getResourcePath(resource));
+               log.error("Invalid resource path: " + KnowledgeBaseManagerConfig.getResourcePath(resource));
             }
          }
       } else {
          log.error("Invalid resource definition: " + resource);         
       }
+   }
+   
+   public KnowledgeBuilderConfiguration getKnowledgeBuilderConfiguration() throws Exception
+   {
+      KnowledgeBuilderConfiguration kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration();
+      // Only allow resource for .properties files
+      if (kbaseManagerConfig.getKnowledgeBuilderConfig() != null && kbaseManagerConfig.getKnowledgeBuilderConfig().endsWith(".properties"))
+      {
+         Properties kbuilderProp = new Properties();
+         InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getKnowledgeBuilderConfig());
+         if (in == null)
+         {
+            throw new IllegalStateException("Could not locate knowledgeBuilderConfig: " + kbaseManagerConfig.getKnowledgeBuilderConfig());
+         }
+         kbuilderProp.load(in);
+         in.close();
+         kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbuilderProp, null);
+         log.debug("KnowledgeBuilderConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBuilderConfig());
+      }
+      return kbuilderconfig;
+   }
+
+   public KnowledgeBaseConfiguration getKnowledgeBaseConfiguration() throws Exception
+   {
+      KnowledgeBaseConfiguration kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
+
+      // Only allow resource for .properties files
+      if (kbaseManagerConfig.getKnowledgeBaseConfig() != null && kbaseManagerConfig.getKnowledgeBaseConfig().endsWith(".properties"))
+      {
+         Properties kbaseProp = new Properties();
+         InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getKnowledgeBaseConfig());
+         if (in == null)
+         {
+            throw new IllegalStateException("Could not locate knowledgeBaseConfig: " + kbaseManagerConfig.getKnowledgeBaseConfig());
+         }
+         kbaseProp.load(in);
+         in.close();
+         kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseProp, null);
+         log.debug("KnowledgeBaseConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBaseConfig());
+      }
+      return kbaseconfig;
    }
 }
