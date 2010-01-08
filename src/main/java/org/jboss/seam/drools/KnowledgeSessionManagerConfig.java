@@ -13,12 +13,43 @@ public class KnowledgeSessionManagerConfig
    private static final Pattern DIVIDER = Pattern.compile(";");
    private static final int WORKITEMHANDLER_NAME = 0;
    private static final int WORKITEMHANDLER_TYPE = 1;
+   private static final int AUDIT_LOG_TYPE = 0;
+   private static final int AUDIT_LOG_INFO = 1;
+   private static final int AUDIT_LOG_INTERVAL = 2;
+   private static final String AUDIT_LOG_TYPE_FILE = "file";
+   private static final String AUDIT_LOG_TYPE_CONSOLE = "console";
+   private static final String AUDIT_LOG_TYPE_THREADED = "threaded";
    
    private String[] eventListeners;
    private String[] workItemHandlers;
    private String knowledgeSessionConfig;
    private Properties knowledgeSessionConfigProp;
    private String auditLog;
+   
+   public static boolean isFileLogger(String auditLog) {
+      return DIVIDER.split(auditLog.trim())[AUDIT_LOG_TYPE] == AUDIT_LOG_TYPE_FILE;
+   }
+   
+   public static boolean isConsoleLogger(String auditLog) {
+      return DIVIDER.split(auditLog.trim())[AUDIT_LOG_TYPE] == AUDIT_LOG_TYPE_CONSOLE;
+   }
+   
+   public static boolean isThreadedLogger(String auditLog) {
+      return DIVIDER.split(auditLog.trim())[AUDIT_LOG_TYPE] == AUDIT_LOG_TYPE_THREADED;
+   }
+   
+   public static String getFileLoggerPath(String auditLog) {
+      return DIVIDER.split(auditLog.trim())[AUDIT_LOG_INFO];
+   }
+   
+   public static String getThreadedLoggerPath(String auditLog) {
+      return DIVIDER.split(auditLog.trim())[AUDIT_LOG_INFO];
+   }
+   
+   public static int getThreadedLoggerInterval(String auditLog) {
+      return Integer.parseInt(DIVIDER.split(auditLog.trim())[AUDIT_LOG_INTERVAL]);
+   }
+   
    public String[] getEventListeners()
    {
       return eventListeners;

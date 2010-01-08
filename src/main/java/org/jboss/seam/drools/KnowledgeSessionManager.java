@@ -1,14 +1,10 @@
 package org.jboss.seam.drools;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
@@ -18,8 +14,8 @@ import javax.inject.Named;
 
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.logger.KnowledgeRuntimeLogger;
+import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
@@ -37,7 +33,6 @@ public class KnowledgeSessionManager
    private static final Logger log = LoggerFactory.getLogger(KnowledgeSessionManager.class);
 
    private KnowledgeSessionManagerConfig ksessionManagerConfig;
-   private KnowledgeRuntimeLogger statelessKLogger;
    private Map<Integer, KnowledgeRuntimeLogger> statefulKnowledgeLoggers = new Hashtable<Integer, KnowledgeRuntimeLogger>();
 
    @Inject
@@ -59,7 +54,7 @@ public class KnowledgeSessionManager
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getKSessionConfig(), null);
       //addEventListeners(ksession);
       //addWorkItemHandlers(ksession);
-      //addAuditLog(ksession);
+      addAuditLog(ksession);
       manager.fireEvent(new KnowledgeSessionCreatedEvent(ksession.getId()));
       return ksession;
    }
@@ -79,17 +74,8 @@ public class KnowledgeSessionManager
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getKSessionConfig());
       //addEventListeners(ksession);
-      //addAuditLog(ksession);
       manager.fireEvent(new KnowledgeSessionCreatedEvent(-1));
       return ksession;
-   }
-
-   public void disposeStatelessSession(@Disposes StatelessKnowledgeSession statelessSession)
-   {
-      if (statelessKLogger != null)
-      {
-         statelessKLogger.close();
-      }
    }
 
    private KnowledgeSessionConfiguration getKSessionConfig() throws Exception
@@ -114,6 +100,27 @@ public class KnowledgeSessionManager
          }
       }
       return ksessionConfig;
+   }
+   
+   
+   private void addAuditLog(StatefulKnowledgeSession ksession) {
+      if(ksessionManagerConfig.getAuditLog() != null) { 
+         if(KnowledgeSessionManagerConfig.isFileLogger(ksessionManagerConfig.getAuditLog())) {
+            String logName = KnowledgeSessionManagerConfig.getFileLoggerPath(ksessionManagerConfig.getAuditLog()) + System.currentTimeMillis(); 
+            KnowledgeRuntimeLogger krLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, logName);
+            statefulKnowledgeLoggers.put(ksession.getId(), krLogger);
+         } else if(KnowledgeSessionManagerConfig.isConsoleLogger(ksessionManagerConfig.getAuditLog())) {
+            KnowledgeRuntimeLogger krLogger = KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
+            statefulKnowledgeLoggers.put(ksession.getId(), krLogger);
+         } else if(KnowledgeSessionManagerConfig.isThreadedLogger(ksessionManagerConfig.getAuditLog())) {
+            String logName = KnowledgeSessionManagerConfig.getThreadedLoggerPath(ksessionManagerConfig.getAuditLog()) + System.currentTimeMillis();
+            int interval = KnowledgeSessionManagerConfig.getThreadedLoggerInterval(ksessionManagerConfig.getAuditLog());
+            KnowledgeRuntimeLogger krLogger = KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, logName, interval);
+            statefulKnowledgeLoggers.put(ksession.getId(), krLogger);
+         } else {
+            log.warn("Invalid logger specified: " + ksessionManagerConfig.getAuditLog());
+         }
+      }
    }
 
 }
