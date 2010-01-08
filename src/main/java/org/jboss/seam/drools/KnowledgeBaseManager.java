@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -41,7 +40,6 @@ public class KnowledgeBaseManager
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManager.class);
    
    private KnowledgeBaseManagerConfig kbaseManagerConfig;
-   private KnowledgeBase kbase;
 
    @Inject
    BeanManager manager;
@@ -53,19 +51,9 @@ public class KnowledgeBaseManager
 
    @Produces
    @ApplicationScoped
-   public KnowledgeBase getKBase()
+   public KnowledgeBase createKBase() throws Exception
    {
-      return kbase;
-   }
-
-   public void disposeKBase(@Disposes KnowledgeBase kbase)
-   {
-      kbase = null;
-   }
-
-   @PostConstruct
-   private void createKBase() throws Exception
-   {
+      KnowledgeBase kbase;
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration());
       
       for (String nextResource : kbaseManagerConfig.getRuleResources())
@@ -93,7 +81,13 @@ public class KnowledgeBaseManager
             addEventListener(kbase, eventListener);
          }
       }
-   } 
+      return kbase;
+   }
+   
+   public void disposeKBase(@Disposes KnowledgeBase kbase)
+   {
+      kbase = null;
+   }
    
    private void addEventListener(org.drools.KnowledgeBase kbase, String eventListener) {
       try {
@@ -163,19 +157,24 @@ public class KnowledgeBaseManager
    public KnowledgeBuilderConfiguration getKnowledgeBuilderConfiguration() throws Exception
    {
       KnowledgeBuilderConfiguration kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration();
-      // Only allow resource for .properties files
-      if (kbaseManagerConfig.getKnowledgeBuilderConfig() != null && kbaseManagerConfig.getKnowledgeBuilderConfig().endsWith(".properties"))
-      {
-         Properties kbuilderProp = new Properties();
-         InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getKnowledgeBuilderConfig());
-         if (in == null)
+      if(kbaseManagerConfig.getKnowledgeBuilderConfigProp() != null) {
+         kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbaseManagerConfig.getKnowledgeBuilderConfigProp(), null);
+         log.debug("KnowledgeBuilderConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBuilderConfigProp());
+      } else {
+         // Only allow resource for .properties files
+         if (kbaseManagerConfig.getKnowledgeBuilderConfig() != null && kbaseManagerConfig.getKnowledgeBuilderConfig().endsWith(".properties"))
          {
-            throw new IllegalStateException("Could not locate knowledgeBuilderConfig: " + kbaseManagerConfig.getKnowledgeBuilderConfig());
+            Properties kbuilderProp = new Properties();
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getKnowledgeBuilderConfig());
+            if (in == null)
+            {
+               throw new IllegalStateException("Could not locate knowledgeBuilderConfig: " + kbaseManagerConfig.getKnowledgeBuilderConfig());
+            }
+            kbuilderProp.load(in);
+            in.close();
+            kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbuilderProp, null);
+            log.debug("KnowledgeBuilderConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBuilderConfig());
          }
-         kbuilderProp.load(in);
-         in.close();
-         kbuilderconfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbuilderProp, null);
-         log.debug("KnowledgeBuilderConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBuilderConfig());
       }
       return kbuilderconfig;
    }
@@ -184,19 +183,24 @@ public class KnowledgeBaseManager
    {
       KnowledgeBaseConfiguration kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
 
-      // Only allow resource for .properties files
-      if (kbaseManagerConfig.getKnowledgeBaseConfig() != null && kbaseManagerConfig.getKnowledgeBaseConfig().endsWith(".properties"))
-      {
-         Properties kbaseProp = new Properties();
-         InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getKnowledgeBaseConfig());
-         if (in == null)
+      if(kbaseManagerConfig.getKnowledgeBaseConfigProp() != null) {
+         kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseManagerConfig.getKnowledgeBaseConfigProp(), null);
+         log.debug("KnowledgeBaseConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBaseConfigProp());
+      } else {
+         // Only allow resource for .properties files
+         if (kbaseManagerConfig.getKnowledgeBaseConfig() != null && kbaseManagerConfig.getKnowledgeBaseConfig().endsWith(".properties"))
          {
-            throw new IllegalStateException("Could not locate knowledgeBaseConfig: " + kbaseManagerConfig.getKnowledgeBaseConfig());
+            Properties kbaseProp = new Properties();
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseManagerConfig.getKnowledgeBaseConfig());
+            if (in == null)
+            {
+               throw new IllegalStateException("Could not locate knowledgeBaseConfig: " + kbaseManagerConfig.getKnowledgeBaseConfig());
+            }
+            kbaseProp.load(in);
+            in.close();
+            kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseProp, null);
+            log.debug("KnowledgeBaseConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBaseConfig());
          }
-         kbaseProp.load(in);
-         in.close();
-         kbaseconfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseProp, null);
-         log.debug("KnowledgeBaseConfiguration loaded: " + kbaseManagerConfig.getKnowledgeBaseConfig());
       }
       return kbaseconfig;
    }

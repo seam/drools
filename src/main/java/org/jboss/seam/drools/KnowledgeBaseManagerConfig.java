@@ -1,25 +1,15 @@
 package org.jboss.seam.drools;
 
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.drools.KnowledgeBaseConfiguration;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilderConfiguration;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Drools KnowledgeBaseManager Configuration.
+ * KnowledgeBaseManager Configuration.
  * 
  * @author Tihomir Surdilovic
  */
 public class KnowledgeBaseManagerConfig
 {
-   private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManagerConfig.class);
-
    private static final Pattern DIVIDER = Pattern.compile(";");
    private static final int RESOURCE_PATH = 0;
    private static final int RESOURCE = 1;
@@ -32,6 +22,8 @@ public class KnowledgeBaseManagerConfig
 
    private String knowledgeBuilderConfig;
    private String knowledgeBaseConfig;
+   private Properties knowledgeBuilderConfigProp;
+   private Properties knowledgeBaseConfigProp;
    private String[] ruleResources;
    private String[] eventListeners;
    
@@ -98,5 +90,27 @@ public class KnowledgeBaseManagerConfig
    {
       this.eventListeners = eventListeners;
    }
+
+   public Properties getKnowledgeBuilderConfigProp()
+   {
+      return knowledgeBuilderConfigProp;
+   }
+
+   public void setKnowledgeBuilderConfigProp(Properties knowledgeBuilderConfigProp)
+   {
+      this.knowledgeBuilderConfigProp = knowledgeBuilderConfigProp;
+   }
+
+   public Properties getKnowledgeBaseConfigProp()
+   {
+      return knowledgeBaseConfigProp;
+   }
+
+   public void setKnowledgeBaseConfigProp(Properties knowledgeBaseConfigProp)
+   {
+      this.knowledgeBaseConfigProp = knowledgeBaseConfigProp;
+   }
+   
+   
 
 }
