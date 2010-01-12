@@ -26,6 +26,18 @@ public class KnowledgeSessionManagerConfig
    private Properties knowledgeSessionConfigProp;
    private String auditLog;
    
+   public static String getWorkItemHandlerName(String workItemHandlerStr) {
+      return DIVIDER.split(workItemHandlerStr.trim())[WORKITEMHANDLER_NAME];
+   }
+   
+   public static String getWorkItemHandlerType(String workItemHandlerStr) {
+      return DIVIDER.split(workItemHandlerStr.trim())[WORKITEMHANDLER_TYPE];
+   }
+   
+   public static boolean isValidWorkItemHandler(String workItemHandlerStr) {
+      return DIVIDER.split(workItemHandlerStr.trim()).length == 2;
+   }
+   
    public static boolean isFileLogger(String auditLog) {
       return DIVIDER.split(auditLog.trim())[AUDIT_LOG_TYPE] == AUDIT_LOG_TYPE_FILE;
    }
