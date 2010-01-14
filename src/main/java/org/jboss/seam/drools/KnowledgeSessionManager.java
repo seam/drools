@@ -5,7 +5,10 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
+import java.lang.annotation.Annotation;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -45,19 +48,16 @@ public class KnowledgeSessionManager
    BeanManager manager;
 
    @Inject
-   KnowledgeBase kbase;
-
-   @Inject
    public KnowledgeSessionManager(KnowledgeSessionManagerConfig ksessionManagerConfig)
    {
       this.ksessionManagerConfig = ksessionManagerConfig;
    }
 
    @Produces
-   @Named
-   public StatefulKnowledgeSession getStatefulSession(InjectionPoint injectionPoint) throws Exception
+   @Any
+   public StatefulKnowledgeSession getStatefulSession(InjectionPoint ip, Instance<KnowledgeBase> kbase) throws Exception
    {
-      StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getKSessionConfig(), null);
+      StatefulKnowledgeSession ksession = kbase.select(ip.getQualifiers().toArray(new Annotation[0])).get().newStatefulKnowledgeSession(getKSessionConfig(), null);
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addAuditLog(ksession);
@@ -75,10 +75,10 @@ public class KnowledgeSessionManager
    }
 
    @Produces
-   @Named
-   public StatelessKnowledgeSession getStatelessSession(InjectionPoint injectionPoint) throws Exception 
+   @Any
+   public StatelessKnowledgeSession getStatelessSession(InjectionPoint ip, Instance<KnowledgeBase> kbase) throws Exception 
    {
-      StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getKSessionConfig());
+      StatelessKnowledgeSession ksession = kbase.select(ip.getQualifiers().toArray(new Annotation[0])).get().newStatelessKnowledgeSession(getKSessionConfig()); 
       addEventListeners(ksession);
       manager.fireEvent(new KnowledgeSessionCreatedEvent(-1));
       return ksession;
@@ -151,6 +151,7 @@ public class KnowledgeSessionManager
    public void addEventListeners(StatelessKnowledgeSession ksession) throws Exception{
       if(ksessionManagerConfig.getEventListeners() != null) {
          for(String eventListener : ksessionManagerConfig.getEventListeners()) {
+            @SuppressWarnings("unchecked")
             Class eventListenerClass = Class.forName(eventListener);
             Object eventListenerObject = eventListenerClass.newInstance();
            
