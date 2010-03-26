@@ -1,88 +1,99 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-   <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-   <parent>
-      <artifactId>seam-parent</artifactId>
-      <groupId>org.jboss.seam</groupId>
-      <version>3.0.0-SNAPSHOT</version>
-   </parent>
+	<parent>
+		<artifactId>weld-parent</artifactId>
+		<groupId>org.jboss.weld</groupId>
+		<version>8</version>
+	</parent>
 
-   <artifactId>seam-drools</artifactId>
-   <packaging>jar</packaging>
-   <version>3.0.0-SNAPSHOT</version>
-   <name>Seam Drools</name>
-   
-   <!-- Snapshots repo to get parent -->
-   <repositories>
-      <repository>
-         <id>oss.sonatype.org/jboss-snapshots</id>
-         <name>JBoss (Nexus) Snapshots Repository</name>
-         <url>http://oss.sonatype.org/content/repositories/jboss-snapshots</url>
-         <releases>
-            <enabled>false</enabled>
-         </releases>
-         <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-         </snapshots>
-      </repository>
-   </repositories>
-   
-   <properties>
-      <seam.version>3.0.0-SNAPSHOT</seam.version>
-   </properties>
+	<groupId>org.jboss.seam.drools</groupId>
+	<artifactId>seam-drools-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>3.0.0-SNAPSHOT</version>
+	<name>Seam Drools Parent</name>
 
-   <dependencies>
+	<modules>
+		<module>core</module>
+		<module>docs</module>
+		<!-- <module>examples</module> -->
+	</modules>
 
-	  <dependency>
-         <groupId>org.drools</groupId>
-         <artifactId>drools-compiler</artifactId>
-         <scope>provided</scope>
-      </dependency>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-      <dependency>
-         <groupId>org.drools</groupId>
-         <artifactId>drools-core</artifactId>
-      </dependency>
-      
-      <dependency>
-      	<groupId>org.drools</groupId>
-      	<artifactId>drools-templates</artifactId>
-      </dependency>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>javax.el</groupId>
+				<artifactId>el-api</artifactId>
+				<version>2.2</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.0.0.GA</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.enterprise</groupId>
+				<artifactId>cdi-api</artifactId>
+				<version>1.0-SP1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.5.10</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-core</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-compiler</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-api</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-templates</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-decisiontables</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-workitems</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
-      <dependency>
-         <groupId>javax.servlet</groupId>
-         <artifactId>servlet-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>javax.el</groupId>
-         <artifactId>el-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      
-      <!-- non portable dependency -->
-      <dependency>
-         <groupId>org.jboss.weld</groupId>
-         <artifactId>weld-core</artifactId>
-         <version>1.0.0</version>
-         <scope>provided</scope>
-      </dependency>
-
-   </dependencies>
-
-   <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/drools/trunk</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/drools/trunk</developerConnection>
-      <url>http://fisheye.jboss.org/browse/Seam/modules/drools/trunk</url>
-   </scm>
+	<scm>
+		<connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/drools/trunk</connection>
+		<developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/drools/trunk</developerConnection>
+		<url>http://fisheye.jboss.org/browse/Seam/modules/drools/trunk</url>
+	</scm>
 
 </project>

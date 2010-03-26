@@ -1,0 +1,4 @@
+To create the Seam Drools distribution, run the following Maven command:
+
+mvn clean package javadoc:javadoc assembly:assembly
+
