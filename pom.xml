@@ -20,6 +20,24 @@
 		<!-- <module>examples</module> -->
 	</modules>
 
+	<developers>
+		<developer>
+			<name>Tihomir Surdilovic</name>
+			<email>tsurdilo@redhat.com</email>
+			<url>http://in.relation.to/Bloggers/Tihomir</url>
+			<organization>JBoss, by Red Hat</organization>
+			<organizationUrl>http://jboss.org</organizationUrl>
+			<timezone>EST</timezone>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<properties>
+		<arquillian.version>1.0.0.Alpha1</arquillian.version>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -86,6 +104,22 @@
 				<groupId>org.drools</groupId>
 				<artifactId>drools-workitems</artifactId>
 				<version>5.1.0.M1</version>
+			</dependency>
+			<!-- Test Dependencies -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.8.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.arquillian</groupId>
+				<artifactId>arquillian-junit</artifactId>
+				<version>${arquillian.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.arquillian.container</groupId>
+				<artifactId>arquillian-weld-embedded</artifactId>
+				<version>${arquillian.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
