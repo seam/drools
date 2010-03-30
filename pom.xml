@@ -29,7 +29,7 @@
 			<organizationUrl>http://jboss.org</organizationUrl>
 			<timezone>EST</timezone>
 			<roles>
-				<role>Project Lead</role>
+				<role>Module Lead</role>
 			</roles>
 		</developer>
 	</developers>
