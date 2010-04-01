@@ -1,15 +1,13 @@
 package org.jboss.seam.drools.kbase;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import static org.junit.Assert.assertNotNull;
 
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import junit.framework.Assert;
 
-import org.drools.KnowledgeBase;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
@@ -27,49 +25,38 @@ public class KBaseTest
    @Deployment
    public static JavaArchive createTestArchive()
    {
+      String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
       return Archives.create("test.jar", JavaArchive.class)
          .addPackages(true, KnowledgeBaseProducer.class.getPackage())
-         .addResource(KBaseTest.class.getPackage().getName().replaceAll("\\.", "/") + "/kbasetest.drl")
-         .addResource(KBaseTest.class.getPackage().getName().replaceAll("\\.", "/") + "/kbuilderconfig.properties") 
-         .addResource(KBaseTest.class.getPackage().getName().replaceAll("\\.", "/") + "/kbaseconfig.properties")
-         .addManifestResource(KBaseTest.class.getPackage().getName().replaceAll("\\.", "/") + "/KBaseTest-beans.xml", 
-               ArchivePaths.create("beans.xml"));
+         .addResource(pkgPath + "/kbasetest.drl")
+         .addResource(pkgPath + "/kbuilderconfig.properties") 
+         .addResource(pkgPath + "/kbaseconfig.properties")
+         .addManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
+         // the XML bean config module doesn't pick up the beans.xml unless it's located at src/test/resources/META-INF/beans.xml
+         //.addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
    }
-  
-   @Inject BeanManager manager;
-   
-   @Test
-   public void testManager() {
-      assertNotNull(manager);
-   }
+
+   @Inject @Any Instance<KnowledgeBaseConfig> kbaseConfigResolver;
+   @Inject @KBaseConfig(name = "kbaseconfig1") KnowledgeBaseConfig config;
    
    @Test
    public void testKBaseConfig() {
-      Bean<KnowledgeBaseConfig> knowledgeBaseConfigBean = (Bean<KnowledgeBaseConfig>) 
-      manager.getBeans(KnowledgeBaseConfig.class, new KBaseConfigBinding("kbaseconfig1")).iterator().next();
-      
-      KnowledgeBaseConfig kbaseConfig = (KnowledgeBaseConfig) manager.getReference(knowledgeBaseConfigBean, KnowledgeBaseConfig.class, manager.createCreationalContext(knowledgeBaseConfigBean));
-      
+      Assert.assertFalse(kbaseConfigResolver.select(new KBaseConfigBinding("kbaseconfig1")).isUnsatisfied());
+      KnowledgeBaseConfig kbaseConfig = kbaseConfigResolver.select(new KBaseConfigBinding("kbaseconfig1")).get();
       assertNotNull(kbaseConfig);
       System.out.println("**** " + kbaseConfig.getEventListeners());
    }
    
-   //@Test
-   public void testKBase() {
-      //assertNotNull(kbasebean.getKbase());
-      //System.out.println("********* KBASE: " + kbasebean.getKbase());
-   }
-   
    static class KBaseConfigBinding extends AnnotationLiteral<KBaseConfig> implements KBaseConfig
    {
-      private String value = null;
-      public KBaseConfigBinding(String value)
+      private String name = null;
+      public KBaseConfigBinding(String name)
       {
-         this.value = value;
+         this.name = name;
       }
       
       public String name() {
-         return value;
+         return name;
       }
    }
 }
