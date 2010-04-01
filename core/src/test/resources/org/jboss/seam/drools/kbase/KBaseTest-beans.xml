@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:s="urn:java:seam:core" 
+       xmlns:drools="urn:java:org.jboss.seam.drools"
+       xmlns:drools-config="urn:java:org.jboss.seam.drools.config"
+       xmlns:drools-qualifier="urn:java:org.jboss.seam.drools.qualifier">
+       
+       <drools-config:KnowledgeBaseConfig>
+       		<s:overrides/>
+       		<drools-qualifier:KBaseConfig name="kbaseconfig1"/>
+       		<drools-config:knowledgeBuilderConfig>kbuilderconfig.properties</drools-config:knowledgeBuilderConfig>
+       		<drools-config:knowledgeBaseConfig>kbaseconfig.properties</drools-config:knowledgeBaseConfig>
+       		<drools-config:ruleResources>
+       			<s:value>classpath:kbasetest.drl:DRL</s:value>
+       		</drools-config:ruleResources>
+       		<drools-config:eventListeners>
+       			<s:value>org.drools.event.knowledgebase.DefaultKnowledgeBaseEventListener</s:value>
+       		</drools-config:eventListeners>
+       </drools-config:KnowledgeBaseConfig>
+       
+       <drools:KnowledgeBaseProducer>
+       		 <s:specializes/>
+       		 <drools:produceKBase>
+       		 	<drools-qualifier:KBase name="kbase1"/>
+       		 	<s:Inject/>
+       		 	<drools-qualifier:KBaseConfig name="kbaseconfig1"/>
+       		 </drools:produceKBase>
+       </drools:KnowledgeBaseProducer>
+ 
+</beans>       

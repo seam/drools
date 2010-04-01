@@ -1,4 +1,4 @@
-package org.jboss.seam.drools;
+package org.jboss.seam.drools.old;
 
 import java.util.List;
 import java.util.Map;
