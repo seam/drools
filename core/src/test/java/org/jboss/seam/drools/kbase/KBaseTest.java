@@ -36,7 +36,7 @@ public class KBaseTest
    @Inject KBaseBean kbasebean;
    
    @Test 
-   public void testBaseBase() {
+   public void testKBaseBean() {
       assertNotNull(kbasebean);
    }
    
