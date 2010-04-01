@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class KnowledgeBaseManager
 {
-   private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManager.class);
+  /** private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseManager.class);
    
    private KnowledgeBaseManagerConfig kbaseManagerConfig;
 
@@ -49,8 +49,8 @@ public class KnowledgeBaseManager
       this.kbaseManagerConfig = kbaseManagerConfig;
    }
 
-   @Produces
-   @ApplicationScoped
+   //@Produces
+   //@ApplicationScoped
    public KnowledgeBase createKBase() throws Exception
    {
       KnowledgeBase kbase;
@@ -84,10 +84,10 @@ public class KnowledgeBaseManager
       return kbase;
    }
    
-   public void disposeKBase(@Disposes KnowledgeBase kbase)
-   {
-      kbase = null;
-   }
+   //public void disposeKBase(@Disposes KnowledgeBase kbase)
+   //{
+   //   kbase = null;
+  // }
    
    private void addEventListener(org.drools.KnowledgeBase kbase, String eventListener) {
       try {
@@ -204,4 +204,4 @@ public class KnowledgeBaseManager
       }
       return kbaseconfig;
    }
-}
+**/}

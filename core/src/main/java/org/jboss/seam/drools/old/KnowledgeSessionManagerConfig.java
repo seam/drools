@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class KnowledgeSessionManagerConfig
 { 
-   private static final Pattern DIVIDER = Pattern.compile(";");
+  /** private static final Pattern DIVIDER = Pattern.compile(";");
    private static final int WORKITEMHANDLER_NAME = 0;
    private static final int WORKITEMHANDLER_TYPE = 1;
    private static final int AUDIT_LOG_TYPE = 0;
@@ -103,4 +103,4 @@ public class KnowledgeSessionManagerConfig
       this.knowledgeSessionConfigProp = knowledgeSessionConfigProp;
    }
 
-}
+**/}

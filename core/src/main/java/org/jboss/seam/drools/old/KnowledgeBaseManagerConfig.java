@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class KnowledgeBaseManagerConfig
 {
-   private static final Pattern DIVIDER = Pattern.compile(";");
+   /** private static final Pattern DIVIDER = Pattern.compile(";");
    private static final int RESOURCE_PATH = 0;
    private static final int RESOURCE = 1;
    private static final int RESOURCE_TYPE = 2;
@@ -113,4 +113,4 @@ public class KnowledgeBaseManagerConfig
    
    
 
-}
+**/ }

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class KnowledgeSessionManager
 {
-   private static final Logger log = LoggerFactory.getLogger(KnowledgeSessionManager.class);
+ /**  private static final Logger log = LoggerFactory.getLogger(KnowledgeSessionManager.class);
 
    private KnowledgeSessionManagerConfig ksessionManagerConfig;
    private Map<Integer, KnowledgeRuntimeLogger> statefulKnowledgeLoggers = new Hashtable<Integer, KnowledgeRuntimeLogger>();
@@ -53,8 +53,8 @@ public class KnowledgeSessionManager
       this.ksessionManagerConfig = ksessionManagerConfig;
    }
 
-   @Produces
-   @Any
+   //@Produces
+   //@Any
    public StatefulKnowledgeSession getStatefulSession(InjectionPoint ip, Instance<KnowledgeBase> kbase) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.select(ip.getQualifiers().toArray(new Annotation[0])).get().newStatefulKnowledgeSession(getKSessionConfig(), null);
@@ -65,14 +65,14 @@ public class KnowledgeSessionManager
       return ksession;
    }
 
-   public void disposeStatefulSession(@Disposes StatefulKnowledgeSession statefulSession)
-   {
-      if (statefulKnowledgeLoggers.get(statefulSession.getId()) != null)
-      {
-         statefulKnowledgeLoggers.get(statefulSession.getId()).close();
-      }
-      statefulSession.dispose();
-   }
+   //public void disposeStatefulSession(@Disposes StatefulKnowledgeSession statefulSession)
+   //{
+    //  if (statefulKnowledgeLoggers.get(statefulSession.getId()) != null)
+     // {
+      //   statefulKnowledgeLoggers.get(statefulSession.getId()).close();
+     // }
+     // statefulSession.dispose();
+  // }
 
    @Produces
    @Any
@@ -183,4 +183,4 @@ public class KnowledgeSessionManager
    }
    
 
-}
+**/}
