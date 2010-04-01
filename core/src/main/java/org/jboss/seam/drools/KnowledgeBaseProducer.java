@@ -34,7 +34,7 @@ public class KnowledgeBaseProducer
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
    @Inject BeanManager manager;
 
-   @Produces
+   @Produces @ApplicationScoped
    public KnowledgeBase produceKBase(KnowledgeBaseConfig kbaseConfig) throws Exception
    {
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration(kbaseConfig));
