@@ -100,13 +100,11 @@
 				<artifactId>drools-decisiontables</artifactId>
 				<version>5.1.0.M1</version>
 			</dependency>
-			<!--  TODO add back and check where
-			      org.apache.commons:commons-cli:2.0-SNAPSHOT -->
-			<!-- <dependency>
+			<dependency>
 				<groupId>org.drools</groupId>
 				<artifactId>drools-workitems</artifactId>
 				<version>5.1.0.M1</version>
-			</dependency> -->
+			</dependency>
 			<!-- Test Dependencies -->
 			<dependency>
 				<groupId>junit</groupId>
