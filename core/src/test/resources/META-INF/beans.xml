@@ -7,26 +7,29 @@
 
 	<drools:KnowledgeBaseConfig>
 		<s:overrides/>
-		<drools-qualifier:KBaseConfig name="kbaseconfig1" />
-		<drools:knowledgeBuilderConfig>kbuilderconfig.properties</drools:knowledgeBuilderConfig>
-		<drools:knowledgeBaseConfig>kbaseconfig.properties</drools:knowledgeBaseConfig>
+		<drools-qualifier:KBaseConfig value="kbaseconfig1" />
+		<drools:knowledgeBuilderConfig>
+			<s:value>/kbuilderconfig.properties</s:value>
+		</drools:knowledgeBuilderConfig>
+		<drools:knowledgeBaseConfig>
+			<s:value>/kbaseconfig.properties</s:value>
+		</drools:knowledgeBaseConfig>
 		<drools:ruleResources>
 			<s:value>classpath:kbasetest.drl:DRL</s:value>
 		</drools:ruleResources>
 		<drools:eventListeners>
-			<s:value>org.drools.event.knowledgebase.DefaultKnowledgeBaseEventListener
-			</s:value>
+			<s:value>org.drools.event.knowledgebase.DefaultKnowledgeBaseEventListener</s:value>
 		</drools:eventListeners>
 	</drools:KnowledgeBaseConfig>
 
 	<drools:KnowledgeBaseProducer>
 		<s:specializes />
 		<drools:produceKBase>
-			<drools-qualifier:KBase name="kbase1" />
+			<drools-qualifier:KBase value="kbase1" />
 			<s:parameters>
 				<drools:KnowledgeBaseConfig>
 					<s:Inject />
-					<drools-qualifier:KBaseConfig name="kbaseconfig1" />
+					<drools-qualifier:KBaseConfig value="kbaseconfig1" />
 				</drools:KnowledgeBaseConfig>
 			</s:parameters>
 		</drools:produceKBase>

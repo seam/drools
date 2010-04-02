@@ -18,5 +18,5 @@ import javax.inject.Qualifier;
 @Inherited
 public @interface KBase
 {
-   String name();
+   String value() default "";
 }

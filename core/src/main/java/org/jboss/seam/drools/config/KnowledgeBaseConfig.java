@@ -46,6 +46,22 @@ public class KnowledgeBaseConfig
    private String knowledgeBaseConfig;
    private String[] ruleResources;
    private String[] eventListeners;
+   
+   public String toString() {
+      StringBuffer buff = new StringBuffer();
+      buff.append("knowledgeBuilderConfig: " + getKnowledgeBuilderConfig() + "\n")
+      .append("knowledgeBaseConfig: " + getKnowledgeBaseConfig() + "\n")
+      .append("Rule Resources:\n");
+      for(String rr : getRuleResources()) {
+         buff.append("\t" + rr);
+      }
+      buff.append("\nEvent Listeners: \n");
+      for(String el : getEventListeners()) {
+         buff.append("\t" + el);
+      }
+      
+      return buff.toString();
+   }
 
    public String getKnowledgeBuilderConfig()
    {

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ import org.drools.io.ResourceFactory;
 import org.jboss.seam.drools.config.KnowledgeBaseConfig;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
+import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +34,13 @@ import org.slf4j.LoggerFactory;
 public class KnowledgeBaseProducer
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
+   
    @Inject BeanManager manager;
-
-   @Produces //@ApplicationScoped
+   @Inject ResourceProvider resourceProvider;
+   
+   @Produces
    public KnowledgeBase produceKBase(KnowledgeBaseConfig kbaseConfig) throws Exception
    {
-      System.out.println("***KBASEPRODUCER CONFIG IS: " + kbaseConfig);
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration(kbaseConfig));
       
       for (String nextResource : kbaseConfig.getRuleResources())
@@ -74,7 +77,7 @@ public class KnowledgeBaseProducer
       if (kbaseConfig.getKnowledgeBuilderConfig() != null && kbaseConfig.getKnowledgeBuilderConfig().endsWith(".properties"))
       {
          Properties kbuilderProp = new Properties();
-         InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseConfig.getKnowledgeBuilderConfig());
+         InputStream in = resourceProvider.loadResourceStream(kbaseConfig.getKnowledgeBuilderConfig());
          if (in == null)
          {
             throw new IllegalStateException("Could not locate knowledgeBuilderConfig: " + kbaseConfig.getKnowledgeBuilderConfig());
@@ -93,7 +96,7 @@ public class KnowledgeBaseProducer
       if (kbaseConfig.getKnowledgeBaseConfig() != null && kbaseConfig.getKnowledgeBaseConfig().endsWith(".properties"))
       {
          Properties kbaseProp = new Properties();
-         InputStream in = this.getClass().getClassLoader().getResourceAsStream(kbaseConfig.getKnowledgeBaseConfig());
+         InputStream in = resourceProvider.loadResourceStream(kbaseConfig.getKnowledgeBaseConfig());
          if (in == null)
          {
             throw new IllegalStateException("Could not locate knowledgeBaseConfig: " + kbaseConfig.getKnowledgeBaseConfig());
