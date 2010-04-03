@@ -3,7 +3,6 @@ package org.jboss.seam.drools.kbase;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import static org.junit.Assert.assertNotNull;
-import static org.jboss.shrinkwrap.api.formatter.Formatters.VERBOSE;
 
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
@@ -31,18 +30,15 @@ public class KBaseTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive =  Archives.create("test.jar", JavaArchive.class)
+      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
          .addPackages(true, KnowledgeBaseProducer.class.getPackage())
-         .addClass(ResourceProvider.class)
+         .addPackages(true, ResourceProvider.class.getPackage())
          .addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl"))
-         .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties")) 
+         .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
          .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-         .addManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
-         // the XML bean config module doesn't pick up the beans.xml unless it's located at src/test/resources/META-INF/beans.xml
-         //.addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
-         System.out.println(archive.toString(VERBOSE));
-         
-         return archive;
+         .addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
+      System.out.println(archive.toString(Formatters.VERBOSE));
+      return archive;
    }
 
    @Inject @Any Instance<KnowledgeBaseConfig> kbaseConfigResolver;
@@ -63,8 +59,6 @@ public class KBaseTest
       assertNotNull(kbase);
    }
    
-   
-   
    static class KBaseConfigBinding extends AnnotationLiteral<KBaseConfig> implements KBaseConfig
    {
       private String value = null;
@@ -78,4 +72,3 @@ public class KBaseTest
       }
    }
 }
-
