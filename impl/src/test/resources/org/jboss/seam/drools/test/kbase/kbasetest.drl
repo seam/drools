@@ -1,6 +1,0 @@
-package org.jboss.seam.drools.kbase
-
-rule "dummy"
-	then 
-		System.out.println("in dummy action");		
-end
