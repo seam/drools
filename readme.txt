@@ -1,64 +1,42 @@
-Seam Drools 3.0.0 Beta 1
-==========================
 
-Seam Drools provides integration with the Drools 5 API.
+                              Seam Drools Module
+                               3.0.0 SNAPSHOT
 
+ What is it?
+ ===========
 
-Contents of distribution
-========================
+The Seam 3 Drools Module provided integration with Drools 5. 
+ Contents of distribution
+ ========================
 
-doc/
+ docs/
 
-  API Docs and reference guide.
+    API Docs and reference guide.
   
-examples/
+ examples/
 
-  Seam Drools Examples
+    Seam Drools examples
   
-lib/
-
-  Seam Drools jar files
+ ...
   
-Licensing
-=========
+ Licensing
+ =========
 
-This distribution, as a whole, is licensed under the terms of the GNU Lesser General Public License
-(LGPL) Version 2.1, the text of which is contained in the file lgpl.txt.
-
-Seam Remoting URLs
-==================
-
-Seam Framework Home Page:      http://www.seamframework.org
-Downloads:                     http://www.seamframework.org/Download/SeamDownloads
-Forums:                        http://www.seamframework.org/Community/SeamUsers
-Source Code:                   http://anonsvn.jboss.org/repos/seam/modules/drools/
-Issue Tracking:                http://jira.jboss.org/jira/browse/SEAMDROOLS
-
-Release Notes
-=============
-
-Version 3.0.0 Beta 1
---------------------
-First beta release of Seam Drools 3.x, ported from Seam 2.x to CDI.
+ This distribution, as a whole, is licensed under the terms of the Apache
+ License, Version 2.0 (see apl.txt).
 
 
-* If using Maven, some artifacts may only be available in the JBoss Repository. To allow Seam Remoting to correctly function, add the JBoss Repository to Maven. Edit your ~/.m2/settings.xml, and add the following entry:
+ Seam Drools URLs
+ ===============
 
-      <profile>
-         <id>jboss.repository</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <repositories>
-            <repository>
-               <id>repository.jboss.org</id>
-               <url>http://repository.jboss.org/maven2</url>
-               <releases>
-                  <enabled>true</enabled>
-               </releases>
-               <snapshots>
-                  <enabled>false</enabled>
-               </snapshots>
-            </repository>
-         </repositories>
-      </profile>
+ Seam 3 Faces Module:  http://www.sfwk.org/Seam3/DroolsModule
+ Seam 3 Home Page:     http://www.sfwk.org/Seam3
+ Downloads:            http://www.sfwk.org/Seam3/DistributionDownloads
+ Forums:               http://www.sfwk.org/Community/Seam3Users
+ Source Code:          http://anonsvn.jboss.org/repos/seam/modules/drools
+ Issue Tracking:       http://jira.jboss.org/jira/browse/SEAMDROOLS
+
+ Release Notes
+ =============
+
+ ...
