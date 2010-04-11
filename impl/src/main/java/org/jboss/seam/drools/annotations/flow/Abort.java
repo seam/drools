@@ -14,15 +14,16 @@ import javax.interceptor.InterceptorBinding;
 
 /**
  * Abort the process instace.
- *  
+ * 
  * @author Tihomir Surdilovic
  */
 @InterceptorBinding
-@Target({TYPE, METHOD})
+@Target( { TYPE, METHOD })
 @Documented
 @Retention(RUNTIME)
 @Inherited
 public @interface Abort
 {
-   @Nonbinding long processid();
+   @Nonbinding
+   long processid();
 }

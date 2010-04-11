@@ -22,18 +22,18 @@ public class InsertInterceptorTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = InsertInterceptorTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addClasses(InsertInterceptor.class, InsertionBean.class)
-      .addManifestResource(pkgPath + "/InsertInterceptorTest-beans.xml", ArchivePaths.create("beans.xml"));
+      JavaArchive archive = Archives.create("test.jar", JavaArchive.class).addClasses(InsertInterceptor.class, InsertionBean.class).addManifestResource(pkgPath + "/InsertInterceptorTest-beans.xml", ArchivePaths.create("beans.xml"));
       System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
-   
-   @Inject InsertionBean insertionBean;
-   
+
+   @Inject
+   InsertionBean insertionBean;
+
    @Test
-   public void testInsertFactHappens() {
+   public void testInsertFactHappens()
+   {
       String result = insertionBean.insertResultAsFact();
-      assertTrue(result.equals("abc")); //TODO finish this test
+      assertTrue(result.equals("abc")); // TODO finish this test
    }
 }

@@ -13,15 +13,18 @@ import javax.interceptor.InterceptorBinding;
 
 /**
  * Starts a Rule Flow process.
- *  
+ * 
  * @author Tihomir Surdilovic
  */
 @InterceptorBinding
-@Target({TYPE, METHOD})
+@Target( { TYPE, METHOD })
 @Documented
 @Retention(RUNTIME)
 public @interface StartProcess
 {
-   @Nonbinding String processId() default "";
-   @Nonbinding String sessionId() default "";
+   @Nonbinding
+   String processId() default "";
+
+   @Nonbinding
+   String sessionId() default "";
 }

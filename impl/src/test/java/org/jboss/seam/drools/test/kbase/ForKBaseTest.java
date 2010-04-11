@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 @Qualifier
-@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Target( { TYPE, METHOD, FIELD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
 @Inherited

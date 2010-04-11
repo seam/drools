@@ -6,29 +6,29 @@ package org.jboss.seam.drools.config;
  */
 public class KnowledgeBaseConfig
 {
-   private String knowledgeBuilderConfig;
-   private String knowledgeBaseConfig;
+   private String knowledgeBuilderConfigPath;
+   private String knowledgeBaseConfigPath;
    private String[] ruleResources;
    private String[] eventListeners;
 
-   public String getKnowledgeBuilderConfig()
+   public String getKnowledgeBuilderConfigPath()
    {
-      return knowledgeBuilderConfig;
+      return knowledgeBuilderConfigPath;
    }
 
-   public void setKnowledgeBuilderConfig(String knowledgeBuilderConfig)
+   public void setKnowledgeBuilderConfigPath(String knowledgeBuilderConfigPath)
    {
-      this.knowledgeBuilderConfig = knowledgeBuilderConfig;
+      this.knowledgeBuilderConfigPath = knowledgeBuilderConfigPath;
    }
 
-   public String getKnowledgeBaseConfig()
+   public String getKnowledgeBaseConfigPath()
    {
-      return knowledgeBaseConfig;
+      return knowledgeBaseConfigPath;
    }
 
-   public void setKnowledgeBaseConfig(String knowledgeBaseConfig)
+   public void setKnowledgeBaseConfigPath(String knowledgeBaseConfigPath)
    {
-      this.knowledgeBaseConfig = knowledgeBaseConfig;
+      this.knowledgeBaseConfigPath = knowledgeBaseConfigPath;
    }
 
    public String[] getRuleResources()
@@ -54,7 +54,7 @@ public class KnowledgeBaseConfig
    public String toString()
    {
       StringBuffer buff = new StringBuffer();
-      buff.append("knowledgeBuilderConfig: " + knowledgeBuilderConfig + "\n").append("knowledgeBaseConfig: " + knowledgeBaseConfig + "\n");
+      buff.append("knowledgeBuilderConfigPath: " + knowledgeBuilderConfigPath + "\n").append("knowledgeBaseConfigPath: " + knowledgeBaseConfigPath + "\n");
       if (ruleResources != null)
       {
          buff.append("Rule Resources:\n");

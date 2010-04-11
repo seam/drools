@@ -1,4 +1,4 @@
-package org.jboss.seam.drools.qualifiers;
+package org.jboss.seam.drools.qualifiers.kbase;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.FIELD;
@@ -14,15 +14,16 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
+ * Qualifier for Drools KnowledgeBase configured for KnowledgeAgent.
  * 
  * @author Tihomir Surdilovic
  */
 @Qualifier
-@Target({TYPE, METHOD, FIELD, PARAMETER})
+@Target( { TYPE, METHOD, FIELD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
 @Inherited
-public @interface KBase
+public @interface KAgentConfigured
 {
-   String value() default "";
+
 }

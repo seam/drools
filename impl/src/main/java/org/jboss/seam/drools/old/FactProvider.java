@@ -12,9 +12,11 @@ import java.util.Map;
 public interface FactProvider
 {
    public List<Object> getFacts();
+
    public void setFacts(List<Object> facts);
-   
+
    public Map<String, Object> getGlobals();
+
    public void setGlobals(Map<String, Object> globals);
-   
+
 }

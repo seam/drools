@@ -14,18 +14,25 @@ import javax.interceptor.InterceptorBinding;
 
 /**
  * Event to be signalled to the process instance or process engine directly.
- *  
+ * 
  * @author Tihomir Surdilovic
  */
 @InterceptorBinding
-@Target({TYPE, METHOD})
+@Target( { TYPE, METHOD })
 @Documented
 @Retention(RUNTIME)
 @Inherited
 public @interface SignalEvent
 {
-   @Nonbinding String type() default "";
-   @Nonbinding String event() default "";
-   @Nonbinding String processId() default "";
-   @Nonbinding String sessionId() default "";
+   @Nonbinding
+   String type() default "";
+
+   @Nonbinding
+   String event() default "";
+
+   @Nonbinding
+   String processId() default "";
+
+   @Nonbinding
+   String sessionId() default "";
 }

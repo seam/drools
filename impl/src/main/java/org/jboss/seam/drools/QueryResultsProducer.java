@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 public class QueryResultsProducer
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
-   
-   @Inject BeanManager manager;
-   @Inject ResourceProvider resourceProvider;
+
+   @Inject
+   BeanManager manager;
+   @Inject
+   ResourceProvider resourceProvider;
 }

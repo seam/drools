@@ -7,10 +7,10 @@
    <drools:KnowledgeBaseConfig>
       <s:overrides/>
       <test:ForKBaseTest/>
-      <drools:knowledgeBuilderConfig>kbuilderconfig.properties</drools:knowledgeBuilderConfig>
-      <drools:knowledgeBaseConfig>kbaseconfig.properties</drools:knowledgeBaseConfig>
+      <drools:knowledgeBuilderConfigPath>kbuilderconfig.properties</drools:knowledgeBuilderConfigPath>
+      <drools:knowledgeBaseConfigPath>kbaseconfig.properties</drools:knowledgeBaseConfigPath>
       <drools:ruleResources>
-         <s:value>classpath:kbasetest.drl:DRL</s:value>
+         <s:value>classpath;kbasetest.drl;DRL</s:value>
       </drools:ruleResources>
       <drools:eventListeners>
          <s:value>org.drools.event.knowledgebase.DefaultKnowledgeBaseEventListener</s:value>

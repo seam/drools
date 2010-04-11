@@ -14,19 +14,28 @@ import javax.interceptor.InterceptorBinding;
 
 /**
  * Insert fact into WM or EntryPoint. Also determine firing rules decisions.
- *  
+ * 
  * @author Tihomir Surdilovic
  */
 @InterceptorBinding
-@Target({TYPE, METHOD})
+@Target( { TYPE, METHOD })
 @Documented
 @Retention(RUNTIME)
 @Inherited
 public @interface InsertFact
 {
-   @Nonbinding int ksessionId() default -1;
-   @Nonbinding boolean fireAllRules() default false;
-   @Nonbinding int fireCount() default -1;
-   @Nonbinding boolean fireUntilHalt() default false;
-   @Nonbinding String entryPointName() default "";
+   @Nonbinding
+   int ksessionId() default -1;
+
+   @Nonbinding
+   boolean fireAllRules() default false;
+
+   @Nonbinding
+   int fireCount() default -1;
+
+   @Nonbinding
+   boolean fireUntilHalt() default false;
+
+   @Nonbinding
+   String entryPointName() default "";
 }

@@ -8,8 +8,8 @@ public class KnowledgeSessionConfig
 {
    private String[] eventListeners;
    private String[] workItemHandlers;
-   private String knowledgeSessionConfig;
-   
+   private String knowledgeSessionConfigPath;
+
    public String[] getEventListeners()
    {
       return eventListeners;
@@ -30,20 +30,20 @@ public class KnowledgeSessionConfig
       this.workItemHandlers = workItemHandlers;
    }
 
-   public String getKnowledgeSessionConfig()
+   public String getKnowledgeSessionConfigPath()
    {
-      return knowledgeSessionConfig;
+      return knowledgeSessionConfigPath;
    }
 
-   public void setKnowledgeSessionConfig(String knowledgeSessionConfig)
+   public void setKnowledgeSessionConfigPath(String knowledgeSessionConfigPath)
    {
-      this.knowledgeSessionConfig = knowledgeSessionConfig;
+      this.knowledgeSessionConfigPath = knowledgeSessionConfigPath;
    }
 
    public String toString()
    {
       StringBuffer buff = new StringBuffer();
-      buff.append("knowledgeSessionConfig: " + knowledgeSessionConfig + "\n");
+      buff.append("knowledgeSessionConfigPath: " + knowledgeSessionConfigPath + "\n");
       if (eventListeners != null)
       {
          buff.append("Event Listeners:\n");

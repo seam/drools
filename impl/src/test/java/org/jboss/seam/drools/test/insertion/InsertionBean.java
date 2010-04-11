@@ -4,8 +4,9 @@ import org.jboss.seam.drools.annotations.InsertFact;
 
 public class InsertionBean
 {
-   @InsertFact(ksessionId=123)
-   public String insertResultAsFact() {
+   @InsertFact(ksessionId = 123)
+   public String insertResultAsFact()
+   {
       return "abc";
    }
 }
