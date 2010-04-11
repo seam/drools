@@ -11,7 +11,6 @@ import org.drools.runtime.StatelessKnowledgeSession;
 import org.jboss.seam.drools.config.KnowledgeLoggerConfig;
 import org.jboss.seam.drools.qualifiers.kbase.KAgentConfigured;
 import org.jboss.seam.drools.qualifiers.kbase.KBaseConfigured;
-import org.jboss.seam.xml.annotations.XmlConfigured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

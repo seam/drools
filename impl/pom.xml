@@ -89,8 +89,7 @@
 		<dependency>
 			<groupId>org.jboss.seam.xml</groupId>
 			<artifactId>seam-xml-bean-config</artifactId>
-			<!--  TODO change back to test scope after we figure out what to do w/ @XmlConfigured -->
-			<scope>compile</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.arquillian</groupId>
