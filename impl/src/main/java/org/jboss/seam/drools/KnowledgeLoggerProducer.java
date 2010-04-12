@@ -1,6 +1,7 @@
 package org.jboss.seam.drools;
 
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 
 import org.drools.event.KnowledgeRuntimeEventManager;
@@ -8,9 +9,9 @@ import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
-import org.jboss.seam.drools.config.KnowledgeLoggerConfig;
-import org.jboss.seam.drools.qualifiers.kbase.KAgentConfigured;
-import org.jboss.seam.drools.qualifiers.kbase.KBaseConfigured;
+import org.jboss.seam.drools.config.DroolsConfiguration;
+import org.jboss.seam.drools.qualifiers.KAgentConfigured;
+import org.jboss.seam.drools.qualifiers.KBaseConfigured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,55 +24,63 @@ public class KnowledgeLoggerProducer
    private static final Logger log = LoggerFactory.getLogger(KnowledgeLoggerProducer.class);
 
    @Produces
-   public KnowledgeRuntimeLogger produceStatefulKnowledgeLogger(@KBaseConfigured StatefulKnowledgeSession ksession, KnowledgeLoggerConfig loggerConfig)
+   @KBaseConfigured
+   public KnowledgeRuntimeLogger produceStatefulKnowledgeLogger(@KBaseConfigured StatefulKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
    {
-      return getLogger(ksession, loggerConfig);
+      return getLogger(ksession, loggerConfigInstance.get());
    }
    
    @Produces
-   public KnowledgeRuntimeLogger produceStatefulKnowledgeLoggerForKAgent(@KAgentConfigured StatefulKnowledgeSession ksession, KnowledgeLoggerConfig loggerConfig)
+   @KAgentConfigured
+   public KnowledgeRuntimeLogger produceStatefulKnowledgeLoggerForKAgent(@KAgentConfigured StatefulKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
    {
-      return getLogger(ksession, loggerConfig);
+      return getLogger(ksession, loggerConfigInstance.get());
    }
 
    @Produces
-   public KnowledgeRuntimeLogger produceStatelessKnowledgeLogger(@KBaseConfigured StatelessKnowledgeSession ksession, KnowledgeLoggerConfig loggerConfig)
+   @KBaseConfigured
+   public KnowledgeRuntimeLogger produceStatelessKnowledgeLogger(@KBaseConfigured StatelessKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
    {
-      return getLogger(ksession, loggerConfig);
+      return getLogger(ksession, loggerConfigInstance.get());
    }
    
    @Produces
-   public KnowledgeRuntimeLogger produceStatelessKnowledgeLoggerForKAgent(@KAgentConfigured StatelessKnowledgeSession ksession, KnowledgeLoggerConfig loggerConfig)
+   @KAgentConfigured
+   public KnowledgeRuntimeLogger produceStatelessKnowledgeLoggerForKAgent(@KAgentConfigured StatelessKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
    {
-      return getLogger(ksession, loggerConfig);
+      return getLogger(ksession, loggerConfigInstance.get());
    }
 
-   private KnowledgeRuntimeLogger getLogger(KnowledgeRuntimeEventManager ksession, KnowledgeLoggerConfig loggerConfig)
+   private KnowledgeRuntimeLogger getLogger(KnowledgeRuntimeEventManager ksession, DroolsConfiguration loggerConfig)
    {
       KnowledgeRuntimeLogger krLogger = null;
-      if (loggerConfig.isFileType())
+      if (loggerConfig.getLoggerType().equalsIgnoreCase("file"))
       {
-         String logName = loggerConfig.getPath() + System.currentTimeMillis();
+         String logName = loggerConfig.getLoggerPath() + System.currentTimeMillis();
          krLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, logName);
       }
-      else if (loggerConfig.isConsoleType())
+      else if (loggerConfig.getLoggerType().equalsIgnoreCase("console"))
       {
          krLogger = KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
       }
-      else if (loggerConfig.isThreadedType())
+      else if (loggerConfig.getLoggerType().equalsIgnoreCase("threaded"))
       {
-         String logName = loggerConfig.getPath() + System.currentTimeMillis();
-         krLogger = KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, logName, loggerConfig.getInterval());
+         String logName = loggerConfig.getLoggerPath() + System.currentTimeMillis();
+         krLogger = KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, logName, loggerConfig.getLoggerInterval());
       }
       else
       {
-         log.error("Invalid logger specified: type: " + loggerConfig.getType() + " path: " + loggerConfig.getPath() + " interval: " + loggerConfig.getInterval());
+         log.error("Invalid logger specified: type: " + loggerConfig.getLoggerType() + " path: " + loggerConfig.getLoggerPath() + " interval: " + loggerConfig.getLoggerInterval());
       }
       return krLogger;
    }
 
-   public void disposeKnowledgeLogger(@Disposes KnowledgeRuntimeLogger logger)
+   public void disposeKBaseConfiguredKnowledgeLogger(@Disposes @KBaseConfigured KnowledgeRuntimeLogger logger)
    {
+      logger.close();
+   }
+   
+   public void disposeKAgentConfiguredKnowledgeLogger(@Disposes @KAgentConfigured KnowledgeRuntimeLogger logger) {
       logger.close();
    }
 }

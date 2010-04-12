@@ -1,12 +1,17 @@
 package org.jboss.seam.drools;
 
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
@@ -19,9 +24,11 @@ import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
 import org.drools.runtime.process.WorkItemHandler;
-import org.jboss.seam.drools.config.KnowledgeSessionConfig;
-import org.jboss.seam.drools.qualifiers.kbase.KAgentConfigured;
-import org.jboss.seam.drools.qualifiers.kbase.KBaseConfigured;
+import org.jboss.seam.drools.config.DroolsConfiguration;
+import org.jboss.seam.drools.qualifiers.KAgentConfigured;
+import org.jboss.seam.drools.qualifiers.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.KSessionEventListener;
+import org.jboss.seam.drools.qualifiers.WIHandler;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -42,35 +49,42 @@ public class KnowledgeSessionProducer
 
    @Produces
    @KBaseConfigured
-   public StatefulKnowledgeSession produceStatefulSession(@KBaseConfigured KnowledgeBase kbase, KnowledgeSessionConfig ksessionConfig) throws Exception
+   public StatefulKnowledgeSession produceStatefulSession(@KBaseConfigured KnowledgeBase kbase, Instance<DroolsConfiguration> ksessionConfigInstance) throws Exception
    {
-      StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getConfig(ksessionConfig.getKnowledgeSessionConfigPath()), null);
-      addEventListeners(ksession, ksessionConfig);
-      addWorkItemHandlers(ksession, ksessionConfig);
+      StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getConfig(ksessionConfigInstance.get().getKnowledgeSessionConfigPath()), null);
+      addEventListeners(ksession);
+      addWorkItemHandlers(ksession);
 
       return ksession;
    }
 
    @Produces
    @KAgentConfigured
-   StatefulKnowledgeSession produceStatefulSessionFromKAgent(@KAgentConfigured KnowledgeBase kbase, KnowledgeSessionConfig ksessionConfig) throws Exception
+   StatefulKnowledgeSession produceStatefulSessionFromKAgent(@KAgentConfigured KnowledgeBase kbase, Instance<DroolsConfiguration> ksessionConfigInstance) throws Exception
    {
-      return null;
+      StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getConfig(ksessionConfigInstance.get().getKnowledgeSessionConfigPath()), null);
+      addEventListeners(ksession);
+      addWorkItemHandlers(ksession);
+
+      return ksession;
    }
 
    @Produces
    @KAgentConfigured
-   StatelessKnowledgeSession produceStatelessSessionFromKAgent(@KAgentConfigured KnowledgeBase kbase, KnowledgeSessionConfig ksesiosnConfig)
+   StatelessKnowledgeSession produceStatelessSessionFromKAgent(@KAgentConfigured KnowledgeBase kbase, Instance<DroolsConfiguration> ksessionConfigInstance) throws Exception
    {
-      return null;
+      StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getConfig(ksessionConfigInstance.get().getKnowledgeSessionConfigPath()));
+      addEventListeners(ksession);
+
+      return ksession;
    }
 
    @Produces
    @KBaseConfigured
-   public StatelessKnowledgeSession produceStatelessSession(@KBaseConfigured KnowledgeBase kbase, KnowledgeSessionConfig ksessionConfig) throws Exception
+   public StatelessKnowledgeSession produceStatelessSession(@KBaseConfigured KnowledgeBase kbase, Instance<DroolsConfiguration> ksessionConfigInstance) throws Exception
    {
-      StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getConfig(ksessionConfig.getKnowledgeSessionConfigPath()));
-      addEventListeners(ksession, ksessionConfig);
+      StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getConfig(ksessionConfigInstance.get().getKnowledgeSessionConfigPath()));
+      addEventListeners(ksession);
 
       return ksession;
    }
@@ -96,53 +110,55 @@ public class KnowledgeSessionProducer
       return droolsKsessionConfig;
    }
 
-   private void addEventListeners(KnowledgeRuntimeEventManager ksession, KnowledgeSessionConfig ksessionConfig) throws Exception
+   private void addEventListeners(KnowledgeRuntimeEventManager ksession)
    {
-      if (ksessionConfig.getEventListeners() != null)
+      Set<Bean<?>> allKSessionEventListeners = manager.getBeans(Object.class, new AnnotationLiteral<KSessionEventListener>()
       {
-         for (String eventListener : ksessionConfig.getEventListeners())
-         {
-            @SuppressWarnings("unchecked")
-            Class eventListenerClass = Class.forName(eventListener);
-            Object eventListenerObject = eventListenerClass.newInstance();
-            if (eventListenerObject instanceof WorkingMemoryEventListener)
+      });
+      if(allKSessionEventListeners != null) {
+         Iterator<Bean<?>> iter = allKSessionEventListeners.iterator();
+         while(iter.hasNext()) {
+            Bean<?> eventListener = iter.next();
+            CreationalContext<?> context = manager.createCreationalContext(eventListener);
+            Object eventListenerInstance = manager.getReference(eventListener, Object.class, context);
+            
+            if (eventListenerInstance instanceof WorkingMemoryEventListener)
             {
-               ksession.addEventListener((WorkingMemoryEventListener) eventListenerObject);
+               ksession.addEventListener((WorkingMemoryEventListener) eventListenerInstance);
             }
-            else if (eventListenerObject instanceof AgendaEventListener)
+            else if (eventListenerInstance instanceof AgendaEventListener)
             {
-               ksession.addEventListener((AgendaEventListener) eventListenerObject);
+               ksession.addEventListener((AgendaEventListener) eventListenerInstance);
             }
-            else if (eventListenerObject instanceof ProcessEventListener)
+            else if (eventListenerInstance instanceof ProcessEventListener)
             {
-               ksession.addEventListener((ProcessEventListener) eventListenerObject);
+               ksession.addEventListener((ProcessEventListener) eventListenerInstance);
             }
             else
             {
-               log.debug("Invalid Event Listener: " + eventListener);
+               log.debug("Invalid Event Listener: " + eventListenerInstance);
             }
          }
       }
    }
 
-   private void addWorkItemHandlers(StatefulKnowledgeSession ksession, KnowledgeSessionConfig ksessionConfig)
+   private void addWorkItemHandlers(StatefulKnowledgeSession ksession)
    {
-      if (ksessionConfig.getWorkItemHandlers() != null)
+      Set<Bean<?>> allWorkItemHandlers = manager.getBeans(WorkItemHandler.class, new AnnotationLiteral<WIHandler>()
       {
-         for (String workItemHandlerStr : ksessionConfig.getWorkItemHandlers())
+      });
+      if (allWorkItemHandlers != null)
+      {
+         Iterator<Bean<?>> iter = allWorkItemHandlers.iterator();
+         while (iter.hasNext())
          {
-            if (ConfigUtils.isValidWorkItemHandler(workItemHandlerStr))
-            {
-               @SuppressWarnings("unchecked")
-               Bean<WorkItemHandler> workItemHandlerBean = (Bean<WorkItemHandler>) manager.getBeans(ConfigUtils.getWorkItemHandlerType(workItemHandlerStr)).iterator().next();
-               WorkItemHandler handler = (WorkItemHandler) manager.getReference(workItemHandlerBean, WorkItemHandler.class, manager.createCreationalContext(workItemHandlerBean));
-               log.debug("Registering new WorkItemHandler: " + ConfigUtils.getWorkItemHandlerName(workItemHandlerStr));
-               ksession.getWorkItemManager().registerWorkItemHandler(ConfigUtils.getWorkItemHandlerName(workItemHandlerStr), handler);
-            }
-            else
-            {
-               log.warn("Invalid workitem handler configuration for: " + workItemHandlerStr);
-            }
+            Bean<?> handler = iter.next();
+            WIHandler handlerQualifier = (WIHandler) handler.getQualifiers().toArray()[0];
+            CreationalContext<?> context = manager.createCreationalContext(handler);
+            WorkItemHandler handlerInstance = (WorkItemHandler) manager.getReference(handler, WorkItemHandler.class, context);
+            
+            log.info("Registering new WorkItemHandler: " + handlerQualifier.name());
+            ksession.getWorkItemManager().registerWorkItemHandler(handlerQualifier.name(), handlerInstance);
          }
       }
    }

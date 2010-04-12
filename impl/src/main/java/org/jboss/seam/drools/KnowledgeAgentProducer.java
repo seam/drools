@@ -2,7 +2,9 @@ package org.jboss.seam.drools;
 
 import java.util.Properties;
 
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -14,9 +16,10 @@ import org.drools.agent.KnowledgeAgentFactory;
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
-import org.jboss.seam.drools.config.KnowledgeAgentConfig;
+import org.jboss.seam.drools.config.DroolsConfiguration;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
-import org.jboss.seam.drools.qualifiers.kbase.KAgentConfigured;
+import org.jboss.seam.drools.qualifiers.KAgentConfigured;
+import org.jboss.seam.drools.qualifiers.config.DroolsConfig;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -37,13 +40,14 @@ public class KnowledgeAgentProducer
 
    @Produces
    @KAgentConfigured
-   KnowledgeBase produceAgentKBase(KnowledgeAgentConfig kagentConfig) throws Exception
+   KnowledgeBase produceAgentKBase(Instance<DroolsConfiguration> kagentConfigInstance) throws Exception
    {
+      DroolsConfiguration kagentConfig = kagentConfigInstance.get();
       ResourceFactory.getResourceChangeScannerService().configure(getResourceChangeScannerConfig(kagentConfig.getResourceChangeScannerConfigPath()));
       KnowledgeAgentConfiguration aconf = getKnowledgeAgentConfiguration(kagentConfig.getKnowledgeAgentConfigPath());
 
       KnowledgeAgent kagent;
-      kagent = KnowledgeAgentFactory.newKnowledgeAgent(kagentConfig.getName(), aconf);
+      kagent = KnowledgeAgentFactory.newKnowledgeAgent(kagentConfig.getKnowledgeAgentName(), aconf);
       applyChangeSet(kagent, kagentConfig.getChangeSetResource());
       
       if(kagentConfig.isStartChangeNotifierService()) {

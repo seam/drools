@@ -1,9 +1,15 @@
 package org.jboss.seam.drools;
 
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
@@ -17,10 +23,11 @@ import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.io.ResourceFactory;
-import org.jboss.seam.drools.config.KnowledgeBaseConfig;
+import org.jboss.seam.drools.config.DroolsConfiguration;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
-import org.jboss.seam.drools.qualifiers.kbase.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.KBaseEventListener;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -39,8 +46,9 @@ public class KnowledgeBaseProducer
    @Inject
    ResourceProvider resourceProvider;
 
-   @Produces @KBaseConfigured
-   public KnowledgeBase produceKBase(KnowledgeBaseConfig kbaseConfig) throws Exception
+   @Produces
+   @KBaseConfigured
+   public KnowledgeBase produceKBase(DroolsConfiguration kbaseConfig) throws Exception
    {
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration(kbaseConfig.getKnowledgeBuilderConfigPath()));
 
@@ -62,13 +70,16 @@ public class KnowledgeBaseProducer
       KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(getKnowledgeBaseConfiguration(kbaseConfig.getKnowledgeBaseConfigPath()));
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
-      if (kbaseConfig.getEventListeners() != null)
-      {
-         for (String eventListener : kbaseConfig.getEventListeners())
+      Set<Bean<?>> allKBaseEventListeners = manager.getBeans(KnowledgeBaseEventListener.class, new AnnotationLiteral<KBaseEventListener>() {});
+      if (allKBaseEventListeners != null)
+      {         
+         Iterator<Bean<?>> iter = allKBaseEventListeners.iterator();
+         while (iter.hasNext())
          {
-            addEventListener(kbase, eventListener);
+            addEventListener(kbase, iter.next());
          }
       }
+
       return kbase;
    }
 
@@ -77,7 +88,7 @@ public class KnowledgeBaseProducer
       KnowledgeBuilderConfiguration droolsKbuilderConfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration();
       if (knowledgeBuilderConfigPath != null && knowledgeBuilderConfigPath.endsWith(".properties"))
       {
-         
+
          Properties kbuilderProp = ConfigUtils.loadProperties(resourceProvider, knowledgeBuilderConfigPath);
          droolsKbuilderConfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbuilderProp, null);
          log.debug("KnowledgeBuilderConfiguration loaded: " + knowledgeBuilderConfigPath);
@@ -133,26 +144,11 @@ public class KnowledgeBaseProducer
       }
    }
 
-   private void addEventListener(org.drools.KnowledgeBase kbase, String eventListener)
+   private void addEventListener(org.drools.KnowledgeBase kbase, Bean<?> listener)
    {
-      try
-      {
-         @SuppressWarnings("unchecked")
-         Class eventListenerClass = Class.forName(eventListener);
-         Object eventListenerObject = eventListenerClass.newInstance();
-
-         if (eventListenerObject instanceof KnowledgeBaseEventListener)
-         {
-            kbase.addEventListener((KnowledgeBaseEventListener) eventListenerObject);
-         }
-         else
-         {
-            log.debug("Event Listener " + eventListener + " is not of type KnowledgeBaseEventListener");
-         }
-      }
-      catch (Exception e)
-      {
-         log.error("Error adding event listener " + e.getMessage());
-      }
-   }
+      CreationalContext<?> context = manager.createCreationalContext(listener);
+      KnowledgeBaseEventListener listenerInstance = (KnowledgeBaseEventListener) manager.getReference(listener, KnowledgeBaseEventListener.class, context);
+      kbase.addEventListener(listenerInstance);
+      log.debug("Added KnowledgeBaseEventListener: " + listener);
+    }
 }

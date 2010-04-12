@@ -8,8 +8,9 @@ import org.drools.KnowledgeBase;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.config.KnowledgeBaseConfig;
-import org.jboss.seam.drools.qualifiers.kbase.KBaseConfigured;
+import org.jboss.seam.drools.config.DroolsConfiguration;
+import org.jboss.seam.drools.qualifiers.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.config.DroolsConfig;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
@@ -25,15 +26,23 @@ public class KBaseTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class).addPackages(true, KnowledgeBaseProducer.class.getPackage()).addPackages(true, ResourceProvider.class.getPackage()).addClass(ForKBaseTest.class).addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl")).addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties")).addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties")).addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
+      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
+      .addPackages(true, KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, ResourceProvider.class.getPackage())
+      .addClass(ForKBaseTest.class)
+      .addClass(MyKnowledgeBaseEventListener.class)
+      .addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl"))
+      .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
+      .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
+      .addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
       System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
 
-   // @Inject @Any Instance<KnowledgeBaseConfig> kbaseConfigResolver;
    @Inject
    @ForKBaseTest
-   KnowledgeBaseConfig config;
+   DroolsConfiguration config;
+   
    @Inject
    @ForKBaseTest
    @KBaseConfigured

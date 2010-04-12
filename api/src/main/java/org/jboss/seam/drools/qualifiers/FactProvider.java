@@ -1,4 +1,4 @@
-package org.jboss.seam.drools.qualifiers.kbase;
+package org.jboss.seam.drools.qualifiers;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -11,10 +11,10 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
 
 /**
- * Qualifier for Drools KnowledgeBase default configuration.
  * 
  * @author Tihomir Surdilovic
  */
@@ -23,7 +23,7 @@ import javax.inject.Qualifier;
 @Documented
 @Retention(RUNTIME)
 @Inherited
-public @interface KBaseConfigured
-{
-
+public @interface FactProvider {
+	@Nonbinding String name();
+	@Nonbinding String entryPointName();
 }

@@ -1,7 +1,7 @@
-package org.jboss.seam.drools.qualifiers.config;
+package org.jboss.seam.drools.qualifiers;
 
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
+ * Qualifier for Drools KnowledgeBase configured for KnowledgeAgent.
  * 
  * @author Tihomir Surdilovic
  */
@@ -22,7 +23,7 @@ import javax.inject.Qualifier;
 @Documented
 @Retention(RUNTIME)
 @Inherited
-public @interface DroolsConfig
+public @interface KAgentConfigured
 {
 
 }
