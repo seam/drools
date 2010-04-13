@@ -26,7 +26,7 @@ public class KSessionTest
    {
       String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, new KSessionTestFiler(), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(KSessionTestQualifier.class)
       .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))

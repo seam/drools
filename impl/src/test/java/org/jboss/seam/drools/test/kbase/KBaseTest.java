@@ -27,7 +27,7 @@ public class KBaseTest
    {
       String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, new KBaseTestFilter(), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(KBaseTestQualifier.class)
       .addClass(MyKnowledgeBaseEventListener.class)
