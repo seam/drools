@@ -1,6 +1,12 @@
+template header
+name
+
 package org.jboss.seam.drools.kbase
 
-rule "dummy"
-	then 
-		System.out.println("in dummy action");		
+template "kbasetesttemplate"
+rule "say hello to @{name}"
+then
+	System.out.println("Hello @{name}");
 end
+end template
+

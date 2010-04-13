@@ -18,7 +18,7 @@ import javax.inject.Qualifier;
  * @author Tihomir Surdilovic
  */
 @Qualifier
-@Target( { TYPE, METHOD, FIELD, PARAMETER })
+@Target( TYPE )
 @Documented
 @Retention(RUNTIME)
 @Inherited

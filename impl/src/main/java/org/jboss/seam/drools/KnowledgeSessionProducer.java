@@ -2,16 +2,12 @@ package org.jboss.seam.drools;
 
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
@@ -23,12 +19,10 @@ import org.drools.event.rule.WorkingMemoryEventListener;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
-import org.drools.runtime.process.WorkItemHandler;
+import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.config.DroolsConfiguration;
 import org.jboss.seam.drools.qualifiers.KAgentConfigured;
 import org.jboss.seam.drools.qualifiers.KBaseConfigured;
-import org.jboss.seam.drools.qualifiers.KSessionEventListener;
-import org.jboss.seam.drools.qualifiers.WIHandler;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -46,6 +40,8 @@ public class KnowledgeSessionProducer
    BeanManager manager;
    @Inject
    ResourceProvider resourceProvider;
+   @Inject
+   DroolsExtension droolsExtension;
 
    @Produces
    @KBaseConfigured
@@ -89,7 +85,7 @@ public class KnowledgeSessionProducer
       return ksession;
    }
 
-   void disposeStatefulSession(@Disposes @Any StatefulKnowledgeSession session)
+   public void disposeStatefulSession(@Disposes @Any StatefulKnowledgeSession session)
    {
       session.dispose();
    }
@@ -112,54 +108,37 @@ public class KnowledgeSessionProducer
 
    private void addEventListeners(KnowledgeRuntimeEventManager ksession)
    {
-      Set<Bean<?>> allKSessionEventListeners = manager.getBeans(Object.class, new AnnotationLiteral<KSessionEventListener>()
+      Iterator<Object> iter = droolsExtension.getKsessionEventListenerSet().iterator();
+      while (iter.hasNext())
       {
-      });
-      if(allKSessionEventListeners != null) {
-         Iterator<Bean<?>> iter = allKSessionEventListeners.iterator();
-         while(iter.hasNext()) {
-            Bean<?> eventListener = iter.next();
-            CreationalContext<?> context = manager.createCreationalContext(eventListener);
-            Object eventListenerInstance = manager.getReference(eventListener, Object.class, context);
-            
-            if (eventListenerInstance instanceof WorkingMemoryEventListener)
-            {
-               ksession.addEventListener((WorkingMemoryEventListener) eventListenerInstance);
-            }
-            else if (eventListenerInstance instanceof AgendaEventListener)
-            {
-               ksession.addEventListener((AgendaEventListener) eventListenerInstance);
-            }
-            else if (eventListenerInstance instanceof ProcessEventListener)
-            {
-               ksession.addEventListener((ProcessEventListener) eventListenerInstance);
-            }
-            else
-            {
-               log.debug("Invalid Event Listener: " + eventListenerInstance);
-            }
+         Object eventListenerInstance = iter.next();
+
+         if (eventListenerInstance instanceof WorkingMemoryEventListener)
+         {
+            ksession.addEventListener((WorkingMemoryEventListener) eventListenerInstance);
+         }
+         else if (eventListenerInstance instanceof AgendaEventListener)
+         {
+            ksession.addEventListener((AgendaEventListener) eventListenerInstance);
+         }
+         else if (eventListenerInstance instanceof ProcessEventListener)
+         {
+            ksession.addEventListener((ProcessEventListener) eventListenerInstance);
+         }
+         else
+         {
+            log.debug("Invalid Event Listener: " + eventListenerInstance);
          }
       }
    }
 
    private void addWorkItemHandlers(StatefulKnowledgeSession ksession)
    {
-      Set<Bean<?>> allWorkItemHandlers = manager.getBeans(WorkItemHandler.class, new AnnotationLiteral<WIHandler>()
+      Iterator<String> iter = droolsExtension.getWorkItemHandlers().keySet().iterator();
+      while (iter.hasNext())
       {
-      });
-      if (allWorkItemHandlers != null)
-      {
-         Iterator<Bean<?>> iter = allWorkItemHandlers.iterator();
-         while (iter.hasNext())
-         {
-            Bean<?> handler = iter.next();
-            WIHandler handlerQualifier = (WIHandler) handler.getQualifiers().toArray()[0];
-            CreationalContext<?> context = manager.createCreationalContext(handler);
-            WorkItemHandler handlerInstance = (WorkItemHandler) manager.getReference(handler, WorkItemHandler.class, context);
-            
-            log.info("Registering new WorkItemHandler: " + handlerQualifier.name());
-            ksession.getWorkItemManager().registerWorkItemHandler(handlerQualifier.name(), handlerInstance);
-         }
+         String name = iter.next();
+         ksession.getWorkItemManager().registerWorkItemHandler(name, droolsExtension.getWorkItemHandlers().get(name));
       }
    }
 }

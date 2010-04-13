@@ -1,15 +1,13 @@
 package org.jboss.seam.drools;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
@@ -23,11 +21,12 @@ import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.io.ResourceFactory;
+import org.drools.template.ObjectDataCompiler;
+import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.config.DroolsConfiguration;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
 import org.jboss.seam.drools.qualifiers.KBaseConfigured;
-import org.jboss.seam.drools.qualifiers.KBaseEventListener;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -45,6 +44,8 @@ public class KnowledgeBaseProducer
    BeanManager manager;
    @Inject
    ResourceProvider resourceProvider;
+   @Inject
+   DroolsExtension droolsExtension;
 
    @Produces
    @KBaseConfigured
@@ -70,17 +71,20 @@ public class KnowledgeBaseProducer
       KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(getKnowledgeBaseConfiguration(kbaseConfig.getKnowledgeBaseConfigPath()));
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
-      Set<Bean<?>> allKBaseEventListeners = manager.getBeans(KnowledgeBaseEventListener.class, new AnnotationLiteral<KBaseEventListener>() {});
-      if (allKBaseEventListeners != null)
-      {         
-         Iterator<Bean<?>> iter = allKBaseEventListeners.iterator();
-         while (iter.hasNext())
-         {
-            addEventListener(kbase, iter.next());
-         }
-      }
+      addEventListeners(kbase);
 
       return kbase;
+   }
+
+   private void addEventListeners(KnowledgeBase kbase)
+   {
+      Iterator<KnowledgeBaseEventListener> allKBaseEventListeners = droolsExtension.getKbaseEventListenerSet().iterator();
+      while (allKBaseEventListeners.hasNext())
+      {
+         KnowledgeBaseEventListener listener = allKBaseEventListeners.next();
+         kbase.addEventListener(listener);
+         log.info("Added KnowledgeBaseEventListener: " + listener);
+      }
    }
 
    private KnowledgeBuilderConfiguration getKnowledgeBuilderConfiguration(String knowledgeBuilderConfigPath) throws Exception
@@ -114,28 +118,53 @@ public class KnowledgeBaseProducer
 
    private void addResource(KnowledgeBuilder kbuilder, String resource) throws Exception
    {
-      // TODO add support for drools templates definition!
       if (ConfigUtils.isValidResource(resource))
       {
          ResourceType resourceType = ResourceType.getResourceType(ConfigUtils.getResourceType(resource));
-         if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_URL))
+
+         if (ConfigUtils.isRuleTemplate(resource))
          {
-            kbuilder.add(ResourceFactory.newUrlResource(ConfigUtils.getRuleResource(resource)), resourceType);
-            manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
-         }
-         else if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_FILE))
-         {
-            kbuilder.add(ResourceFactory.newFileResource(ConfigUtils.getRuleResource(resource)), resourceType);
-            manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
-         }
-         else if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_CLASSPATH))
-         {
-            kbuilder.add(ResourceFactory.newClassPathResource(ConfigUtils.getRuleResource(resource)), resourceType);
-            manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+            TemplateDataProvider templateDataProvider = droolsExtension.getTemplateDataProviders().get(ConfigUtils.getTemplateData(resource));
+            if (templateDataProvider != null)
+            {
+               InputStream templateStream = resourceProvider.loadResourceStream(ConfigUtils.getRuleResource(resource));
+               if (templateStream == null)
+               {
+                  throw new IllegalStateException("Could not load rule template: " + ConfigUtils.getRuleResource(resource));
+               }
+               ObjectDataCompiler converter = new ObjectDataCompiler();
+               String drl = converter.compile(templateDataProvider.getTemplateData(), templateStream);
+               log.info("Generated following rule from template and template data: \n" + drl);
+               templateStream.close();
+               Reader rdr = new StringReader(drl);
+               kbuilder.add(ResourceFactory.newReaderResource(rdr), resourceType);
+            }
+            else
+            {
+               throw new IllegalStateException("Requested template data provider: " + ConfigUtils.getTemplateData(resource) + " for resource " + resource + " has not been created. Check to make sure you have defined one.");
+            }
          }
          else
          {
-            log.error("Invalid resource: " + ConfigUtils.getResourcePath(resource));
+            if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_URL))
+            {
+               kbuilder.add(ResourceFactory.newUrlResource(ConfigUtils.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+            }
+            else if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_FILE))
+            {
+               kbuilder.add(ResourceFactory.newFileResource(ConfigUtils.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+            }
+            else if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_CLASSPATH))
+            {
+               kbuilder.add(ResourceFactory.newClassPathResource(ConfigUtils.getRuleResource(resource)), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+            }
+            else
+            {
+               log.error("Invalid resource: " + ConfigUtils.getResourcePath(resource));
+            }
          }
       }
       else
@@ -143,12 +172,4 @@ public class KnowledgeBaseProducer
          log.error("Invalid resource definition: " + resource);
       }
    }
-
-   private void addEventListener(org.drools.KnowledgeBase kbase, Bean<?> listener)
-   {
-      CreationalContext<?> context = manager.createCreationalContext(listener);
-      KnowledgeBaseEventListener listenerInstance = (KnowledgeBaseEventListener) manager.getReference(listener, KnowledgeBaseEventListener.class, context);
-      kbase.addEventListener(listenerInstance);
-      log.debug("Added KnowledgeBaseEventListener: " + listener);
-    }
 }

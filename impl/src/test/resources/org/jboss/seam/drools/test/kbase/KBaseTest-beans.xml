@@ -10,7 +10,7 @@
       <drools:knowledgeBuilderConfigPath>kbuilderconfig.properties</drools:knowledgeBuilderConfigPath>
       <drools:knowledgeBaseConfigPath>kbaseconfig.properties</drools:knowledgeBaseConfigPath>
       <drools:ruleResources>
-         <s:value>classpath;kbasetest.drl;DRL</s:value>
+         <s:value>classpath;kbasetest.drl;DRL;forkbasetest</s:value>
       </drools:ruleResources>
    </drools:DroolsConfiguration>
 
