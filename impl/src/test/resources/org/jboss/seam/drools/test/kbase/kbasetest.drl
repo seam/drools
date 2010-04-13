@@ -1,7 +1,7 @@
 template header
 name
 
-package org.jboss.seam.drools.kbase
+package org.jboss.seam.drools.test.kbase
 
 template "kbasetesttemplate"
 rule "say hello to @{name}"

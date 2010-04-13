@@ -8,7 +8,7 @@ import java.util.Map;
 import org.jboss.seam.drools.TemplateDataProvider;
 import org.jboss.seam.drools.qualifiers.TemplateData;
 
-@TemplateData(name="forkbasetest")
+@TemplateData("forkbasetest")
 public class SimpleTemplateDataProvider implements TemplateDataProvider
 {
    private static Collection<Map<String, Object>> templateData = new ArrayList<Map<String,Object>>();

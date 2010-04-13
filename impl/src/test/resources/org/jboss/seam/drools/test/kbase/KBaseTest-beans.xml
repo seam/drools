@@ -6,7 +6,7 @@
 
    <drools:DroolsConfiguration>
       <s:overrides/>
-      <test:ForKBaseTest/>
+      <test:KBaseTestQualifier/>
       <drools:knowledgeBuilderConfigPath>kbuilderconfig.properties</drools:knowledgeBuilderConfigPath>
       <drools:knowledgeBaseConfigPath>kbaseconfig.properties</drools:knowledgeBaseConfigPath>
       <drools:ruleResources>
@@ -17,11 +17,11 @@
    <drools:KnowledgeBaseProducer>
       <s:specializes/>
       <drools:produceKBase>
-         <test:ForKBaseTest/>
+         <test:KBaseTestQualifier/>
          <s:parameters>
             <drools:DroolsConfiguration>
                <s:Inject/>
-               <test:ForKBaseTest/>
+               <test:KBaseTestQualifier/>
             </drools:DroolsConfiguration>
          </s:parameters>
       </drools:produceKBase>
@@ -32,11 +32,11 @@
    <drools:KnowledgeBaseProducer>
       <s:specializes/>
       <drools:produceKBase>
-         <test:ForKBaseTest/>
+         <test:KBaseTestQualifier/>
          <s:parameters>
             <s:Instance>
 				<s:Inject/>
-				<test:ForKBaseTest/>
+				<test:KBaseTestQualifier/>
 			</s:Instance>
          </s:parameters>
       </drools:produceKBase>

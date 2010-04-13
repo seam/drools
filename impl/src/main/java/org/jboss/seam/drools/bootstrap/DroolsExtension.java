@@ -71,7 +71,7 @@ public class DroolsExtension implements Extension
          {
             Bean<?> handler = iter.next();
             WIHandler handlerAnnotation = handler.getBeanClass().getAnnotation(WIHandler.class);
-            String handlerName = handlerAnnotation.name();
+            String handlerName = handlerAnnotation.value();
             if(handlerName.length() > 0) {
                CreationalContext<?> context = bm.createCreationalContext(handler);
                WorkItemHandler handlerInstance = (WorkItemHandler) bm.getReference(handler, WorkItemHandler.class, context);
@@ -92,7 +92,7 @@ public class DroolsExtension implements Extension
          {
             Bean<?> templateDataProvider = iter.next();
             TemplateData teamplateDataAnnotation = templateDataProvider.getBeanClass().getAnnotation(TemplateData.class);
-            String templateDataName = teamplateDataAnnotation.name();
+            String templateDataName = teamplateDataAnnotation.value();
             if(templateDataName.length() > 0) {
                CreationalContext<?> context = bm.createCreationalContext(templateDataProvider);
                TemplateDataProvider templateDataProviderInstance = (TemplateDataProvider) bm.getReference(templateDataProvider, TemplateDataProvider.class, context);

@@ -1,6 +1,7 @@
 package org.jboss.seam.drools.test.kbase;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
@@ -10,7 +11,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
 import org.jboss.seam.drools.config.DroolsConfiguration;
 import org.jboss.seam.drools.qualifiers.KBaseConfigured;
-import org.jboss.seam.drools.qualifiers.config.DroolsConfig;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
@@ -29,7 +29,7 @@ public class KBaseTest
       JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
       .addPackages(true, KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(ForKBaseTest.class)
+      .addClass(KBaseTestQualifier.class)
       .addClass(MyKnowledgeBaseEventListener.class)
       .addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl"))
       .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
@@ -40,11 +40,11 @@ public class KBaseTest
    }
 
    @Inject
-   @ForKBaseTest
+   @KBaseTestQualifier
    DroolsConfiguration config;
    
    @Inject
-   @ForKBaseTest
+   @KBaseTestQualifier
    @KBaseConfigured
    KnowledgeBase kbase;
 
@@ -63,7 +63,7 @@ public class KBaseTest
    public void testKBase()
    {
       assertNotNull(kbase);
-      System.out.println("KBASE: " + kbase.toString());
+      assertTrue(kbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 3);
    }
 
    // static class KBaseConfigBinding extends AnnotationLiteral<ForKBaseTest>

@@ -1,4 +1,4 @@
-package org.jboss.seam.drools.test.kbase;
+package org.jboss.seam.drools.test.ksession;
 
 import org.drools.event.knowledgebase.DefaultKnowledgeBaseEventListener;
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;

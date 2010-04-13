@@ -24,5 +24,5 @@ import javax.inject.Qualifier;
 @Retention(RUNTIME)
 @Inherited
 public @interface WIHandler {
-	@Nonbinding String name();
+	@Nonbinding String value();
 }

@@ -1,11 +1,11 @@
-package org.jboss.seam.drools.test.kbase;
+package org.jboss.seam.drools.test.ksession;
 
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
 import org.jboss.seam.drools.qualifiers.WIHandler;
 
-@WIHandler(name="dummy1")
+@WIHandler("dummy1")
 public class MyDummyWorkItemHandler implements WorkItemHandler
 {
 

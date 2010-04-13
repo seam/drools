@@ -1,4 +1,4 @@
-package org.jboss.seam.drools.test.kbase;
+package org.jboss.seam.drools.test.ksession;
 
 import org.drools.event.process.ProcessCompletedEvent;
 import org.drools.event.process.ProcessEventListener;
