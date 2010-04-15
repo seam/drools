@@ -1,7 +1,6 @@
 package org.jboss.seam.drools;
 
 import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 
 import org.drools.event.KnowledgeRuntimeEventManager;
@@ -10,8 +9,7 @@ import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
 import org.jboss.seam.drools.config.DroolsConfiguration;
-import org.jboss.seam.drools.qualifiers.KAgentConfigured;
-import org.jboss.seam.drools.qualifiers.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.Scanned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,31 +22,29 @@ public class KnowledgeLoggerProducer
    private static final Logger log = LoggerFactory.getLogger(KnowledgeLoggerProducer.class);
 
    @Produces
-   @KBaseConfigured
-   public KnowledgeRuntimeLogger produceStatefulKnowledgeLogger(@KBaseConfigured StatefulKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
+   public KnowledgeRuntimeLogger produceStatefulKnowledgeLogger(StatefulKnowledgeSession ksession, DroolsConfiguration loggerConfig)
    {
-      return getLogger(ksession, loggerConfigInstance.get());
+      return getLogger(ksession, loggerConfig);
    }
    
    @Produces
-   @KAgentConfigured
-   public KnowledgeRuntimeLogger produceStatefulKnowledgeLoggerForKAgent(@KAgentConfigured StatefulKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
+   @Scanned
+   public KnowledgeRuntimeLogger produceScannedStatefulKnowledgeLogger(@Scanned StatefulKnowledgeSession ksession, DroolsConfiguration loggerConfig)
    {
-      return getLogger(ksession, loggerConfigInstance.get());
+      return getLogger(ksession, loggerConfig);
    }
 
    @Produces
-   @KBaseConfigured
-   public KnowledgeRuntimeLogger produceStatelessKnowledgeLogger(@KBaseConfigured StatelessKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
+   public KnowledgeRuntimeLogger produceStatelessKnowledgeLogger(StatelessKnowledgeSession ksession, DroolsConfiguration loggerConfig)
    {
-      return getLogger(ksession, loggerConfigInstance.get());
+      return getLogger(ksession, loggerConfig);
    }
    
    @Produces
-   @KAgentConfigured
-   public KnowledgeRuntimeLogger produceStatelessKnowledgeLoggerForKAgent(@KAgentConfigured StatelessKnowledgeSession ksession, Instance<DroolsConfiguration> loggerConfigInstance)
+   @Scanned
+   public KnowledgeRuntimeLogger produceStatelessKnowledgeLoggerForKAgent(@Scanned StatelessKnowledgeSession ksession, DroolsConfiguration loggerConfig)
    {
-      return getLogger(ksession, loggerConfigInstance.get());
+      return getLogger(ksession, loggerConfig);
    }
 
    private KnowledgeRuntimeLogger getLogger(KnowledgeRuntimeEventManager ksession, DroolsConfiguration loggerConfig)
@@ -75,12 +71,12 @@ public class KnowledgeLoggerProducer
       return krLogger;
    }
 
-   public void disposeKBaseConfiguredKnowledgeLogger(@Disposes @KBaseConfigured KnowledgeRuntimeLogger logger)
+   public void disposeKnowledgeRuntimeLogger(@Disposes KnowledgeRuntimeLogger logger)
    {
       logger.close();
    }
    
-   public void disposeKAgentConfiguredKnowledgeLogger(@Disposes @KAgentConfigured KnowledgeRuntimeLogger logger) {
+   public void disposeScannedKnowledgeRuntimeLogger(@Disposes @Scanned KnowledgeRuntimeLogger logger) {
       logger.close();
    }
 }

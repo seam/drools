@@ -1,12 +1,14 @@
 package org.jboss.seam.drools;
 
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
-import org.jboss.seam.drools.qualifiers.KAgentConfigured;
-import org.jboss.seam.drools.qualifiers.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.EntryPoint;
+import org.jboss.seam.drools.qualifiers.Scanned;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -14,12 +16,39 @@ import org.jboss.seam.drools.qualifiers.KBaseConfigured;
  */
 public class EntryPointProducer
 {
-   @Produces @KBaseConfigured WorkingMemoryEntryPoint produceEntryPoint(@KBaseConfigured StatefulKnowledgeSession ksession, Instance<String> entryPointNameInstance) {
-      return ksession.getWorkingMemoryEntryPoint(entryPointNameInstance.get());
+   private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
+
+   @Produces
+   @EntryPoint
+   public WorkingMemoryEntryPoint produceEntryPoint(StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
+   {
+      String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
+      if (entryPointName != null && entryPointName.length() > 0)
+      {
+         log.debug("EntryPoint Name requested: " + entryPointName);
+         return ksession.getWorkingMemoryEntryPoint(entryPointName);
+      }
+      else
+      {
+         throw new IllegalStateException("EntryPoint must have a name.");
+      }
    }
-   
-   @Produces @KAgentConfigured WorkingMemoryEntryPoint produceKAgentEntryPoint(@KAgentConfigured StatefulKnowledgeSession ksession, Instance<String> entryPointNameInstance) {
-      return ksession.getWorkingMemoryEntryPoint(entryPointNameInstance.get());
+
+   @Produces
+   @EntryPoint
+   @Scanned
+   public WorkingMemoryEntryPoint produceScannedEntryPoint(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
+   {
+      String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
+      if (entryPointName != null && entryPointName.length() > 0)
+      {
+         log.debug("EntryPoint Name requested: " + entryPointName);
+         return ksession.getWorkingMemoryEntryPoint(ip.getAnnotated().getAnnotation(EntryPoint.class).value());
+      }
+      else
+      {
+         throw new IllegalStateException("EntryPoint must have a name.");
+      }
    }
-   
+
 }

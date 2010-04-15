@@ -1,1 +1,6 @@
 package org.jboss.seam.drools.test.ksession
+
+rule dummy
+then
+	System.out.println("hello");
+end

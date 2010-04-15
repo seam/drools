@@ -18,7 +18,7 @@ import javax.inject.Qualifier;
 @Documented
 @Retention(RUNTIME)
 @Inherited
-public @interface KSessionTestQualifier
+public @interface KSessionTestRules
 {
 
 }

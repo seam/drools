@@ -1,47 +1,16 @@
-<beans xmlns="http://java.sun.com/xml/ns/javaee" 
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:s="urn:java:seam:core"
-   xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
-   xmlns:drools="urn:java:org.drools:org.drools.runtime"
-   xmlns:test="urn:java:org.jboss.seam.drools.test.ksession">
+<beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:s="urn:java:seam:core" 
+	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+	xmlns:test="urn:java:org.jboss.seam.drools.test.ksession">
 
-   <d:DroolsConfiguration>
-      <s:overrides/>
-      <test:KSessionTestQualifier/>
-      <d:knowledgeBuilderConfigPath>kbuilderconfig.properties</d:knowledgeBuilderConfigPath>
-      <d:knowledgeBaseConfigPath>kbaseconfig.properties</d:knowledgeBaseConfigPath>
-      <d:ruleResources>
-         <s:value>classpath;ksessiontest.drl;DRL</s:value>
-      </d:ruleResources>
-   </d:DroolsConfiguration>
-
-   <d:KnowledgeBaseProducer>
-      <s:specializes/>
-      <d:produceKBase>
-         <test:KSessionTestQualifier/>
-         <s:parameters>
-            <d:DroolsConfiguration>
-               <s:Inject/>
-               <test:KSessionTestQualifier/>
-            </d:DroolsConfiguration>
-         </s:parameters>
-      </d:produceKBase>
-   </d:KnowledgeBaseProducer>
-   
-   <d:KnowledgeSessionProducer>
-   	<s:specializes/>
-   	<d:produceStatefulSession>
-   		<test:KSessionTestQualifier/>
-   		<s:parameters>
-   			<drools:KnowledgeBase>
-   				<s:Inject/>
-   				<test:KSessionTestQualifier/>
-   			</drools:KnowledgeBase>
-   			<d:DroolsConfiguration>
-   				<s:Inject/>
-   				<test:KSessionTestQualifier/>
-   			</d:DroolsConfiguration>
-   		</s:parameters>
-   	</d:produceStatefulSession>
-   </d:KnowledgeSessionProducer>
+	<d:DroolsConfiguration>
+		<test:KSessionTestRules />
+		<d:knowledgeBuilderConfigPath>kbuilderconfig.properties
+		</d:knowledgeBuilderConfigPath>
+		<d:knowledgeBaseConfigPath>kbaseconfig.properties
+		</d:knowledgeBaseConfigPath>
+		<d:ruleResources>
+			<s:value>classpath;ksessiontest.drl;DRL</s:value>
+		</d:ruleResources>
+	</d:DroolsConfiguration>
 </beans>       

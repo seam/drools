@@ -3,9 +3,7 @@ package org.jboss.seam.drools;
 import java.util.Iterator;
 import java.util.Properties;
 
-import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -21,8 +19,7 @@ import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.config.DroolsConfiguration;
-import org.jboss.seam.drools.qualifiers.KAgentConfigured;
-import org.jboss.seam.drools.qualifiers.KBaseConfigured;
+import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -38,14 +35,15 @@ public class KnowledgeSessionProducer
 
    @Inject
    BeanManager manager;
+   
    @Inject
    ResourceProvider resourceProvider;
+   
    @Inject
    DroolsExtension droolsExtension;
 
    @Produces
-   @KBaseConfigured
-   public StatefulKnowledgeSession produceStatefulSession(@KBaseConfigured KnowledgeBase kbase, @Any DroolsConfiguration ksessionConfig) throws Exception
+   public StatefulKnowledgeSession produceStatefulSession(KnowledgeBase kbase,DroolsConfiguration ksessionConfig) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getConfig(ksessionConfig.getKnowledgeSessionConfigPath()), null);
       addEventListeners(ksession);
@@ -55,8 +53,8 @@ public class KnowledgeSessionProducer
    }
 
    @Produces
-   @KAgentConfigured
-   StatefulKnowledgeSession produceStatefulSessionFromKAgent(@KAgentConfigured KnowledgeBase kbase, @Any DroolsConfiguration ksessionConfig) throws Exception
+   @Scanned
+   public StatefulKnowledgeSession produceScannedStatefulSession(@Scanned KnowledgeBase kbase, DroolsConfiguration ksessionConfig) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(getConfig(ksessionConfig.getKnowledgeSessionConfigPath()), null);
       addEventListeners(ksession);
@@ -66,8 +64,8 @@ public class KnowledgeSessionProducer
    }
 
    @Produces
-   @KAgentConfigured
-   StatelessKnowledgeSession produceStatelessSessionFromKAgent(@KAgentConfigured KnowledgeBase kbase, @Any DroolsConfiguration ksessionConfig) throws Exception
+   @Scanned
+   public StatelessKnowledgeSession produceScannedStatelessSession(@Scanned KnowledgeBase kbase, DroolsConfiguration ksessionConfig) throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getConfig(ksessionConfig.getKnowledgeSessionConfigPath()));
       addEventListeners(ksession);
@@ -76,8 +74,7 @@ public class KnowledgeSessionProducer
    }
 
    @Produces
-   @KBaseConfigured
-   public StatelessKnowledgeSession produceStatelessSession(@KBaseConfigured KnowledgeBase kbase, @Any DroolsConfiguration ksessionConfig) throws Exception
+   public StatelessKnowledgeSession produceStatelessSession(KnowledgeBase kbase, DroolsConfiguration ksessionConfig) throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(getConfig(ksessionConfig.getKnowledgeSessionConfigPath()));
       addEventListeners(ksession);
@@ -85,11 +82,12 @@ public class KnowledgeSessionProducer
       return ksession;
    }
 
-   public void disposeStatefulSession(@Disposes @Any StatefulKnowledgeSession session)
+   public void disposeStatefulSession(@Disposes StatefulKnowledgeSession session)
    {
       session.dispose();
    }
-
+   
+   
    private KnowledgeSessionConfiguration getConfig(String knowledgeSessionConfigPath) throws Exception
    {
       KnowledgeSessionConfiguration droolsKsessionConfig = KnowledgeBaseFactory.newKnowledgeSessionConfiguration();

@@ -9,7 +9,6 @@ import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.qualifiers.KBaseConfigured;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
@@ -28,7 +27,7 @@ public class KSessionTest
       JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
       .addPackages(true, new KSessionTestFiler(), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(KSessionTestQualifier.class)
+      .addClass(KSessionTestRules.class)
       .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
       .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
       .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
@@ -37,14 +36,12 @@ public class KSessionTest
       return archive;
    }
    
-   @Inject 
-   @KSessionTestQualifier 
-   @KBaseConfigured 
-   StatefulKnowledgeSession ksession;
+   @Inject @KSessionTestRules StatefulKnowledgeSession ksession;
    
    @Test
    public void testKSession()
    {
       assertNotNull(ksession);
+      assertTrue(ksession.getId() >= 0);
    }
 }

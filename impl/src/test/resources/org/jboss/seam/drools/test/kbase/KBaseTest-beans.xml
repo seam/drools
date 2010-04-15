@@ -1,44 +1,16 @@
-<beans xmlns="http://java.sun.com/xml/ns/javaee" 
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:s="urn:java:seam:core"
-   xmlns:drools="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
-   xmlns:test="urn:java:org.jboss.seam.drools.test.kbase">
+<beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:s="urn:java:seam:core" 
+	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+	xmlns:test="urn:java:org.jboss.seam.drools.test.kbase">
 
-   <drools:DroolsConfiguration>
-      <s:overrides/>
-      <test:KBaseTestQualifier/>
-      <drools:knowledgeBuilderConfigPath>kbuilderconfig.properties</drools:knowledgeBuilderConfigPath>
-      <drools:knowledgeBaseConfigPath>kbaseconfig.properties</drools:knowledgeBaseConfigPath>
-      <drools:ruleResources>
-         <s:value>classpath;kbasetest.drl;DRL;forkbasetest</s:value>
-      </drools:ruleResources>
-   </drools:DroolsConfiguration>
 
-   <drools:KnowledgeBaseProducer>
-      <s:specializes/>
-      <drools:produceKBase>
-         <test:KBaseTestQualifier/>
-         <s:parameters>
-            <drools:DroolsConfiguration>
-               <s:Inject/>
-               <test:KBaseTestQualifier/>
-            </drools:DroolsConfiguration>
-         </s:parameters>
-      </drools:produceKBase>
-   </drools:KnowledgeBaseProducer>
-   
-   <!-- 
-   WITH LATEST WELD-EXTENSION AND Instance<XYZ> zyx param in producer!
-   <drools:KnowledgeBaseProducer>
-      <s:specializes/>
-      <drools:produceKBase>
-         <test:KBaseTestQualifier/>
-         <s:parameters>
-            <s:Instance>
-				<s:Inject/>
-				<test:KBaseTestQualifier/>
-			</s:Instance>
-         </s:parameters>
-      </drools:produceKBase>
-   </drools:KnowledgeBaseProducer> -->
+	<d:DroolsConfiguration>
+		<test:KBaseTestRules />
+		<d:knowledgeBuilderConfigPath>kbuilderconfig.properties</d:knowledgeBuilderConfigPath>
+		<d:knowledgeBaseConfigPath>kbaseconfig.properties</d:knowledgeBaseConfigPath>
+		<d:ruleResources>
+			<s:value>classpath;kbasetest.drl;DRL;forkbasetest</s:value>
+		</d:ruleResources>
+	</d:DroolsConfiguration>
+
 </beans>       

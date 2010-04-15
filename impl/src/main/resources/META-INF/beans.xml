@@ -1,0 +1,189 @@
+<beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:s="urn:java:seam:core" 
+	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+	xmlns:drools="urn:java:org.drools:org.drools.runtime">
+
+	<s:genericBean class="org.jboss.seam.drools.config.DroolsConfiguration">
+		<d:KnowledgeBaseProducer>
+			<s:specializes />
+			<d:produceKnowledgeBase>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceKnowledgeBase>
+		</d:KnowledgeBaseProducer>
+		
+		<d:KnowledgeSessionProducer>
+			<s:specializes />
+			<d:produceStatefulSession>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:KnowledgeBase>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:KnowledgeBase>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceStatefulSession>
+			<d:disposeStatefulSession>
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:disposeStatefulSession>
+			<d:produceScannedStatefulSession>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:KnowledgeBase>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:KnowledgeBase>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceScannedStatefulSession>
+			<!--<d:disposeScannedStatefulSession>
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:disposeScannedStatefulSession>
+			--><d:produceStatelessSession>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:KnowledgeBase>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:KnowledgeBase>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceStatelessSession>
+			<d:produceScannedStatelessSession>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:KnowledgeBase>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:KnowledgeBase>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceScannedStatelessSession>
+		</d:KnowledgeSessionProducer>
+
+		<d:KnowledgeAgentProducer>
+			<s:specializes />
+			<d:produceScannedKnowledgeBase>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceScannedKnowledgeBase>
+			<d:disposeScannedKnowledgeBase>
+				<s:parameters>
+					<drools:KnowledgeBase>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:KnowledgeBase>
+				</s:parameters>
+			</d:disposeScannedKnowledgeBase>
+		</d:KnowledgeAgentProducer>
+		
+		<d:EntryPointProducer>
+			<s:specializes />
+			<d:produceEntryPoint>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:produceEntryPoint>
+			<d:produceScannedEntryPoint>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:produceScannedEntryPoint>
+		</d:EntryPointProducer>
+
+		<d:KnowledgeLoggerProducer>
+			<s:specializes />
+			<d:produceStatefulKnowledgeLogger>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceStatefulKnowledgeLogger>
+			<d:produceScannedStatefulKnowledgeLogger>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+					<d:DroolsConfiguration>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfiguration>
+				</s:parameters>
+			</d:produceScannedStatefulKnowledgeLogger>			
+		</d:KnowledgeLoggerProducer>
+		
+		<d:QueryResultsProducer>
+			<s:specializes />
+			<d:produceQueryResults>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:produceQueryResults>
+			<d:produceScannedQueryResults>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:produceScannedQueryResults>
+		</d:QueryResultsProducer>
+		
+	</s:genericBean>
+
+</beans>

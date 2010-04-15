@@ -26,7 +26,6 @@ import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.config.DroolsConfiguration;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
-import org.jboss.seam.drools.qualifiers.KBaseConfigured;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
@@ -42,14 +41,15 @@ public class KnowledgeBaseProducer
 
    @Inject
    BeanManager manager;
+   
    @Inject
    ResourceProvider resourceProvider;
+   
    @Inject
    DroolsExtension droolsExtension;
 
    @Produces
-   @KBaseConfigured
-   public KnowledgeBase produceKBase(DroolsConfiguration kbaseConfig) throws Exception
+   public KnowledgeBase produceKnowledgeBase(DroolsConfiguration kbaseConfig) throws Exception
    {
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration(kbaseConfig.getKnowledgeBuilderConfigPath()));
 
