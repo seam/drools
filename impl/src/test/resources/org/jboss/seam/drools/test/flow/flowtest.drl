@@ -1,0 +1,21 @@
+package org.jboss.seam.drools.test.flow
+
+import org.jboss.seam.drools.test.flow.Person;
+
+global java.util.ArrayList errors;
+	 
+rule "Person Name Validation"
+ruleflow-group "datavalidation"
+when
+	Person(name == "")
+then
+	errors.add("You must enter a Person Name"); 
+end
+	 
+rule "Person Phone Number Validation"
+ruleflow-group "datavalidation"
+when
+	Person(telephoneNumber == "")
+then
+	errors.add("You must enter a Telephone Number"); 
+end
