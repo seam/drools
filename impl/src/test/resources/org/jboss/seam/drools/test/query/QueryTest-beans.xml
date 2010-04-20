@@ -27,15 +27,8 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 	<d:DefaultRuleResources>
   		<s:specializes/>
    		<d:resources>
-   			<s:value>classpath;ksessiontest.drl;DRL</s:value>
+   			<s:value>classpath;querytest.drl;DRL</s:value>
    		</d:resources>
 	</d:DefaultRuleResources>
-	
-	<d:MVELDialectRuleResources>
-		<s:specializes/>
-		<d:resources>
-			<s:value>classpath;ksessiontest.drl;DRL</s:value>
-		</d:resources>
-	</d:MVELDialectRuleResources> 
 	
 </beans>       

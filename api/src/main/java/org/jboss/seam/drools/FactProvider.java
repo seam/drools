@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,19 +18,27 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Interface for template data providers.
- *
+ * Interface for fact data providers.
+ * 
  * @author Tihomir Surdilovic
  */
-public interface TemplateDataProvider
-{
-   public Collection<Map<String,Object>> getTemplateData();
-}
+public interface FactProvider {
+	public List<Object> getFacts();
 
+	public void setFacts(List<Object> facts);
+
+	public Map<String, Object> getGlobals();
+
+	public void setGlobals(Map<String, Object> globals);
+	
+	public List<String> getQueries();
+	
+	public void setQueries(List<String> queries);
+}

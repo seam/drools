@@ -38,6 +38,7 @@ import javax.enterprise.util.AnnotationLiteral;
 
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.runtime.process.WorkItemHandler;
+import org.jboss.seam.drools.FactProvider;
 import org.jboss.seam.drools.TemplateDataProvider;
 import org.jboss.seam.drools.qualifiers.KBaseEventListener;
 import org.jboss.seam.drools.qualifiers.KSessionEventListener;
@@ -53,6 +54,7 @@ public class DroolsExtension implements Extension
    private Set<Object> ksessionEventListenerSet = new HashSet<Object>();
    private Map<String, WorkItemHandler> workItemHandlers = new HashMap<String, WorkItemHandler>();
    private Map<String, TemplateDataProvider> templateDataProviders = new HashMap<String, TemplateDataProvider>();
+   private Set<FactProvider> factProviderSet = new HashSet<FactProvider>();
    
    @SuppressWarnings("serial")
    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
@@ -125,11 +127,29 @@ public class DroolsExtension implements Extension
       }
       log.info("End creating [" + (allTemplateProviders == null ? 0 : allTemplateProviders.size())+ "] template data providers");      
       
+      //Fact Providers
+      log.info("Start creating fact providers");
+      Set<Bean<?>> allFactProviders = bm.getBeans(FactProvider.class, new AnnotationLiteral<Any>() {});
+      if(allFactProviders != null) {
+         Iterator<Bean<?>> factProviderIterator = allFactProviders.iterator();
+         while (factProviderIterator.hasNext()) {
+            Bean<?> factProvider = factProviderIterator.next();
+            CreationalContext<?> context = bm.createCreationalContext(factProvider);
+            factProviderSet.add((FactProvider) bm.getReference(factProvider, FactProvider.class, context));
+         }
+      }
+      log.info("End creating [" + (allFactProviders == null ? 0 : allFactProviders.size())+ "] fact providers");      
+      
    }
 
    public Set<KnowledgeBaseEventListener> getKbaseEventListenerSet()
    {
       return kbaseEventListenerSet;
+   }
+   
+   public Set<FactProvider> getFactProviderSet() 
+   {
+      return factProviderSet;
    }
 
    public Map<String, WorkItemHandler> getWorkItemHandlers()

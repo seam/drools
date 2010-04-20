@@ -19,18 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools;
+package org.jboss.seam.drools.annotations;
 
-import java.util.Collection;
-import java.util.Map;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Interface for template data providers.
- *
+ * 
  * @author Tihomir Surdilovic
  */
-public interface TemplateDataProvider
-{
-   public Collection<Map<String,Object>> getTemplateData();
+@Target( { TYPE, METHOD, FIELD, PARAMETER })
+@Documented
+@Retention(RUNTIME)
+@Inherited
+public @interface Query {
+	String value() default "";
 }
-

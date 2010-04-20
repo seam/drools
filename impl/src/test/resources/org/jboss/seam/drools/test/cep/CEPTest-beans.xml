@@ -24,18 +24,11 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
 	xmlns:test="urn:java:org.jboss.seam.drools.test.ksession">
 
-	<d:DefaultRuleResources>
+	<d:CEPPseudoClockRuleResources>
   		<s:specializes/>
    		<d:resources>
-   			<s:value>classpath;ksessiontest.drl;DRL</s:value>
+   			<s:value>classpath;ceptest.drl;DRL</s:value>
    		</d:resources>
-	</d:DefaultRuleResources>
-	
-	<d:MVELDialectRuleResources>
-		<s:specializes/>
-		<d:resources>
-			<s:value>classpath;ksessiontest.drl;DRL</s:value>
-		</d:resources>
-	</d:MVELDialectRuleResources> 
+	</d:CEPPseudoClockRuleResources>
 	
 </beans>       

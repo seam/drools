@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,18 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools;
+package org.jboss.seam.drools.config;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.regex.Pattern;
+
+import org.drools.io.Resource;
 
 /**
- * Interface for template data providers.
- *
+ * 
  * @author Tihomir Surdilovic
  */
-public interface TemplateDataProvider
+public class RuleResources
 {
-   public Collection<Map<String,Object>> getTemplateData();
-}
+   public static final Pattern DIVIDER = Pattern.compile(";");
+   public static final int LOCATION_TYPE = 0;
+   public static final int RESOURCE_PATH = 1;
+   public static final int RESOURCE_TYPE = 2;
+   public static final int TEMPLATE_DATAPROVIDER_NAME = 3;
+   
+   public static final String LOCATION_TYPE_URL = "url";
+   public static final String LOCATION_TYPE_FILE = "file";
+   public static final String LOCATION_TYPE_CLASSPATH = "classpath";
 
+   
+   private String[] resources;
+
+   public String[] getResources()
+   {
+      return resources;
+   }
+
+   public void setResources(String[] resources)
+   {
+      this.resources = resources;
+   }
+   
+}

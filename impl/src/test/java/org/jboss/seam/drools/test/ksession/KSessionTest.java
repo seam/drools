@@ -23,16 +23,20 @@ package org.jboss.seam.drools.test.ksession;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertNotSame;
 
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
+import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
+import org.jboss.seam.drools.qualifiers.config.MVELDialectConfig;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
@@ -53,16 +57,24 @@ public class KSessionTest
       .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
       .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
       .addManifestResource(pkgPath + "/KSessionTest-beans.xml", ArchivePaths.create("beans.xml"));
-      System.out.println(archive.toString(Formatters.VERBOSE));
+      //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
    
-   @Inject @KSessionTestRules StatefulKnowledgeSession ksession;
+   @Inject @Default @DefaultConfig StatefulKnowledgeSession ksession;
+   @Inject @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession;
+   @Inject @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession2;
    
    @Test
    public void testKSession()
    {
       assertNotNull(ksession);
       assertTrue(ksession.getId() >= 0);
+      
+      assertNotNull(mvelksession);
+      assertTrue(mvelksession.getId() >= 0);
+      
+      assertNotSame(ksession, mvelksession);
+      assertSame(mvelksession, mvelksession2);
    }
 }

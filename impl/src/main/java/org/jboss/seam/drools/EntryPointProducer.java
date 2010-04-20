@@ -21,12 +21,16 @@
  */ 
 package org.jboss.seam.drools;
 
+import java.io.Serializable;
+
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
-import org.jboss.seam.drools.qualifiers.EntryPoint;
+import org.jboss.seam.drools.annotations.EntryPoint;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +39,20 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-public class EntryPointProducer
+@SessionScoped
+public class EntryPointProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
 
    @Produces
-   @EntryPoint
    public WorkingMemoryEntryPoint produceEntryPoint(StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
    {
       String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
       if (entryPointName != null && entryPointName.length() > 0)
       {
          log.debug("EntryPoint Name requested: " + entryPointName);
-         return ksession.getWorkingMemoryEntryPoint(entryPointName);
+         WorkingMemoryEntryPoint entryPoint = ksession.getWorkingMemoryEntryPoint( entryPointName );
+         return entryPoint;
       }
       else
       {
@@ -56,7 +61,6 @@ public class EntryPointProducer
    }
 
    @Produces
-   @EntryPoint
    @Scanned
    public WorkingMemoryEntryPoint produceScannedEntryPoint(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
    {
@@ -64,7 +68,7 @@ public class EntryPointProducer
       if (entryPointName != null && entryPointName.length() > 0)
       {
          log.debug("EntryPoint Name requested: " + entryPointName);
-         return ksession.getWorkingMemoryEntryPoint(ip.getAnnotated().getAnnotation(EntryPoint.class).value());
+         return ksession.getWorkingMemoryEntryPoint(entryPointName);
       }
       else
       {

@@ -1,43 +1,39 @@
-<!--
-JBoss, Home of Professional Open Source
-Copyright ${year}, Red Hat, Inc., and individual contributors
-by the @authors tag. See the copyright.txt in the distribution for a
-full listing of individual contributors.
 
-This is free software; you can redistribute it and/or modify it
-under the terms of the GNU Lesser General Public License as
-published by the Free Software Foundation; either version 2.1 of
-the License, or (at your option) any later version.
-
-This software is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this software; if not, write to the Free
-Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-02110-1301 USA, or see the FSF site: http://www.fsf.org.
---> 
+	<!--
+		JBoss, Home of Professional Open Source Copyright ${year}, Red Hat,
+		Inc., and individual contributors by the @authors tag. See the
+		copyright.txt in the distribution for a full listing of individual
+		contributors. This is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public License as
+		published by the Free Software Foundation; either version 2.1 of the
+		License, or (at your option) any later version. This software is
+		distributed in the hope that it will be useful, but WITHOUT ANY
+		WARRANTY; without even the implied warranty of MERCHANTABILITY or
+		FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+		License for more details. You should have received a copy of the GNU
+		Lesser General Public License along with this software; if not, write
+		to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+		Boston, MA 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+	-->
 <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:s="urn:java:seam:core" 
-	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+	xmlns:s="urn:java:seam:core"
+	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config:org.jboss.seam.drools.qualifiers.config"
 	xmlns:drools="urn:java:org.drools:org.drools.runtime">
 
-	<s:genericBean class="org.jboss.seam.drools.config.DroolsConfiguration">
+	<s:genericBean class="org.jboss.seam.drools.config.DroolsConfig">
 		<d:KnowledgeBaseProducer>
 			<s:specializes />
 			<d:produceKnowledgeBase>
 				<s:ApplyQualifiers />
 				<s:parameters>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceKnowledgeBase>
 		</d:KnowledgeBaseProducer>
-		
+
 		<d:KnowledgeSessionProducer>
 			<s:specializes />
 			<d:produceStatefulSession>
@@ -47,10 +43,10 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 						<s:Inject />
 						<s:ApplyQualifiers />
 					</drools:KnowledgeBase>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceStatefulSession>
 			<d:disposeStatefulSession>
@@ -68,13 +64,13 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 						<s:Inject />
 						<s:ApplyQualifiers />
 					</drools:KnowledgeBase>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceScannedStatefulSession>
-			<!--<d:disposeScannedStatefulSession>
+			<d:disposeScannedStatefulSession>
 				<s:parameters>
 					<drools:StatefulKnowledgeSession>
 						<s:Inject />
@@ -82,17 +78,17 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 					</drools:StatefulKnowledgeSession>
 				</s:parameters>
 			</d:disposeScannedStatefulSession>
-			--><d:produceStatelessSession>
+			<d:produceStatelessSession>
 				<s:ApplyQualifiers />
 				<s:parameters>
 					<drools:KnowledgeBase>
 						<s:Inject />
 						<s:ApplyQualifiers />
 					</drools:KnowledgeBase>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceStatelessSession>
 			<d:produceScannedStatelessSession>
@@ -102,10 +98,10 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 						<s:Inject />
 						<s:ApplyQualifiers />
 					</drools:KnowledgeBase>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceScannedStatelessSession>
 		</d:KnowledgeSessionProducer>
@@ -115,10 +111,10 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 			<d:produceScannedKnowledgeBase>
 				<s:ApplyQualifiers />
 				<s:parameters>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceScannedKnowledgeBase>
 			<d:disposeScannedKnowledgeBase>
@@ -130,7 +126,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 				</s:parameters>
 			</d:disposeScannedKnowledgeBase>
 		</d:KnowledgeAgentProducer>
-		
+
 		<d:EntryPointProducer>
 			<s:specializes />
 			<d:produceEntryPoint>
@@ -162,10 +158,10 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 						<s:Inject />
 						<s:ApplyQualifiers />
 					</drools:StatefulKnowledgeSession>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceStatefulKnowledgeLogger>
 			<d:produceScannedStatefulKnowledgeLogger>
@@ -175,14 +171,62 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 						<s:Inject />
 						<s:ApplyQualifiers />
 					</drools:StatefulKnowledgeSession>
-					<d:DroolsConfiguration>
+					<d:DroolsConfig>
 						<s:Inject />
 						<s:ApplyQualifiers />
-					</d:DroolsConfiguration>
+					</d:DroolsConfig>
 				</s:parameters>
-			</d:produceScannedStatefulKnowledgeLogger>			
+			</d:produceScannedStatefulKnowledgeLogger>
+			<d:produceStatelessKnowledgeLogger>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+					<d:DroolsConfig>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfig>
+				</s:parameters>
+			</d:produceStatelessKnowledgeLogger>
+			<d:produceScannedStatelessKnowledgeLogger>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+					<d:DroolsConfig>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfig>
+				</s:parameters>
+			</d:produceScannedStatelessKnowledgeLogger>
 		</d:KnowledgeLoggerProducer>
-		
+
+		<d:ExecutionResultsProducer>
+			<s:specializes />
+			<d:produceExecutionResults>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatelessKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatelessKnowledgeSession>
+				</s:parameters>
+			</d:produceExecutionResults>
+			<d:produceScannedExecutionResults>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatelessKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatelessKnowledgeSession>
+				</s:parameters>
+			</d:produceScannedExecutionResults>
+		</d:ExecutionResultsProducer>
+
 		<d:QueryResultsProducer>
 			<s:specializes />
 			<d:produceQueryResults>
@@ -204,7 +248,87 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 				</s:parameters>
 			</d:produceScannedQueryResults>
 		</d:QueryResultsProducer>
-		
 	</s:genericBean>
 
+	<d:DroolsConfig>
+		<s:specializes />
+		<d:DefaultConfig />
+		<s:parameters>
+			<d:RuleResources>
+				<d:DefaultConfig />
+				<s:type>
+					<d:DefaultRuleResources />
+				</s:type>
+			</d:RuleResources>
+		</s:parameters>
+	</d:DroolsConfig>
+
+	<d:DroolsConfig>
+		<s:specializes />
+		<d:MVELDialectConfig />
+		<d:kbuilderPropertiesMap>
+			<s:entry>
+				<s:key>drools.dialect.default</s:key>
+				<s:value>mvel</s:value>
+			</s:entry>
+		</d:kbuilderPropertiesMap>
+		<s:parameters>
+			<d:RuleResources>
+				<d:MVELDialectConfig />
+				<s:type>
+					<d:MVELDialectRuleResources />
+				</s:type>
+			</d:RuleResources>
+		</s:parameters>
+	</d:DroolsConfig>
+
+	<d:DroolsConfig>
+		<s:specializes />
+		<d:CEPRealitimeClockConfig />
+		<d:kbasePropertiesMap>
+			<s:entry>
+				<s:key>drools.eventProcessingMode</s:key>
+				<s:value>stream</s:value>
+			</s:entry>
+		</d:kbasePropertiesMap>
+		<d:ksessionPropertiesMap>
+			<s:entry>
+				<s:key>drools.clockType</s:key>
+				<s:value>realtime</s:value>
+			</s:entry>
+		</d:ksessionPropertiesMap>
+		<s:parameters>
+			<d:RuleResources>
+				<d:CEPRealitimeClockConfig />
+				<s:type>
+					<d:CEPRealtimeClockRuleResources />
+				</s:type>
+			</d:RuleResources>
+		</s:parameters>
+	</d:DroolsConfig>
+
+	<d:DroolsConfig>
+		<s:specializes />
+		<d:CEPPseudoClockConfig />
+		<d:kbasePropertiesMap>
+			<s:entry>
+				<s:key>drools.eventProcessingMode</s:key>
+				<s:value>stream</s:value>
+			</s:entry>
+		</d:kbasePropertiesMap>
+		<d:ksessionPropertiesMap>
+			<s:entry>
+				<s:key>drools.clockType</s:key>
+				<s:value>pseudo</s:value>
+			</s:entry>
+		</d:ksessionPropertiesMap>
+		<s:parameters>
+			<d:RuleResources>
+				<d:CEPPseudoClockConfig />
+				<s:type>
+					<d:CEPPseudoClockRuleResources />
+				</s:type>
+			</d:RuleResources>
+		</s:parameters>
+	</d:DroolsConfig>
 </beans>

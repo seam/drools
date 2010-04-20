@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,53 +19,68 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.test.kbase;
+package org.jboss.seam.drools.test.query;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertNotSame;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.drools.KnowledgeBase;
+import org.drools.runtime.ExecutionResults;
+import org.drools.runtime.rule.QueryResults;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
+import org.jboss.seam.drools.annotations.Query;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
-import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class KBaseTest
+public class QueryTest
 {
    @Deployment
    public static JavaArchive createTestArchive()
    {
-      String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
+      String pkgPath = QueryTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new KBaseTestFilter(), KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, new QueryTestFilter(), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(KBaseTestRules.class)
-      .addClass(MyKnowledgeBaseEventListener.class)
-      .addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl"))
-      .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
-      .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
+      .addClass(Person.class)
+      .addClass(QueryFactProvider.class)
+      .addResource(pkgPath + "/querytest.drl", ArchivePaths.create("querytest.drl"))
+      //.addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
+      //.addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
+      .addManifestResource(pkgPath + "/QueryTest-beans.xml", ArchivePaths.create("beans.xml"));
       //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
 
-   @Inject @Default @DefaultConfig KnowledgeBase kbase;
+   @Inject @Default @DefaultConfig @Query("number of adults") QueryResults adultsQuery;
+   @Inject @Default @DefaultConfig @Query("number of minors") QueryResults minorsQuery;
+   
+   @Inject @Default @DefaultConfig ExecutionResults executionResults;
    
    @Test
-   public void testKBase()
-   {
-      assertNotNull(kbase);
-      assertTrue(kbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 3);
+   public void testQuery() {
+      assertNotNull(adultsQuery);
+      assertNotNull(minorsQuery);
+      assertNotSame(adultsQuery, minorsQuery);
+      
+      assertTrue(adultsQuery.size() == 7);
+      assertTrue(minorsQuery.size() == 7);
+      
+      assertNotNull(executionResults);
+      assertTrue(((QueryResults) executionResults.getValue("number of adults")).size() == 7);
+      assertTrue(((QueryResults) executionResults.getValue("number of minors")).size() == 7);
+      
+      
    }
 }

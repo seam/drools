@@ -1,0 +1,25 @@
+package org.jboss.seam.drools.test.cep
+
+import org.jboss.seam.drools.test.cep.FireAlarm;
+import org.jboss.seam.drools.test.cep.FireDetected;
+import org.jboss.seam.drools.test.cep.SprinklerActivated;
+
+global FireAlarm fireAlarm;
+
+declare SprinklerActivated
+    @role( event )
+    @expires( 1h )
+end
+
+declare FireDetected
+    @role( event )
+    @expires( 1h )
+end
+
+rule "Sound the alarm"
+when
+    $f : FireDetected( ) from entry-point "FireDetectionStream"
+    not( SprinklerActivated( this after[0s,10s] $f ) from entry-point "SprinklerDetectionStream" )
+then
+    fireAlarm.setActivated(true);
+end

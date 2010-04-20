@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,18 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools;
+package org.jboss.seam.drools.config;
 
-import java.util.Collection;
-import java.util.Map;
+import org.jboss.seam.drools.qualifiers.config.MVELDialectConfig;
 
 /**
- * Interface for template data providers.
- *
+ * 
  * @author Tihomir Surdilovic
  */
-public interface TemplateDataProvider
+@MVELDialectConfig
+public class MVELDialectRuleResources extends RuleResources
 {
-   public Collection<Map<String,Object>> getTemplateData();
-}
 
+}

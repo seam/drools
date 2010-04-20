@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,31 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.qualifiers;
+package org.jboss.seam.drools.test.cep;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+public class FireAlarm
+{
+   private boolean activated;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+   public boolean isActivated()
+   {
+      return activated;
+   }
 
-import javax.enterprise.util.Nonbinding;
-import javax.inject.Qualifier;
-
-/**
- * 
- * @author Tihomir Surdilovic
- */
-@Qualifier
-@Target( { TYPE, METHOD, FIELD, PARAMETER })
-@Documented
-@Retention(RUNTIME)
-@Inherited
-public @interface EntryPoint {
-	@Nonbinding String value() default "";
+   public void setActivated(boolean activated)
+   {
+      this.activated = activated;
+   }
+   
+   
 }

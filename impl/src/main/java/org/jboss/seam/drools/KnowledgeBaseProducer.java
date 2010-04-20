@@ -23,19 +23,18 @@ package org.jboss.seam.drools;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Iterator;
-import java.util.Properties;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseConfiguration;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderError;
 import org.drools.builder.KnowledgeBuilderErrors;
 import org.drools.builder.KnowledgeBuilderFactory;
@@ -44,10 +43,10 @@ import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.io.ResourceFactory;
 import org.drools.template.ObjectDataCompiler;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
-import org.jboss.seam.drools.config.DroolsConfiguration;
+import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
-import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-public class KnowledgeBaseProducer
+@ApplicationScoped
+public class KnowledgeBaseProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
 
@@ -70,13 +70,17 @@ public class KnowledgeBaseProducer
    DroolsExtension droolsExtension;
 
    @Produces
-   public KnowledgeBase produceKnowledgeBase(DroolsConfiguration kbaseConfig) throws Exception
+   @ApplicationScoped
+   public KnowledgeBase produceKnowledgeBase(DroolsConfig config) throws Exception
    {
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(getKnowledgeBuilderConfiguration(kbaseConfig.getKnowledgeBuilderConfigPath()));
+      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(config.getKnowledgeBuilderConfiguration());
 
-      for (String nextResource : kbaseConfig.getRuleResources())
-      {
-         addResource(kbuilder, nextResource);
+      if(config.getRuleResources().getResources() == null || config.getRuleResources().getResources().length == 0) {
+         throw new IllegalStateException("No rule resources are specified.");
+      }
+      
+      for(String resourceEntry : config.getRuleResources().getResources()) {
+         addResource(kbuilder, resourceEntry);
       }
 
       KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
@@ -89,7 +93,7 @@ public class KnowledgeBaseProducer
          manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
       }
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(getKnowledgeBaseConfiguration(kbaseConfig.getKnowledgeBaseConfigPath()));
+      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(config.getKnowledgeBaseConfiguration());
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
       addEventListeners(kbase);
@@ -108,50 +112,23 @@ public class KnowledgeBaseProducer
       }
    }
 
-   private KnowledgeBuilderConfiguration getKnowledgeBuilderConfiguration(String knowledgeBuilderConfigPath) throws Exception
+   private void addResource(KnowledgeBuilder kbuilder, String entry) throws Exception
    {
-      KnowledgeBuilderConfiguration droolsKbuilderConfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration();
-      if (knowledgeBuilderConfigPath != null && knowledgeBuilderConfigPath.endsWith(".properties"))
+      String[] entryParts = RuleResources.DIVIDER.split(entry.trim());
+      
+      if (entryParts.length >= 3)
       {
+         ResourceType resourceType = ResourceType.getResourceType(entryParts[RuleResources.RESOURCE_TYPE]);
 
-         Properties kbuilderProp = ConfigUtils.loadProperties(resourceProvider, knowledgeBuilderConfigPath);
-         droolsKbuilderConfig = KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(kbuilderProp, null);
-         log.debug("KnowledgeBuilderConfiguration loaded: " + knowledgeBuilderConfigPath);
-      }
-      else
-      {
-         log.warn("Invalid config type: " + knowledgeBuilderConfigPath);
-      }
-      return droolsKbuilderConfig;
-   }
-
-   public KnowledgeBaseConfiguration getKnowledgeBaseConfiguration(String knowledgeBaseConfigPath) throws Exception
-   {
-      KnowledgeBaseConfiguration droolsKbaseConfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
-      if (knowledgeBaseConfigPath != null && knowledgeBaseConfigPath.endsWith(".properties"))
-      {
-         Properties kbaseProp = ConfigUtils.loadProperties(resourceProvider, knowledgeBaseConfigPath);
-         droolsKbaseConfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration(kbaseProp, null);
-         log.debug("KnowledgeBaseConfiguration loaded: " + knowledgeBaseConfigPath);
-      }
-      return droolsKbaseConfig;
-   }
-
-   private void addResource(KnowledgeBuilder kbuilder, String resource) throws Exception
-   {
-      if (ConfigUtils.isValidResource(resource))
-      {
-         ResourceType resourceType = ResourceType.getResourceType(ConfigUtils.getResourceType(resource));
-
-         if (ConfigUtils.isRuleTemplate(resource))
+         if (entryParts.length == 4)
          {
-            TemplateDataProvider templateDataProvider = droolsExtension.getTemplateDataProviders().get(ConfigUtils.getTemplateData(resource));
+            TemplateDataProvider templateDataProvider = droolsExtension.getTemplateDataProviders().get(entryParts[RuleResources.TEMPLATE_DATAPROVIDER_NAME]);
             if (templateDataProvider != null)
             {
-               InputStream templateStream = resourceProvider.loadResourceStream(ConfigUtils.getRuleResource(resource));
+               InputStream templateStream = resourceProvider.loadResourceStream(entryParts[RuleResources.RESOURCE_PATH]);
                if (templateStream == null)
                {
-                  throw new IllegalStateException("Could not load rule template: " + ConfigUtils.getRuleResource(resource));
+                  throw new IllegalStateException("Could not load rule template: " + entryParts[RuleResources.RESOURCE_PATH]);
                }
                ObjectDataCompiler converter = new ObjectDataCompiler();
                String drl = converter.compile(templateDataProvider.getTemplateData(), templateStream);
@@ -162,35 +139,35 @@ public class KnowledgeBaseProducer
             }
             else
             {
-               throw new IllegalStateException("Requested template data provider: " + ConfigUtils.getTemplateData(resource) + " for resource " + resource + " has not been created. Check to make sure you have defined one.");
+               throw new IllegalStateException("Requested template data provider: " + entryParts[RuleResources.TEMPLATE_DATAPROVIDER_NAME] + " for resource " + entryParts[RuleResources.RESOURCE_PATH] + " has not been created. Check to make sure you have defined one.");
             }
          }
          else
          {
-            if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_URL))
+            if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_URL))
             {
-               kbuilder.add(ResourceFactory.newUrlResource(ConfigUtils.getRuleResource(resource)), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+               kbuilder.add(ResourceFactory.newUrlResource(entryParts[RuleResources.RESOURCE_PATH]), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(entryParts[RuleResources.RESOURCE_PATH]));
             }
-            else if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_FILE))
+            else if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_FILE))
             {
-               kbuilder.add(ResourceFactory.newFileResource(ConfigUtils.getRuleResource(resource)), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+               kbuilder.add(ResourceFactory.newFileResource(entryParts[RuleResources.RESOURCE_PATH]), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(entryParts[RuleResources.RESOURCE_PATH]));
             }
-            else if (ConfigUtils.getResourcePath(resource).equals(ConfigUtils.RESOURCE_TYPE_CLASSPATH))
+            else if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_CLASSPATH))
             {
-               kbuilder.add(ResourceFactory.newClassPathResource(ConfigUtils.getRuleResource(resource)), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(ConfigUtils.getRuleResource(resource)));
+               kbuilder.add(ResourceFactory.newClassPathResource(entryParts[RuleResources.RESOURCE_PATH]), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(entryParts[RuleResources.RESOURCE_PATH]));
             }
             else
             {
-               log.error("Invalid resource: " + ConfigUtils.getResourcePath(resource));
+               log.error("Invalid resource: " + entryParts[RuleResources.RESOURCE_PATH]);
             }
          }
       }
       else
       {
-         log.error("Invalid resource definition: " + resource);
+         log.error("Invalid resource entry definition: " + entry);
       }
    }
 }

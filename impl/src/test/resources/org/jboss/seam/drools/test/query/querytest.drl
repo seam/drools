@@ -1,0 +1,11 @@
+package org.jboss.seam.drools.test.query
+
+import org.jboss.seam.drools.test.query.Person;
+
+query "number of adults" 
+    person : Person( age >= 18 )
+end
+
+query "number of minors" 
+    person : Person( age < 18 )
+end

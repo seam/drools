@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,18 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools;
+package org.jboss.seam.drools.test.query;
 
-import java.util.Collection;
-import java.util.Map;
+import org.jboss.shrinkwrap.api.Filter;
 
-/**
- * Interface for template data providers.
- *
- * @author Tihomir Surdilovic
- */
-public interface TemplateDataProvider
+public class QueryTestFilter implements Filter<Class<?>>
 {
-   public Collection<Map<String,Object>> getTemplateData();
+
+   public boolean include(Class<?> clazz)
+   {
+      // exclude classes in all other test packages except your own
+      if(clazz.getPackage().getName().startsWith("org.jboss.seam.drools.test")
+            && !clazz.getPackage().getName().equals(QueryTestFilter.class.getPackage().getName())) {
+         return false;
+      } else {
+         return true;
+      }
+   }
+   
 }
 
