@@ -21,6 +21,10 @@
  */ 
 package org.jboss.seam.drools.interceptor;
 
+import java.lang.annotation.Annotation;
+
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -29,14 +33,25 @@ import org.jboss.seam.drools.annotations.InsertFact;
 
 @InsertFact
 @Interceptor
-public class InsertInterceptor
+public class InsertFactInterceptor
 {
+   @Inject
+   BeanManager manager;
+   
    @AroundInvoke
-   public Object manageTransaction(InvocationContext ctx) throws Exception
+   public Object insertFact(InvocationContext ctx) throws Exception
    {
-      InsertFact insertFactAnnotation = ctx.getMethod().getAnnotation(InsertFact.class);
-      System.out.println("ksession id: " + insertFactAnnotation.ksessionId());
-
+      System.out.println("*******\n\nIN INTERCEPTOR! \n\n ********");
+      Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
+      for(Annotation nextAnnotation : methodAnnotations) {
+         if(manager.isQualifier(nextAnnotation.getClass())) {
+            System.out.println("**************** \n\n\nNEXT QUALIFIER: " + nextAnnotation);
+         }
+         if(manager.isInterceptorBinding(nextAnnotation.getClass())) {
+            System.out.println("**************** \n\n\n\n NEXT INTERCEPTOR BINDING: " + nextAnnotation);   
+         }
+      }
+      
       return ctx.proceed();
    }
 }

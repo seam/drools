@@ -76,7 +76,7 @@ public class FlowTest
       ksession.fireAllRules();
       
       assertTrue( ((ArrayList<String>) ksession.getGlobal("errors")).size() == 1 );
-      assertTrue(((ArrayList<String>) ksession.getGlobal("errors")).get(0).equals("You must enter a Telephone Number"));
+      assertTrue( ((ArrayList<String>) ksession.getGlobal("errors")).get(0).equals("You must enter a Telephone Number") );
      
    
    }

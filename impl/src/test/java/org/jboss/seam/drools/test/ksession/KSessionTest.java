@@ -33,6 +33,7 @@ import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
+import org.jboss.seam.drools.annotations.InsertFact;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.qualifiers.config.MVELDialectConfig;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -76,5 +77,11 @@ public class KSessionTest
       
       assertNotSame(ksession, mvelksession);
       assertSame(mvelksession, mvelksession2);
+      doSomething();
+   }
+ 
+   @InsertFact @Default @DefaultConfig
+   public void doSomething() {
+      
    }
 }
