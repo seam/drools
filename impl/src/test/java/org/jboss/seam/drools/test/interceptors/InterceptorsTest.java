@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,23 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.test.ksession;
+package org.jboss.seam.drools.test.interceptors;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
 
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.validation.constraints.AssertTrue;
 
-import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.annotations.InsertFact;
-import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
-import org.jboss.seam.drools.qualifiers.config.MVELDialectConfig;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.Archives;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -44,38 +40,30 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class KSessionTest
+public class InterceptorsTest
 {
    @Deployment
    public static JavaArchive createTestArchive()
    {
-      String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
+      String pkgPath = InterceptorsTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new KSessionTestFiler(), KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, new InterceptorsTestFilter(), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(KSessionTestRules.class)
-      .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
-      .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
-      .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/KSessionTest-beans.xml", ArchivePaths.create("beans.xml"));
+      .addClass(Person.class)
+      .addClass(InterceptorsTestBean.class)
+      .addResource(pkgPath + "/interceptorstest.drl", ArchivePaths.create("interceptorstest.drl"))
+      .addManifestResource(pkgPath + "/InterceptorsTest-beans.xml", ArchivePaths.create("beans.xml"));
       //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
    
-   @Inject @Default @DefaultConfig StatefulKnowledgeSession ksession;
-   @Inject @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession;
-   @Inject @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession2;
+   @Inject InterceptorsTestBean ibean;
    
    @Test
-   public void testKSession()
-   {
-      assertNotNull(ksession);
-      assertTrue(ksession.getId() >= 0);
+   public void testInterceptors() {
+      assertNotNull(ibean);
       
-      assertNotNull(mvelksession);
-      assertTrue(mvelksession.getId() >= 0);
-      
-      assertNotSame(ksession, mvelksession);
-      assertSame(mvelksession, mvelksession2);
+      ibean.getPerson();
+      assertTrue(true);
    }
- }
+}

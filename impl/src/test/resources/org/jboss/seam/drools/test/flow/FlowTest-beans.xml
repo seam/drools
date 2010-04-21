@@ -22,7 +22,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:s="urn:java:seam:core" 
 	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
-	xmlns:test="urn:java:org.jboss.seam.drools.test.ksession">
+	xmlns:test="urn:java:org.jboss.seam.drools.test.flow">
 
 	<d:DefaultRuleResources>
   		<s:specializes/>
