@@ -36,8 +36,9 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
+import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
@@ -50,8 +51,8 @@ public class FlowTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = FlowTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new FlowTestFilter(), KnowledgeBaseProducer.class.getPackage())
+      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      .addPackages(true, new DroolsModuleFilter("flow"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(Person.class)
       .addResource(pkgPath + "/flowtest.drl", ArchivePaths.create("flowtest.drl"))
@@ -63,11 +64,9 @@ public class FlowTest
       return archive;
    }
    
-   @Inject @Default @DefaultConfig StatefulKnowledgeSession ksession;
-   
    @SuppressWarnings("unchecked")
    @Test
-   public void testFlow() {
+   public void testFlow(@Default @DefaultConfig StatefulKnowledgeSession ksession) {
       assertNotNull(ksession);
       ksession.setGlobal("errors", new ArrayList<String>());
       ksession.insert(new Person("Tihomir", ""));     

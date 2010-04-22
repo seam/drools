@@ -32,8 +32,9 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
+import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
@@ -47,8 +48,8 @@ public class KBaseTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new KBaseTestFilter(), KnowledgeBaseProducer.class.getPackage())
+      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      .addPackages(true, new DroolsModuleFilter("kbase"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(KBaseTestRules.class)
       .addClass(MyKnowledgeBaseEventListener.class)
@@ -60,10 +61,8 @@ public class KBaseTest
       return archive;
    }
 
-   @Inject @Default @DefaultConfig KnowledgeBase kbase;
-   
    @Test
-   public void testKBase()
+   public void testKBase(@Default @DefaultConfig KnowledgeBase kbase)
    {
       assertNotNull(kbase);
       assertTrue(kbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 3);

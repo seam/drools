@@ -36,8 +36,9 @@ import org.jboss.seam.drools.KnowledgeBaseProducer;
 import org.jboss.seam.drools.annotations.InsertFact;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.qualifiers.config.MVELDialectConfig;
+import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
@@ -50,8 +51,8 @@ public class KSessionTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new KSessionTestFiler(), KnowledgeBaseProducer.class.getPackage())
+      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      .addPackages(true, new DroolsModuleFilter("ksession"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(KSessionTestRules.class)
       .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
@@ -62,12 +63,10 @@ public class KSessionTest
       return archive;
    }
    
-   @Inject @Default @DefaultConfig StatefulKnowledgeSession ksession;
-   @Inject @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession;
-   @Inject @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession2;
-   
    @Test
-   public void testKSession()
+   public void testKSession(@Default @DefaultConfig StatefulKnowledgeSession ksession,
+         @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession,
+         @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession2)
    {
       assertNotNull(ksession);
       assertTrue(ksession.getId() >= 0);

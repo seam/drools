@@ -36,10 +36,11 @@ import org.drools.time.SessionPseudoClock;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.annotations.EntryPoint;
+import org.jboss.seam.drools.qualifiers.EntryPoint;
 import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
+import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
@@ -52,8 +53,8 @@ public class CEPTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = CEPTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new CEPTestFilter(), KnowledgeBaseProducer.class.getPackage())
+      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      .addPackages(true, new DroolsModuleFilter("cep"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(FireAlarm.class)
       .addClass(FireDetected.class)
@@ -65,14 +66,11 @@ public class CEPTest
       //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
-   
-   @Inject @Default @CEPPseudoClockConfig StatefulKnowledgeSession cepSession;
-   @Inject @Default @CEPPseudoClockConfig @EntryPoint("FireDetectionStream") WorkingMemoryEntryPoint fireDetectionStream;
-   @Inject @Default @CEPPseudoClockConfig @EntryPoint("SprinklerDetectionStream") WorkingMemoryEntryPoint sprinklerDetectionStream;
-   
-   
+    
    @Test
-   public void testCEP() {
+   public void testCEP(@Default @CEPPseudoClockConfig StatefulKnowledgeSession cepSession,
+         @Default @CEPPseudoClockConfig @EntryPoint("FireDetectionStream") WorkingMemoryEntryPoint fireDetectionStream,
+         @Default @CEPPseudoClockConfig @EntryPoint("SprinklerDetectionStream") WorkingMemoryEntryPoint sprinklerDetectionStream) {
       assertNotNull(cepSession);
       assertTrue(cepSession.getId() >= 0);
       assertNotNull(fireDetectionStream);

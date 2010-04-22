@@ -30,7 +30,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
-import org.jboss.seam.drools.annotations.EntryPoint;
+import org.jboss.seam.drools.qualifiers.EntryPoint;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +45,7 @@ public class EntryPointProducer implements Serializable
    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
 
    @Produces
+   @EntryPoint
    public WorkingMemoryEntryPoint produceEntryPoint(StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
    {
       String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
@@ -62,6 +63,7 @@ public class EntryPointProducer implements Serializable
 
    @Produces
    @Scanned
+   @EntryPoint
    public WorkingMemoryEntryPoint produceScannedEntryPoint(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
    {
       String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();

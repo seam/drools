@@ -41,17 +41,17 @@ public class InsertFactInterceptor
    @AroundInvoke
    public Object insertFact(InvocationContext ctx) throws Exception
    {
-      System.out.println("*******\n\nIN INTERCEPTOR! \n\n ********");
       Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
       for(Annotation nextAnnotation : methodAnnotations) {
-         if(manager.isQualifier(nextAnnotation.getClass())) {
+         if(manager.isQualifier(nextAnnotation.annotationType())) {
             System.out.println("**************** \n\n\nNEXT QUALIFIER: " + nextAnnotation);
          }
-         if(manager.isInterceptorBinding(nextAnnotation.getClass())) {
+         if(manager.isInterceptorBinding(nextAnnotation.annotationType())) {
             System.out.println("**************** \n\n\n\n NEXT INTERCEPTOR BINDING: " + nextAnnotation);   
          }
       }
       
+            
       return ctx.proceed();
    }
 }

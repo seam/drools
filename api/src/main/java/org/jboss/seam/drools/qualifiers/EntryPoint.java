@@ -19,22 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.test.kbase;
+package org.jboss.seam.drools.qualifiers;
 
-import org.jboss.shrinkwrap.api.Filter;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class KBaseTestFilter implements Filter<Class<?>>
-{
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-   public boolean include(Class<?> clazz)
-   {
-      // exclude classes in all other test packages except your own
-      if(clazz.getPackage().getName().startsWith("org.jboss.seam.drools.test")
-            && !clazz.getPackage().getName().equals(KBaseTestFilter.class.getPackage().getName())) {
-         return false;
-      } else {
-         return true;
-      }
-   }
-   
+import javax.enterprise.util.Nonbinding;
+import javax.inject.Qualifier;
+
+/**
+ * 
+ * @author Tihomir Surdilovic
+ */
+@Qualifier
+@Target( { TYPE, METHOD, FIELD, PARAMETER })
+@Documented
+@Retention(RUNTIME)
+@Inherited
+public @interface EntryPoint {
+	@Nonbinding String value() default "";
 }

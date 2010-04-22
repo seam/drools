@@ -331,9 +331,5 @@
 			</d:RuleResources>
 		</s:parameters>
 	</d:DroolsConfig>
-	
-	
-	<interceptors>
-      <class>org.jboss.seam.drools.interceptor.InsertFactInterceptor</class>
-   </interceptors>
+   
 </beans>

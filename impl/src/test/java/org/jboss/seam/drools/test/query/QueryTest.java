@@ -34,10 +34,11 @@ import org.drools.runtime.rule.QueryResults;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.annotations.Query;
+import org.jboss.seam.drools.qualifiers.Query;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
+import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
@@ -50,8 +51,8 @@ public class QueryTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = QueryTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = Archives.create("test.jar", JavaArchive.class)
-      .addPackages(true, new QueryTestFilter(), KnowledgeBaseProducer.class.getPackage())
+      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      .addPackages(true, new DroolsModuleFilter("query"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(Person.class)
       .addClass(QueryFactProvider.class)
@@ -63,13 +64,10 @@ public class QueryTest
       return archive;
    }
 
-   @Inject @Default @DefaultConfig @Query("number of adults") QueryResults adultsQuery;
-   @Inject @Default @DefaultConfig @Query("number of minors") QueryResults minorsQuery;
-   
-   @Inject @Default @DefaultConfig ExecutionResults executionResults;
-   
    @Test
-   public void testQuery() {
+   public void testQuery(@Default @DefaultConfig @Query("number of adults") QueryResults adultsQuery,
+         @Default @DefaultConfig @Query("number of minors") QueryResults minorsQuery,
+         @Default @DefaultConfig ExecutionResults executionResults) {
       assertNotNull(adultsQuery);
       assertNotNull(minorsQuery);
       assertNotSame(adultsQuery, minorsQuery);

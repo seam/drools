@@ -19,18 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.test.flow;
+package org.jboss.seam.drools.test;
 
+import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filter;
 
-public class FlowTestFilter implements Filter<Class<?>>
+public class DroolsModuleFilter implements Filter<ArchivePath>
 {
+   private String testDirName;
+   
+   public DroolsModuleFilter(String testDirName) {
+      this.testDirName = testDirName;
+   }
 
-   public boolean include(Class<?> clazz)
+   public boolean include(ArchivePath path)
    {
-      // exclude classes in all other test packages except your own
-      if(clazz.getPackage().getName().startsWith("org.jboss.seam.drools.test")
-            && !clazz.getPackage().getName().equals(FlowTestFilter.class.getPackage().getName())) {
+      if(path.get().startsWith("/org/jboss/seam/drools/test")
+            && !(path.get().startsWith("/org/jboss/seam/drools/test/" + testDirName )) ) {
          return false;
       } else {
          return true;

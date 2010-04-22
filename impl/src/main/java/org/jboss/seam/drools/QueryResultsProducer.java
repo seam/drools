@@ -29,7 +29,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.QueryResults;
-import org.jboss.seam.drools.annotations.Query;
+import org.jboss.seam.drools.qualifiers.Query;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +44,7 @@ public class QueryResultsProducer implements Serializable
    private static final Logger log = LoggerFactory.getLogger(QueryResultsProducer.class);
 
    @Produces
+   @Query
    public QueryResults produceQueryResults(StatefulKnowledgeSession ksession, InjectionPoint ip)
    {
       String queryName = ip.getAnnotated().getAnnotation(Query.class).value();
@@ -60,6 +61,7 @@ public class QueryResultsProducer implements Serializable
    
    @Produces
    @Scanned
+   @Query
    public QueryResults produceScannedQueryResults(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) {
       String queryName = ip.getAnnotated().getAnnotation(Query.class).value();
       if (queryName != null && queryName.length() > 0)
