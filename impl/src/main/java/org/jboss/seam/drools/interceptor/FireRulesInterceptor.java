@@ -18,12 +18,11 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
+ */ 
 package org.jboss.seam.drools.interceptor;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -35,30 +34,31 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
 import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
-import org.jboss.seam.drools.annotations.flow.AbortProcess;
+import org.jboss.seam.drools.annotations.FireRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@AbortProcess
+/**
+ * 
+ * @author Tihomir Surdilovic
+ */
+@FireRules
 @Interceptor
-public class AbortProcessInterceptor
+public class FireRulesInterceptor
 {
    @Inject
    BeanManager manager;
-
-   @Inject
-   @Any
-   Instance<StatefulKnowledgeSession> ksessionSource;
-
-   private static final Logger log = LoggerFactory.getLogger(AbortProcessInterceptor.class);
-
+   
+   @Inject @Any Instance<StatefulKnowledgeSession> ksessionSource;
+   
+   private static final Logger log = LoggerFactory.getLogger(FireRulesInterceptor.class);
+   
    @AroundInvoke
-   public Object abortProcess(InvocationContext ctx) throws Exception
+   public Object fireRules(InvocationContext ctx) throws Exception
    {
-
-      String processName = null;
-
+      boolean untilHalt = false;
+      int limit = -1;
+      
       Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
       List<Annotation> annotationTypeList = new ArrayList<Annotation>();
 
@@ -70,32 +70,32 @@ public class AbortProcessInterceptor
          }
          if (manager.isInterceptorBinding(nextAnnotation.annotationType()))
          {
-            if (nextAnnotation instanceof AbortProcess)
+            if (nextAnnotation instanceof FireRules)
             {
-               processName = ((AbortProcess) nextAnnotation).value();
+               untilHalt = ((FireRules) nextAnnotation).untilHalt();
+               limit = ((FireRules) nextAnnotation).limit();
             }
          }
       }
       
-      StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[])annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
+      final StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[])annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
       if(ksession != null) {
          Object retObj = ctx.proceed();
-         if(processName != null && processName.length() > 0 ) {
-            Iterator<ProcessInstance> iter = ksession.getProcessInstances().iterator();
-            while(iter.hasNext()) {
-               ProcessInstance pi = iter.next();
-               if(pi.getProcessName().equals(processName)) {
-                  ksession.abortProcessInstance(pi.getId());
-               }
-            }
+         if(untilHalt) {
+            ksession.fireUntilHalt();
          } else {
-            log.info("Invalid process name: " + processName);
+            if(limit > 0) {
+               ksession.fireAllRules(limit);
+            } else {
+               ksession.fireAllRules();
+            }
          }
          return retObj;
       } else {  
          log.info("Could not obtain StatefulKnowledgeSession.");
          return ctx.proceed();
       }
+      
    }
-
+   
 }

@@ -24,6 +24,9 @@ package org.jboss.seam.drools.test.interceptors;
 import javax.enterprise.inject.Default;
 
 import org.jboss.seam.drools.annotations.InsertFact;
+import org.jboss.seam.drools.annotations.flow.AbortProcess;
+import org.jboss.seam.drools.annotations.flow.SignalEvent;
+import org.jboss.seam.drools.annotations.flow.StartProcess;
 import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 
@@ -43,5 +46,28 @@ public class InterceptorsTestBean
       p.setEligible(false);
       p.setAge(33);
       return p;
+   }
+   
+   @InsertFact @Default @InterceptorsTestConfig
+   public Person getPersonForFlow() {
+      Person p = new Person();
+      p.setEligible(false);
+      p.setAge(55);
+      return p;
+   }
+   
+   @StartProcess(name="interceptorstestflow", fire=true) @Default @InterceptorsTestConfig
+   public void startProcess() {
+      // this will start the process....
+   }
+   
+   @SignalEvent(type="signal", processName="interceptorstestflow") @Default @InterceptorsTestConfig
+   public String signalEvent() {
+      return "continue";
+   }
+   
+   @AbortProcess("interceptorstestflow") @Default @InterceptorsTestConfig
+   public void abortProcess() {
+      // this will abort the process....
    }
 }

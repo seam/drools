@@ -44,5 +44,11 @@ import javax.interceptor.InterceptorBinding;
 public @interface StartProcess
 {
    @Nonbinding
-   String value() default "";
+   String name() default "";
+   
+   @Nonbinding
+   boolean fire() default false;
+   
+   @Nonbinding 
+   boolean untilHalt() default false;
 }

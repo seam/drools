@@ -21,6 +21,10 @@
  */ 
 package org.jboss.seam.drools.interceptor;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
@@ -46,8 +50,47 @@ public class StartProcessInterceptor
    private static final Logger log = LoggerFactory.getLogger(StartProcessInterceptor.class);
    
    @AroundInvoke
-   public Object abortProcess(InvocationContext ctx) throws Exception
+   public Object startProcess(InvocationContext ctx) throws Exception
    {
-      return ctx.proceed();
+      String processName = null;
+      boolean fire = false;
+      boolean untilHalt = false;
+      
+      Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
+      List<Annotation> annotationTypeList = new ArrayList<Annotation>();
+      
+      for(Annotation nextAnnotation : methodAnnotations) {
+         if(manager.isQualifier(nextAnnotation.annotationType())) {
+            annotationTypeList.add(nextAnnotation);
+         }
+         if(manager.isInterceptorBinding(nextAnnotation.annotationType())) {
+            if(nextAnnotation instanceof StartProcess) {
+               processName = ((StartProcess) nextAnnotation).name();
+               fire = ((StartProcess) nextAnnotation).fire();
+               untilHalt = ((StartProcess) nextAnnotation).untilHalt();
+            }
+         }
+      }
+      
+      final StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[])annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
+      if(ksession != null) {
+         Object retObj = ctx.proceed();
+         if(processName != null && processName.length() > 0 ) {
+            ksession.startProcess(processName);
+            if(fire) {
+               if(untilHalt) {                
+                  ksession.fireUntilHalt();
+               } else {
+                  ksession.fireAllRules();
+               }
+            }
+         } else {
+            log.info("Invalid process name: " + processName);
+         }
+         return retObj;
+      } else {  
+         log.info("Could not obtain StatefulKnowledgeSession.");
+         return ctx.proceed();
+      }
    }
 }

@@ -29,20 +29,18 @@ import static org.junit.Assert.assertNotSame;
 import java.util.Collection;
 
 import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-import javax.validation.constraints.AssertTrue;
 
 import org.drools.runtime.ObjectFilter;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
+import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.weld.extensions.resources.ResourceProvider;
 import org.junit.Test;
@@ -59,8 +57,11 @@ public class InterceptorsTest
       .addPackages(true, new DroolsModuleFilter("interceptors"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(Person.class).addClass(InterceptorsTestBean.class)
+      .addClass(InterceptorsTestConfig.class)
       .addResource(pkgPath + "/interceptorstest.drl", ArchivePaths.create("interceptorstest.drl"))
       .addResource(pkgPath + "/interceptorstestcep.drl", ArchivePaths.create("interceptorstestcep.drl"))
+      .addResource(pkgPath + "/interceptorstestflow.drl", ArchivePaths.create("interceptorstestflow.drl"))
+      .addResource(pkgPath + "/interceptortests.rf", ArchivePaths.create("interceptortests.rf"))
       .addManifestResource(pkgPath + "/InterceptorsTest-beans.xml", ArchivePaths.create("beans.xml"));
       // System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
@@ -106,5 +107,42 @@ public class InterceptorsTest
       Person p = (Person) allPeople.toArray(new Object[0])[0];
       assertNotNull(p);
       assertTrue(p.isEligible());
+   }
+   
+   @Test
+   public void testProcessStartAndSignal(InterceptorsTestBean ibean,
+         @Default @InterceptorsTestConfig StatefulKnowledgeSession ksession) {
+      assertNotNull(ibean);
+      assertNotNull(ksession);
+      
+      ibean.getPersonForFlow();
+      Collection<?> allPeople1 = ksession.getObjects(new ObjectFilter()
+      {
+         public boolean accept(Object object)
+         {
+            return object instanceof Person;
+         }
+      });
+      
+      Person p1 = (Person) allPeople1.toArray(new Object[0])[0];
+      assertNotNull(p1);
+      assertTrue(!p1.isEligible());
+   
+      ibean.startProcess();
+      
+      Collection<?> allPeople2 = ksession.getObjects(new ObjectFilter()
+      {
+         public boolean accept(Object object)
+         {
+            return object instanceof Person;
+         }
+      });
+      
+      Person p2 = (Person) allPeople2.toArray(new Object[0])[0];
+      assertNotNull(p2);
+      assertTrue(p2.isEligible());
+
+      
+
    }
 }

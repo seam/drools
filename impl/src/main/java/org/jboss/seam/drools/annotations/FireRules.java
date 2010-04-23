@@ -19,11 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.qualifiers.config;
+package org.jboss.seam.drools.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -31,16 +29,19 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
+import javax.enterprise.util.Nonbinding;
+import javax.interceptor.InterceptorBinding;
 
 /**
  * 
  * @author Tihomir Surdilovic
  */
-@Qualifier
-@Target( { TYPE, METHOD, FIELD, PARAMETER })
+@InterceptorBinding
+@Target( { TYPE, METHOD })
 @Documented
 @Retention(RUNTIME)
-public @interface CEPPseudoClockConfig {
-
+public @interface FireRules
+{
+   @Nonbinding boolean untilHalt() default false;
+   @Nonbinding int limit() default -1;
 }

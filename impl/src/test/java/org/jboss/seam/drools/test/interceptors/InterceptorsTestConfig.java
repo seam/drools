@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.qualifiers.config;
+package org.jboss.seam.drools.test.interceptors;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -41,6 +41,7 @@ import javax.inject.Qualifier;
 @Target( { TYPE, METHOD, FIELD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
-public @interface CEPPseudoClockConfig {
+public @interface InterceptorsTestConfig
+{
 
 }

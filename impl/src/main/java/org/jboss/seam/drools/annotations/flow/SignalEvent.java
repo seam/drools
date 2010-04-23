@@ -50,5 +50,5 @@ public @interface SignalEvent
    String event() default "";
 
    @Nonbinding
-   String process() default "";
+   String processName() default "";
 }

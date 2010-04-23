@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<process xmlns="http://drools.org/drools-5.0/process"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+         xs:schemaLocation="http://drools.org/drools-5.0/process drools-processes-5.0.xsd"
+         type="RuleFlow" name="interceptorstestflow" id="interceptorstestflow" package-name="org.jboss.seam.drools.test.interceptors" >
+
+  <header>
+  </header>
+
+  <nodes>
+    <start id="1" name="Start" x="32" y="16" width="48" height="48" />
+    <end id="2" name="End" x="16" y="168" width="80" height="40" />
+    <ruleSet id="4" name="BusinessRules" x="16" y="96" width="80" height="40" ruleFlowGroup="BusinessRules" />
+  </nodes>
+
+  <connections>
+    <connection from="4" to="2" />
+    <connection from="1" to="4" />
+  </connections>
+
+</process>

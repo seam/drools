@@ -26,6 +26,10 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 	<interceptors>
     	<class>org.jboss.seam.drools.interceptor.InsertFactInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.FireRulesInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.StartProcessInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.SignalEventInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.AbortProcessInterceptor</class>
     </interceptors>
     
 	<d:DefaultRuleResources>
@@ -41,5 +45,23 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
    			<s:value>classpath;interceptorstestcep.drl;DRL</s:value>
    		</d:resources>
 	</d:CEPPseudoClockRuleResources>
+	
+	
+	<d:RuleResources>
+		<s:overrides/>
+		<test:InterceptorsTestConfig/>
+		<d:resources>
+   			<s:value>classpath;interceptorstestflow.drl;DRL</s:value>
+   			<s:value>classpath;interceptortests.rf;DRF</s:value>
+   		</d:resources>
+	</d:RuleResources>
+	<d:DroolsConfig>
+		<test:InterceptorsTestConfig/>
+		<d:ruleResources>
+			<s:Inject/>
+			<test:InterceptorsTestConfig/>
+		</d:ruleResources>
+	</d:DroolsConfig>
+	
 		
 </beans>       
