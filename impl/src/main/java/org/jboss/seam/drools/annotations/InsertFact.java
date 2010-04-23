@@ -37,7 +37,6 @@ import javax.interceptor.InterceptorBinding;
  * 
  * @author Tihomir Surdilovic
  */
-
 @InterceptorBinding
 @Target( { TYPE, METHOD })
 @Documented

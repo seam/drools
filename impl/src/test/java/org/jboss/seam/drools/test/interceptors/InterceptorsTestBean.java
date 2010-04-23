@@ -24,13 +24,24 @@ package org.jboss.seam.drools.test.interceptors;
 import javax.enterprise.inject.Default;
 
 import org.jboss.seam.drools.annotations.InsertFact;
+import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 
 public class InterceptorsTestBean
 {
    @InsertFact(fire=true) @Default @DefaultConfig
    public Person getPerson() {
-      System.out.println("*********** \n\nIN GETPERSON\n\n**************");
-      return new Person();
+      Person p = new Person();
+      p.setEligible(false);
+      p.setAge(22);
+      return p;
+   }
+   
+   @InsertFact(fire=true, entrypoint="peopleStream") @Default @CEPPseudoClockConfig
+   public Person getPersonForEntryPoint() {
+      Person p = new Person();
+      p.setEligible(false);
+      p.setAge(33);
+      return p;
    }
 }

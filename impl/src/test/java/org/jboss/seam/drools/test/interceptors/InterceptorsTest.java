@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.interceptors;
 
 import static org.junit.Assert.assertNotNull;
@@ -26,12 +26,19 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
 
+import java.util.Collection;
+
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.validation.constraints.AssertTrue;
 
+import org.drools.runtime.ObjectFilter;
+import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
+import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
+import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -51,19 +58,53 @@ public class InterceptorsTest
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
       .addPackages(true, new DroolsModuleFilter("interceptors"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(Person.class)
-      .addClass(InterceptorsTestBean.class)
+      .addClass(Person.class).addClass(InterceptorsTestBean.class)
       .addResource(pkgPath + "/interceptorstest.drl", ArchivePaths.create("interceptorstest.drl"))
+      .addResource(pkgPath + "/interceptorstestcep.drl", ArchivePaths.create("interceptorstestcep.drl"))
       .addManifestResource(pkgPath + "/InterceptorsTest-beans.xml", ArchivePaths.create("beans.xml"));
-      System.out.println(archive.toString(Formatters.VERBOSE));
+      // System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
+   }
+
+   @Test
+   public void testInsertAndFire(InterceptorsTestBean ibean, @Default @DefaultConfig StatefulKnowledgeSession ksession)
+   {
+      assertNotNull(ibean);
+      assertNotNull(ksession);
+
+      ibean.getPerson();
+
+      Collection<?> allPeople = ksession.getObjects(new ObjectFilter()
+      {
+         public boolean accept(Object object)
+         {
+            return object instanceof Person;
+         }
+      });
+      
+      Person p = (Person) allPeople.toArray(new Object[0])[0];
+      assertNotNull(p);
+      assertTrue(p.isEligible());
    }
    
    @Test
-   public void testInterceptors(InterceptorsTestBean ibean) {
+   public void testInsertAndFireEntryPoint(InterceptorsTestBean ibean, @Default @CEPPseudoClockConfig StatefulKnowledgeSession ksession)
+   {
       assertNotNull(ibean);
+      assertNotNull(ksession);
+
+      ibean.getPersonForEntryPoint();
+
+      Collection<?> allPeople = ksession.getWorkingMemoryEntryPoint("peopleStream").getObjects(new ObjectFilter()
+      {
+         public boolean accept(Object object)
+         {
+            return object instanceof Person;
+         }
+      });
       
-      ibean.getPerson();
-      assertTrue(true);
+      Person p = (Person) allPeople.toArray(new Object[0])[0];
+      assertNotNull(p);
+      assertTrue(p.isEligible());
    }
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,30 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.annotations.flow;
+package org.jboss.seam.drools.interceptor;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.drools.runtime.StatefulKnowledgeSession;
+import org.jboss.seam.drools.annotations.flow.SignalEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
-
-/**
- * Starts a Rule Flow process.
- * 
- * @author Tihomir Surdilovic
- */
-@InterceptorBinding
-@Target( { TYPE, METHOD })
-@Documented
-@Retention(RUNTIME)
-public @interface StartProcess
+@SignalEvent
+@Interceptor
+public class SignalEventInterceptor
 {
-   @Nonbinding
-   String value() default "";
+   @Inject
+   BeanManager manager;
+   
+   @Inject @Any Instance<StatefulKnowledgeSession> ksessionSource;
+   
+   private static final Logger log = LoggerFactory.getLogger(SignalEventInterceptor.class);
+   
+   @AroundInvoke
+   public Object abortProcess(InvocationContext ctx) throws Exception
+   {
+      return ctx.proceed();
+   }
 }

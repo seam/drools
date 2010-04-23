@@ -34,5 +34,12 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
    			<s:value>classpath;interceptorstest.drl;DRL</s:value>
    		</d:resources>
 	</d:DefaultRuleResources>
+	
+	<d:CEPPseudoClockRuleResources>
+  		<s:specializes/>
+   		<d:resources>
+   			<s:value>classpath;interceptorstestcep.drl;DRL</s:value>
+   		</d:resources>
+	</d:CEPPseudoClockRuleResources>
 		
 </beans>       
