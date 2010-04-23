@@ -43,6 +43,7 @@ import javax.interceptor.InterceptorBinding;
 @Retention(RUNTIME)
 public @interface InsertFact
 {
-   @Nonbinding boolean fire() default false;   
+   @Nonbinding boolean fire() default false;  
+   @Nonbinding boolean untilHalt() default false;
    @Nonbinding String entrypoint() default "";
 }

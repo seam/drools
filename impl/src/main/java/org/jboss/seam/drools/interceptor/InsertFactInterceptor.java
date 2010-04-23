@@ -54,6 +54,7 @@ public class InsertFactInterceptor
    public Object insertFact(InvocationContext ctx) throws Exception
    {
       boolean fire = false;
+      boolean untilHalt = false;
       String entryPointName = null;
       
       Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
@@ -66,6 +67,7 @@ public class InsertFactInterceptor
          if(manager.isInterceptorBinding(nextAnnotation.annotationType())) {
             if(nextAnnotation instanceof InsertFact) {
                fire = ((InsertFact) nextAnnotation).fire();
+               untilHalt = ((InsertFact) nextAnnotation).untilHalt();
                entryPointName = ((InsertFact) nextAnnotation).entrypoint();
             }
          }
@@ -80,7 +82,11 @@ public class InsertFactInterceptor
             ksession.insert(retObj);
          }
          if(fire) {
-            ksession.fireAllRules();
+            if(untilHalt) {
+               
+            } else {
+               ksession.fireAllRules();
+            }
          }
          return retObj;
       } else {  
