@@ -117,6 +117,15 @@
 					</d:DroolsConfig>
 				</s:parameters>
 			</d:produceScannedKnowledgeBase>
+			<d:produceKnowledgeAgent>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<d:DroolsConfig>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</d:DroolsConfig>
+				</s:parameters>
+			</d:produceKnowledgeAgent>
 			<d:disposeScannedKnowledgeBase>
 				<s:parameters>
 					<drools:KnowledgeBase>
@@ -327,6 +336,43 @@
 				<d:CEPPseudoClockConfig />
 				<s:type>
 					<d:CEPPseudoClockRuleResources />
+				</s:type>
+			</d:RuleResources>
+		</s:parameters>
+	</d:DroolsConfig>
+	
+	<d:DroolsConfig>
+		<s:specializes />
+		<d:AgentConfig />
+		<d:kagentPropertiestMap>
+			<s:entry>
+				<s:key>drools.agent.scanResources</s:key>
+				<s:value>true</s:value>
+			</s:entry>
+			<s:entry>
+				<s:key>drools.agent.scanDirectories</s:key>
+				<s:value>true</s:value>
+			</s:entry>
+			<s:entry>
+				<s:key>drools.agent.newInstance</s:key>
+				<s:value>true</s:value>
+			</s:entry>
+			<s:entry>
+				<s:key>drools.agent.monitorChangeSetEvents</s:key>
+				<s:value>true</s:value>
+			</s:entry>
+		</d:kagentPropertiestMap>
+		<d:startChangeNotifierService>true</d:startChangeNotifierService>
+		<d:startChangeScannerService>true</d:startChangeScannerService>
+		<d:scannerInterval>60</d:scannerInterval>
+		<d:agentName>
+			<s:value>kagent</s:value>
+		</d:agentName>
+		<s:parameters>
+			<d:RuleResources>
+				<d:AgentConfig />
+				<s:type>
+					<d:AgentRuleResources />
 				</s:type>
 			</d:RuleResources>
 		</s:parameters>

@@ -85,7 +85,6 @@ public class SignalEventInterceptor
       }
 
       StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
-      System.out.println("***** SEI ksession: " + ksession);
       if (ksession != null)
       {
          Object retObj = ctx.proceed();
@@ -101,12 +100,10 @@ public class SignalEventInterceptor
                   {
                      if (event != null && event.length() > 0)
                      {
-                        System.out.println("***** signalling to process : " + type + " - " + event);
                         pi.signalEvent(type, event);
                      }
                      else
                      {
-                        System.out.println("***** signalling to process : " + type + " - " + retObj);
                         pi.signalEvent(type, retObj);
                      }
                   }
@@ -116,12 +113,10 @@ public class SignalEventInterceptor
             {
                if (event != null && event.length() > 0)
                {
-                  System.out.println("***** signalling to ksession : " + type + " - " + event);
                   ksession.signalEvent(type, event);
                }
                else
                {
-                  System.out.println("***** signalling to ksession : " + type + " - " + retObj);
                   ksession.signalEvent(type, retObj);
                }
 

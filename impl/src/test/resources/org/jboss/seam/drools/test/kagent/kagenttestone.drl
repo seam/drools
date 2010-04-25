@@ -1,29 +1,13 @@
-#created on: Apr 19, 2010
 package org.jboss.seam.drools.test.kagent
 
-#list any import classes here.
+import org.jboss.seam.drools.test.kagent.Person;
 
-
-
-#declare any global variables here
-
-
-
-
-rule "Your First Rule"
-	
-	when
-		#conditions
-	then 
-		#actions
-		
-end
-
-rule "Your Second Rule"
-	#include attributes such as "salience" here...
-	when
-		#conditions
-	then 
-		#actions
-		
+rule "is eligible"
+lock-on-active 
+when
+	$p : Person( age > 18 )	
+then
+	modify($p) {
+		setEligible(true);
+	}
 end

@@ -59,9 +59,22 @@ public class KnowledgeAgentProducer implements Serializable
    ResourceProvider resourceProvider;
 
    @Produces
+   @ApplicationScoped
+   public KnowledgeAgent produceKnowledgeAgent(DroolsConfig config) throws Exception
+   {
+      return getAgent(config);
+   }
+   
+   @Produces
    @Scanned
    @ApplicationScoped
    public KnowledgeBase produceScannedKnowledgeBase(DroolsConfig config) throws Exception
+   {
+      KnowledgeAgent agent = getAgent(config);
+      return agent.getKnowledgeBase();
+   }
+   
+   private KnowledgeAgent getAgent(DroolsConfig config) throws Exception
    {
       if (config.getAgentName() == null || config.getAgentName().length() < 1)
       {
@@ -73,7 +86,7 @@ public class KnowledgeAgentProducer implements Serializable
          throw new IllegalStateException("No change set rule resource specified.");
       }
       
-      if(config.getRuleResources().getResources().length > 0) {
+      if(config.getRuleResources().getResources().length > 1) {
          throw new IllegalStateException("More than one change set rule resource specified for KnowledgeAgent. Make sure only a single change set resource is specified.");
       }
 
@@ -93,7 +106,7 @@ public class KnowledgeAgentProducer implements Serializable
          ResourceFactory.getResourceChangeScannerService().start();
       }
 
-      return kagent.getKnowledgeBase();
+      return kagent;
 
    }
 
@@ -103,7 +116,7 @@ public class KnowledgeAgentProducer implements Serializable
       ResourceFactory.getResourceChangeNotifierService().stop();
       ResourceFactory.getResourceChangeScannerService().stop();
    }
-
+   
    private void applyChangeSet(KnowledgeAgent kagent, String entry)
    {
       String[] entryParts = RuleResources.DIVIDER.split(entry.trim());
