@@ -24,6 +24,7 @@ package org.jboss.seam.drools;
 import java.io.Serializable;
 
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
@@ -44,6 +45,7 @@ public class EntryPointProducer implements Serializable
    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
 
    @Produces
+   @Default
    @EntryPoint
    public WorkingMemoryEntryPoint produceEntryPoint(StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
    {

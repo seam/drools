@@ -377,5 +377,6 @@
 			</d:RuleResources>
 		</s:parameters>
 	</d:DroolsConfig>
+	
    
 </beans>

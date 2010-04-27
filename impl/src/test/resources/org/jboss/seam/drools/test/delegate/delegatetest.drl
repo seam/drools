@@ -1,0 +1,10 @@
+package org.jboss.seam.drools.test.delegate
+ 
+import org.jboss.seam.drools.test.delegate.DelegateBean;
+
+global DelegateBean testDelegate
+
+rule "dummy"
+then
+	testDelegate.setTouched(true);
+end

@@ -19,25 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */ 
-package org.jboss.seam.drools.test.cep;
+package org.jboss.seam.drools.test.delegate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.enterprise.inject.Default;
-import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.rule.WorkingMemoryEntryPoint;
-import org.drools.time.SessionPseudoClock;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.qualifiers.EntryPoint;
-import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
+import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -47,56 +42,28 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class CEPTest
+public class DelegateTest
 {
    @Deployment
    public static JavaArchive createTestArchive()
    {
-      String pkgPath = CEPTest.class.getPackage().getName().replaceAll("\\.", "/");
+      String pkgPath = DelegateTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
-      .addPackages(true, new DroolsModuleFilter("cep"), KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, new DroolsModuleFilter("delegate"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(FireAlarm.class)
-      .addClass(FireDetected.class)
-      .addClass(SprinklerActivated.class)
-      .addResource(pkgPath + "/ceptest.drl", ArchivePaths.create("ceptest.drl"))
+      .addClass(DelegateBean.class)
+      .addResource(pkgPath + "/delegatetest.drl", ArchivePaths.create("delegatetest.drl"))
       //.addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
       //.addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/CEPTest-beans.xml", ArchivePaths.create("beans.xml"));
+      .addManifestResource(pkgPath + "/DelegateTest-beans.xml", ArchivePaths.create("beans.xml"));
       //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
    
-   @Inject @Default @CEPPseudoClockConfig StatefulKnowledgeSession cepSession;
-   @Inject @Default @CEPPseudoClockConfig @EntryPoint("FireDetectionStream") WorkingMemoryEntryPoint fireDetectionStream;
-   @Inject @Default @CEPPseudoClockConfig @EntryPoint("SprinklerDetectionStream") WorkingMemoryEntryPoint sprinklerDetectionStream;
-   
    @Test
-   public void testCEP() {
-      assertNotNull(cepSession);
-      assertTrue(cepSession.getId() >= 0);
-      assertNotNull(fireDetectionStream);
-      assertNotNull(sprinklerDetectionStream);
-      assertNotSame(fireDetectionStream, sprinklerDetectionStream);
-      
-        FireAlarm fireAlarm = new FireAlarm();
-        assertTrue(!fireAlarm.isActivated());
-        cepSession.setGlobal("fireAlarm", fireAlarm);
-        SessionPseudoClock clock = cepSession.getSessionClock();
-        fireDetectionStream.insert(new FireDetected());
-        clock.advanceTime(9, TimeUnit.SECONDS);
-        
-        cepSession.fireAllRules();
-        
-        FireAlarm afireAlarm = (FireAlarm) cepSession.getGlobal("fireAlarm");
-        assertTrue(!afireAlarm.isActivated());
-        
-        clock.advanceTime(2, TimeUnit.SECONDS);    
-        
-        cepSession.fireAllRules();
-        
-        FireAlarm bfireAlarm = (FireAlarm) cepSession.getGlobal("fireAlarm");
-        assertTrue(bfireAlarm.isActivated());
-      
+   public void testDelegate(DelegateBean delegateBean, @Default @DefaultConfig StatefulKnowledgeSession ksession) {
+      assertNotNull(ksession);
+      ksession.fireAllRules();
+      assertTrue(delegateBean.isTouched());
    }
 }

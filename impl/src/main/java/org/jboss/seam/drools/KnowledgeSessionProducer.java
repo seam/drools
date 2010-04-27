@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -63,12 +64,16 @@ public class KnowledgeSessionProducer implements Serializable
    
    @Inject
    DroolsExtension droolsExtension;
+   
+   @Inject 
+   SeamDelegate delegate;
 
    @Produces
    @RequestScoped
    public StatefulKnowledgeSession produceStatefulSession(KnowledgeBase kbase,DroolsConfig config) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(config.getKnowledgeSessionConfiguration(), null);
+      addSeamDelegate(ksession);
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
@@ -82,6 +87,7 @@ public class KnowledgeSessionProducer implements Serializable
    public StatefulKnowledgeSession produceScannedStatefulSession(@Scanned KnowledgeBase kbase, DroolsConfig config) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(config.getKnowledgeSessionConfiguration(), null);
+      addSeamDelegate(ksession);
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
@@ -95,6 +101,7 @@ public class KnowledgeSessionProducer implements Serializable
    public StatelessKnowledgeSession produceScannedStatelessSession(@Scanned KnowledgeBase kbase, DroolsConfig config) throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(config.getKnowledgeSessionConfiguration());
+      addSeamDelegate(ksession);
       addEventListeners(ksession);
       
       return ksession;
@@ -105,6 +112,7 @@ public class KnowledgeSessionProducer implements Serializable
    public StatelessKnowledgeSession produceStatelessSession(KnowledgeBase kbase, DroolsConfig config) throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(config.getKnowledgeSessionConfiguration());
+      addSeamDelegate(ksession);
       addEventListeners(ksession);
       
       return ksession;
@@ -117,6 +125,14 @@ public class KnowledgeSessionProducer implements Serializable
    
    public void disposeScannedStatefulSession(@Disposes @Scanned StatefulKnowledgeSession session) {
       session.dispose();
+   }
+   
+   private void addSeamDelegate(StatefulKnowledgeSession  ksession) {
+      ksession.getGlobals().setDelegate(new SeamDelegate());
+   }
+   
+   private void addSeamDelegate(StatelessKnowledgeSession ksession) {
+      ksession.getGlobals().setDelegate(delegate);
    }
    
    private void addEventListeners(KnowledgeRuntimeEventManager ksession)

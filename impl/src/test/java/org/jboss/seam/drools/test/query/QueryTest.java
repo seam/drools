@@ -64,26 +64,24 @@ public class QueryTest
       return archive;
    }
 
-   @Test
-   public void dummy() {
-      assertTrue(true);
-   }
+   // cannot yet move to test method arguments (ARQ-120)
+   @Inject @Default @DefaultConfig @Query("number of adults") QueryResults adultsQuery;
+   @Inject @Default @DefaultConfig @Query("number of minors") QueryResults minorsQuery;
+   @Inject @Default @DefaultConfig ExecutionResults executionResults;
    
-//   @Test
-//   public void testQuery(@Default @DefaultConfig @Query("number of adults") QueryResults adultsQuery,
-//         @Default @DefaultConfig @Query("number of minors") QueryResults minorsQuery,
-//         @Default @DefaultConfig ExecutionResults executionResults) {
-//      assertNotNull(adultsQuery);
-//      assertNotNull(minorsQuery);
-//      assertNotSame(adultsQuery, minorsQuery);
-//      
-//      assertTrue(adultsQuery.size() == 7);
-//      assertTrue(minorsQuery.size() == 7);
-//      
-//      assertNotNull(executionResults);
-//      assertTrue(((QueryResults) executionResults.getValue("number of adults")).size() == 7);
-//      assertTrue(((QueryResults) executionResults.getValue("number of minors")).size() == 7);
-//      
-//      
-//   }
+   @Test
+   public void testQuery() {
+      assertNotNull(adultsQuery);
+      assertNotNull(minorsQuery);
+      assertNotSame(adultsQuery, minorsQuery);
+      
+      assertTrue(adultsQuery.size() == 7);
+      assertTrue(minorsQuery.size() == 7);
+      
+      assertNotNull(executionResults);
+      assertTrue(((QueryResults) executionResults.getValue("number of adults")).size() == 7);
+      assertTrue(((QueryResults) executionResults.getValue("number of minors")).size() == 7);
+      
+      
+   }
 }

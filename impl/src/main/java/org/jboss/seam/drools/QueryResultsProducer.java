@@ -24,6 +24,7 @@ package org.jboss.seam.drools;
 import java.io.Serializable;
 
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
@@ -44,6 +45,7 @@ public class QueryResultsProducer implements Serializable
    private static final Logger log = LoggerFactory.getLogger(QueryResultsProducer.class);
 
    @Produces
+   @Default
    @Query
    public QueryResults produceQueryResults(StatefulKnowledgeSession ksession, InjectionPoint ip)
    {
