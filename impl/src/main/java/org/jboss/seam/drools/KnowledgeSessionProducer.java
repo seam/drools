@@ -128,7 +128,7 @@ public class KnowledgeSessionProducer implements Serializable
    }
    
    private void addSeamDelegate(StatefulKnowledgeSession  ksession) {
-      ksession.getGlobals().setDelegate(new SeamDelegate());
+      ksession.getGlobals().setDelegate(delegate);
    }
    
    private void addSeamDelegate(StatelessKnowledgeSession ksession) {

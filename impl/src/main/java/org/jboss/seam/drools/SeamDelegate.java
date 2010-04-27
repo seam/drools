@@ -42,7 +42,6 @@ public class SeamDelegate implements Globals
 {
    private static final Logger log = LoggerFactory.getLogger(SeamDelegate.class);
    
-   // TODO figure out why manager is NULL!!!!!
    @Inject
    BeanManager manager;
 
@@ -51,8 +50,6 @@ public class SeamDelegate implements Globals
    public Object get(String name)
    {
       Set<Bean<?>> beans = manager.getBeans(name);
-      
-      System.out.println("***** BEAN : " + beans);
       
       if (beans != null && beans.size() > 0)
       {

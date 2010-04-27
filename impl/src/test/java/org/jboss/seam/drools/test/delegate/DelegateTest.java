@@ -63,6 +63,7 @@ public class DelegateTest
    @Test
    public void testDelegate(DelegateBean delegateBean, @Default @DefaultConfig StatefulKnowledgeSession ksession) {
       assertNotNull(ksession);
+      assertNotNull(delegateBean);
       ksession.fireAllRules();
       assertTrue(delegateBean.isTouched());
    }
