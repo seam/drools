@@ -22,7 +22,6 @@
 package org.jboss.seam.drools.config;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-public class DroolsConfig implements Serializable
+public class DroolsConfig
 {
    private static final Logger log = LoggerFactory.getLogger(DroolsConfig.class);
 
