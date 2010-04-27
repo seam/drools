@@ -73,6 +73,8 @@ public class DroolsConfig implements Serializable
    private String loggerPath;
    private int loggerInterval;
 
+   private boolean disableSeamDelegate;
+   
    private RuleResources ruleResources;
 
    private Map<String, String> kbuilderPropertiesMap = new HashMap<String, String>();
@@ -307,5 +309,17 @@ public class DroolsConfig implements Serializable
    {
       this.ruleResources = ruleResources;
    }
+
+   public boolean isDisableSeamDelegate()
+   {
+      return disableSeamDelegate;
+   }
+
+   public void setDisableSeamDelegate(boolean disableSeamDelegate)
+   {
+      this.disableSeamDelegate = disableSeamDelegate;
+   }
+   
+   
 
 }

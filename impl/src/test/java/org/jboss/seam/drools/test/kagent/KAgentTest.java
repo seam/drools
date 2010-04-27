@@ -74,8 +74,8 @@ public class KAgentTest
    public void testKAgentConfiguration(@KAgentTestConfig DroolsConfig config)
    {
       assertNotNull(config);
-      assertTrue(config.isStartChangeNotifierService());
-      assertTrue(config.isStartChangeScannerService());
+      assertTrue(!config.isStartChangeNotifierService());
+      assertTrue(!config.isStartChangeScannerService());
       assertTrue(config.getAgentName() != null);
       assertTrue(config.getScannerInterval() > 0);
    }
@@ -91,9 +91,11 @@ public class KAgentTest
       ksession1.fireAllRules();
       Person p1f = (Person) ksession1.getObject(fh1);
       assertTrue(p1f.isEligible());
+      
+      //ResourceFactory.getResourceChangeNotifierService().stop();
+      //ResourceFactory.getResourceChangeScannerService().stop();
       ksession1.dispose();
-      ResourceFactory.getResourceChangeNotifierService().stop();
-      ResourceFactory.getResourceChangeScannerService().stop();
+      
    }
 
 }

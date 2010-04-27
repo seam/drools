@@ -73,7 +73,9 @@ public class KnowledgeSessionProducer implements Serializable
    public StatefulKnowledgeSession produceStatefulSession(KnowledgeBase kbase,DroolsConfig config) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(config.getKnowledgeSessionConfiguration(), null);
-      addSeamDelegate(ksession);
+      if(!config.isDisableSeamDelegate()) {
+         addSeamDelegate(ksession);
+      }
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
@@ -87,7 +89,9 @@ public class KnowledgeSessionProducer implements Serializable
    public StatefulKnowledgeSession produceScannedStatefulSession(@Scanned KnowledgeBase kbase, DroolsConfig config) throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(config.getKnowledgeSessionConfiguration(), null);
-      addSeamDelegate(ksession);
+      if(!config.isDisableSeamDelegate()) {
+         addSeamDelegate(ksession);
+      }
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
@@ -101,7 +105,9 @@ public class KnowledgeSessionProducer implements Serializable
    public StatelessKnowledgeSession produceScannedStatelessSession(@Scanned KnowledgeBase kbase, DroolsConfig config) throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(config.getKnowledgeSessionConfiguration());
-      addSeamDelegate(ksession);
+      if(!config.isDisableSeamDelegate()) {
+         addSeamDelegate(ksession);
+      }
       addEventListeners(ksession);
       
       return ksession;
@@ -112,7 +118,9 @@ public class KnowledgeSessionProducer implements Serializable
    public StatelessKnowledgeSession produceStatelessSession(KnowledgeBase kbase, DroolsConfig config) throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(config.getKnowledgeSessionConfiguration());
-      addSeamDelegate(ksession);
+      if(!config.isDisableSeamDelegate()) {
+         addSeamDelegate(ksession);
+      }
       addEventListeners(ksession);
       
       return ksession;
