@@ -47,7 +47,7 @@ import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
-import org.jboss.weld.extensions.resources.ResourceProvider;
+import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

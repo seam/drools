@@ -35,12 +35,13 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
 import org.jboss.seam.drools.qualifiers.Query;
+import org.jboss.seam.drools.qualifiers.Stateless;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.weld.extensions.resources.ResourceProvider;
+import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,7 +68,7 @@ public class QueryTest
    // cannot yet move to test method arguments (ARQ-120)
    @Inject @Default @DefaultConfig @Query("number of adults") QueryResults adultsQuery;
    @Inject @Default @DefaultConfig @Query("number of minors") QueryResults minorsQuery;
-   @Inject @Default @DefaultConfig ExecutionResults executionResults;
+   @Inject @Default @Stateless @DefaultConfig ExecutionResults executionResults;
    
    @Test
    public void testQuery() {

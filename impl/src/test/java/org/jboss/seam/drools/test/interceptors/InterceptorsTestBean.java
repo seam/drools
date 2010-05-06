@@ -56,7 +56,7 @@ public class InterceptorsTestBean
       return p;
    }
    
-   @StartProcess(name="interceptorstestflow", fire=true) @Default @InterceptorsTestConfig
+   @StartProcess(processName="interceptorstestflow", fire=true) @Default @InterceptorsTestConfig
    public void startProcess() {
       // this will start the process....
    }

@@ -61,6 +61,7 @@ public class SignalEventInterceptor
    public Object signalEvent(InvocationContext ctx) throws Exception
    {
       String processName = null;
+      String processId = null;
       String type = null;
       String event = null;
 
@@ -78,6 +79,7 @@ public class SignalEventInterceptor
             if (nextAnnotation instanceof SignalEvent)
             {
                processName = ((SignalEvent) nextAnnotation).processName();
+               processId = ((SignalEvent) nextAnnotation).processId();
                type = ((SignalEvent) nextAnnotation).type();
                event = ((SignalEvent) nextAnnotation).event();
             }
@@ -107,6 +109,12 @@ public class SignalEventInterceptor
                         pi.signalEvent(type, retObj);
                      }
                   }
+               }
+            }
+            else if(processId != null && processId.length() > 0) {
+               ProcessInstance pi = ksession.getProcessInstance(Long.parseLong(processId));
+               if(pi != null) {
+                  pi.signalEvent(type, event);
                }
             }
             else

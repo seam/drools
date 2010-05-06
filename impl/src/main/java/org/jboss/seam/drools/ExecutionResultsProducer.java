@@ -35,10 +35,20 @@ import javax.inject.Inject;
 
 import org.drools.command.CommandFactory;
 import org.drools.runtime.ExecutionResults;
+import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
+import org.drools.runtime.help.BatchExecutionHelper;
+import org.drools.runtime.pipeline.Action;
+import org.drools.runtime.pipeline.KnowledgeRuntimeCommand;
+import org.drools.runtime.pipeline.Pipeline;
+import org.drools.runtime.pipeline.PipelineFactory;
+import org.drools.runtime.pipeline.ResultHandler;
+import org.drools.runtime.pipeline.Transformer;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.qualifiers.Scanned;
-import org.jboss.weld.extensions.resources.ResourceProvider;
+import org.jboss.seam.drools.qualifiers.Stateful;
+import org.jboss.seam.drools.qualifiers.Stateless;
+import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,18 +72,81 @@ public class ExecutionResultsProducer implements Serializable
    
    @SuppressWarnings("unchecked")
    @Produces
+   @Stateless
    @RequestScoped
-   public ExecutionResults produceExecutionResults(StatelessKnowledgeSession ksession) {
+   public ExecutionResults produceStatelessExecutionResults(StatelessKnowledgeSession ksession) {
       return ksession.execute(CommandFactory.newBatchExecution(getCommandList()));
    }
    
    @SuppressWarnings("unchecked")
    @Produces
+   @Stateless
    @Scanned
    @RequestScoped
-   public ExecutionResults produceScannedExecutionResults(@Scanned StatelessKnowledgeSession ksession) {
+   public ExecutionResults produceStatelessScannedExecutionResults(@Scanned StatelessKnowledgeSession ksession) {
       return ksession.execute(CommandFactory.newBatchExecution(getCommandList()));
    }
+   
+   @Produces
+   @Stateful
+   @RequestScoped
+   public ExecutionResults produceStateFulExecutionResults(StatefulKnowledgeSession ksession) {
+      ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
+      Pipeline pip = getPipelineStateful(ksession);
+      Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
+      while(iter.hasNext())
+      {
+         FactProvider factProvider = iter.next();
+         if(factProvider.getBatchXml() != null) {
+            pip.insert(factProvider.getBatchXml(), resultsHandler);
+         }
+      }
+      
+      return (ExecutionResults) BatchExecutionHelper.newXStreamMarshaller().fromXML((String) resultsHandler.getObject());
+   }
+   
+   @Produces
+   @Stateful
+   @Scanned
+   @RequestScoped
+   public ExecutionResults produceStateFulScannedExecutionResults(@Scanned StatefulKnowledgeSession ksession) {
+      ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
+      Pipeline pip = getPipelineStateful(ksession);
+      Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
+      while(iter.hasNext())
+      {
+         FactProvider factProvider = iter.next();
+         if(factProvider.getBatchXml() != null) {
+            pip.insert(factProvider.getBatchXml(), resultsHandler);
+         }
+      }
+      
+      return (ExecutionResults) BatchExecutionHelper.newXStreamMarshaller().fromXML((String) resultsHandler.getObject());
+   
+   }
+   
+   private Pipeline getPipelineStateful(StatefulKnowledgeSession ksession)
+   {
+      Action executeResultHandler = PipelineFactory.newExecuteResultHandler();
+
+      Action assignResult = PipelineFactory.newAssignObjectAsResult();
+      assignResult.setReceiver(executeResultHandler);
+
+      Transformer outTransformer = PipelineFactory.newXStreamToXmlTransformer(BatchExecutionHelper.newXStreamMarshaller());
+      outTransformer.setReceiver(assignResult);
+
+      KnowledgeRuntimeCommand batchExecution = PipelineFactory.newCommandExecutor();
+      batchExecution.setReceiver(outTransformer);
+
+      Transformer inTransformer = PipelineFactory.newXStreamFromXmlTransformer(BatchExecutionHelper.newXStreamMarshaller());
+      inTransformer.setReceiver(batchExecution);
+
+      Pipeline pipeline = PipelineFactory.newStatefulKnowledgeSessionPipeline(ksession);
+      pipeline.setReceiver(inTransformer);
+
+      return pipeline;
+   }
+
    
    @SuppressWarnings("unchecked")
    private List getCommandList() {
@@ -103,6 +176,23 @@ public class ExecutionResultsProducer implements Serializable
       }
       return commandList;
    }
+   
+   public static class ResultHandlerImpl implements ResultHandler
+   {
+      Object object;
+
+      public void handleResult(Object object)
+      {
+         this.object = object;
+      }
+
+      public Object getObject()
+      {
+         return this.object;
+      }
+
+   }
+
    
 
 }

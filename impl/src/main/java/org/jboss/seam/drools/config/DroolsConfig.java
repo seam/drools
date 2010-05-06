@@ -41,7 +41,8 @@ import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.jboss.seam.drools.utils.ConfigUtils;
-import org.jboss.weld.extensions.resources.ResourceProvider;
+import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

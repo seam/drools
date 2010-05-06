@@ -18,11 +18,12 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.interceptor;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -34,6 +35,7 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
 import org.drools.runtime.StatefulKnowledgeSession;
+import org.drools.runtime.rule.WorkingMemoryEntryPoint;
 import org.jboss.seam.drools.annotations.InsertFact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,52 +46,77 @@ public class InsertFactInterceptor
 {
    @Inject
    BeanManager manager;
-   
-   @Inject @Any Instance<StatefulKnowledgeSession> ksessionSource;
-   
+
+   @Inject
+   @Any
+   Instance<StatefulKnowledgeSession> ksessionSource;
+
    private static final Logger log = LoggerFactory.getLogger(InsertFactInterceptor.class);
 
-   
    @AroundInvoke
    public Object insertFact(InvocationContext ctx) throws Exception
    {
       boolean fire = false;
       boolean untilHalt = false;
       String entryPointName = null;
-      
+      boolean allEntryPoints = false;
+
       Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
       List<Annotation> annotationTypeList = new ArrayList<Annotation>();
-      
-      for(Annotation nextAnnotation : methodAnnotations) {
-         if(manager.isQualifier(nextAnnotation.annotationType())) {
+
+      for (Annotation nextAnnotation : methodAnnotations)
+      {
+         if (manager.isQualifier(nextAnnotation.annotationType()))
+         {
             annotationTypeList.add(nextAnnotation);
          }
-         if(manager.isInterceptorBinding(nextAnnotation.annotationType())) {
-            if(nextAnnotation instanceof InsertFact) {
+         if (manager.isInterceptorBinding(nextAnnotation.annotationType()))
+         {
+            if (nextAnnotation instanceof InsertFact)
+            {
                fire = ((InsertFact) nextAnnotation).fire();
                untilHalt = ((InsertFact) nextAnnotation).untilHalt();
                entryPointName = ((InsertFact) nextAnnotation).entrypoint();
+               allEntryPoints = ((InsertFact) nextAnnotation).allEntryPoints();
             }
          }
       }
-      
-      StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[])annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
-      if(ksession != null) {
+
+      StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
+      if (ksession != null)
+      {
          Object retObj = ctx.proceed();
-         if(entryPointName != null && entryPointName.length() > 0 ) {
+         if (entryPointName != null && entryPointName.length() > 0)
+         {
             ksession.getWorkingMemoryEntryPoint(entryPointName).insert(retObj);
-         } else {
+         }
+         else if (allEntryPoints)
+         {
+            Iterator<? extends WorkingMemoryEntryPoint> iter =  ksession.getWorkingMemoryEntryPoints().iterator();
+            while(iter.hasNext()) {
+               WorkingMemoryEntryPoint ep = iter.next();
+               ep.insert(retObj);
+            }
+         }
+         else
+         {
             ksession.insert(retObj);
          }
-         if(fire) {
-            if(untilHalt) {
-               
-            } else {
+         if (fire)
+         {
+            if (untilHalt)
+            {
+               ksession.fireUntilHalt();
+            }
+            else
+            {
                ksession.fireAllRules();
             }
          }
          return retObj;
-      } else {  
+      }
+      else
+      {
          log.info("Could not obtain StatefulKnowledgeSession.");
          return ctx.proceed();
       }

@@ -79,6 +79,16 @@ public class QueryFactProvider implements FactProvider
    {
       
    }
+
+   public String getBatchXml()
+   {
+      return null;
+   }
+
+   public void setBatchXml(String batchXml)
+   {
+      
+   }
    
    
    

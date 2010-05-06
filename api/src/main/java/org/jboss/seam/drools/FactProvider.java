@@ -41,4 +41,8 @@ public interface FactProvider {
 	public List<String> getQueries();
 	
 	public void setQueries(List<String> queries);
+	
+	public String getBatchXml();
+	
+	public void setBatchXml(String batchXml);
 }

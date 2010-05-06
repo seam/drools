@@ -26,7 +26,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.jboss.weld.extensions.resources.ResourceProvider;
+import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
+
 
 /**
  * 

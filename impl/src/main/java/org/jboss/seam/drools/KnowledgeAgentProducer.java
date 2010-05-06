@@ -38,7 +38,7 @@ import org.drools.io.ResourceFactory;
 import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.qualifiers.Scanned;
-import org.jboss.weld.extensions.resources.ResourceProvider;
+import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>seam-parent</artifactId>
-		<groupId>org.jboss.seam</groupId>
-		<version>3.0.0-SNAPSHOT</version>
+		<groupId>org.jboss.weld</groupId>
+		<artifactId>weld-parent</artifactId>
+		<version>9</version>
 	</parent>
 
 	<groupId>org.jboss.seam.drools</groupId>
@@ -104,6 +104,11 @@
 			<dependency>
 				<groupId>org.drools</groupId>
 				<artifactId>drools-workitems</artifactId>
+				<version>5.1.0.M1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.drools</groupId>
+				<artifactId>drools-transformer-xstream</artifactId>
 				<version>5.1.0.M1</version>
 			</dependency>
 			<dependency>

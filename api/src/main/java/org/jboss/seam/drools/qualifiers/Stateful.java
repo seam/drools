@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright ${year}, Red Hat, Inc., and individual contributors
+ * Copyright 2010, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,40 +18,31 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
-package org.jboss.seam.drools.annotations;
+ */ 
+package org.jboss.seam.drools.qualifiers;
 
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
+import javax.inject.Qualifier;
 
 /**
- * Interceptor binding for inserting facts into the KnowledgeSession.
  * 
  * @author Tihomir Surdilovic
  */
-@InterceptorBinding
-@Target( { TYPE, METHOD })
+@Qualifier
+@Target( { TYPE, METHOD, FIELD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
-public @interface InsertFact
-{
-   @Nonbinding
-   boolean fire() default false;
+@Inherited
+public @interface Stateful {
 
-   @Nonbinding
-   boolean untilHalt() default false;
-
-   @Nonbinding
-   String entrypoint() default "";
-   
-   @Nonbinding
-   boolean allEntryPoints() default false;
 }

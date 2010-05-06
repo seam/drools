@@ -65,7 +65,7 @@ public class StartProcessInterceptor
          }
          if(manager.isInterceptorBinding(nextAnnotation.annotationType())) {
             if(nextAnnotation instanceof StartProcess) {
-               processName = ((StartProcess) nextAnnotation).name();
+               processName = ((StartProcess) nextAnnotation).processName();
                fire = ((StartProcess) nextAnnotation).fire();
                untilHalt = ((StartProcess) nextAnnotation).untilHalt();
             }

@@ -216,7 +216,7 @@
 
 		<d:ExecutionResultsProducer>
 			<s:specializes />
-			<d:produceExecutionResults>
+			<d:produceStatelessExecutionResults>
 				<s:ApplyQualifiers />
 				<s:parameters>
 					<drools:StatelessKnowledgeSession>
@@ -224,8 +224,8 @@
 						<s:ApplyQualifiers />
 					</drools:StatelessKnowledgeSession>
 				</s:parameters>
-			</d:produceExecutionResults>
-			<d:produceScannedExecutionResults>
+			</d:produceStatelessExecutionResults>
+			<d:produceStatelessScannedExecutionResults>
 				<s:ApplyQualifiers />
 				<s:parameters>
 					<drools:StatelessKnowledgeSession>
@@ -233,7 +233,25 @@
 						<s:ApplyQualifiers />
 					</drools:StatelessKnowledgeSession>
 				</s:parameters>
-			</d:produceScannedExecutionResults>
+			</d:produceStatelessScannedExecutionResults>			
+			<d:produceStateFulExecutionResults>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:produceStateFulExecutionResults>
+			<d:produceStateFulScannedExecutionResults>
+				<s:ApplyQualifiers />
+				<s:parameters>
+					<drools:StatefulKnowledgeSession>
+						<s:Inject />
+						<s:ApplyQualifiers />
+					</drools:StatefulKnowledgeSession>
+				</s:parameters>
+			</d:produceStateFulScannedExecutionResults>
 		</d:ExecutionResultsProducer>
 
 		<d:QueryResultsProducer>
