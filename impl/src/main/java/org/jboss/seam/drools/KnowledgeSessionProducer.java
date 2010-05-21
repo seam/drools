@@ -79,7 +79,7 @@ public class KnowledgeSessionProducer implements Serializable
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
-
+      
       return ksession;
    }
 

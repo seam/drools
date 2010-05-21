@@ -23,8 +23,6 @@ package org.jboss.seam.drools.config;
 
 import java.util.regex.Pattern;
 
-import org.drools.io.Resource;
-
 /**
  * 
  * @author Tihomir Surdilovic

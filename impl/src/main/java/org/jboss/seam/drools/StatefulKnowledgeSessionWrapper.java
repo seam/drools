@@ -21,6 +21,8 @@
  */
 package org.jboss.seam.drools;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -33,6 +35,10 @@ import org.drools.command.Command;
 import org.drools.event.process.ProcessEventListener;
 import org.drools.event.rule.AgendaEventListener;
 import org.drools.event.rule.WorkingMemoryEventListener;
+import org.drools.marshalling.Marshaller;
+import org.drools.marshalling.MarshallerFactory;
+import org.drools.marshalling.ObjectMarshallingStrategy;
+import org.drools.marshalling.ObjectMarshallingStrategyAcceptor;
 import org.drools.runtime.Environment;
 import org.drools.runtime.ExecutionResults;
 import org.drools.runtime.ExitPoint;
@@ -52,7 +58,7 @@ import org.drools.time.SessionClock;
  * 
  * @author Tihomir Surdilovic
  */
-public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession,  Externalizable
+public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession, Externalizable
 {
    private StatefulKnowledgeSession ksession;
 
@@ -88,14 +94,27 @@ public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession
 
    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
    {
-      // TODO Auto-generated method stub
+      byte[] bytes = new byte[in.available()];
+      in.read(bytes);
+      ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
 
+      KnowledgeBase kbase = (KnowledgeBase) in.readObject();
+      Marshaller marshaller = createSerializableMarshaller( kbase );
+      ksession = marshaller.unmarshall(bais);
+      bais.close();
    }
 
    public void writeExternal(ObjectOutput out) throws IOException
    {
-      // TODO Auto-generated method stub
-
+      Marshaller marshaller = createSerializableMarshaller( ksession.getKnowledgeBase() );
+      
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      marshaller.marshall( bos, ksession );
+      final byte[] b = bos.toByteArray();
+      bos.close();
+      
+      out.write(b);
+      out.writeObject(ksession.getKnowledgeBase());
    }
 
    public FactHandle getFactHandle(Object object)
@@ -226,7 +245,7 @@ public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession
    public <T extends SessionClock> T getSessionClock()
    {
       // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6302954
-      return ksession.<T>getSessionClock();
+      return ksession.<T> getSessionClock();
    }
 
    public void registerExitPoint(String name, ExitPoint exitPoint)
@@ -323,6 +342,14 @@ public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession
    public void halt()
    {
       ksession.halt();
+   }
+
+   private Marshaller createSerializableMarshaller(KnowledgeBase knowledgeBase)
+   {
+      ObjectMarshallingStrategyAcceptor acceptor = MarshallerFactory.newClassFilterAcceptor(new String[] { "*.*" });
+      ObjectMarshallingStrategy strategy = MarshallerFactory.newSerializeMarshallingStrategy(acceptor);
+      Marshaller marshaller = MarshallerFactory.newMarshaller(knowledgeBase, new ObjectMarshallingStrategy[] { strategy });
+      return marshaller;
    }
 
 }
