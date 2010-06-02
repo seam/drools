@@ -13,7 +13,7 @@
    <packaging>pom</packaging>
    <version>3.0.0-SNAPSHOT</version>
    <name>Seam Drools Parent</name>
-   
+
    <prerequisites>
       <maven>3.0</maven>
    </prerequisites>
@@ -55,6 +55,21 @@
          </dependency>
       </dependencies>
    </dependencyManagement>
+
+   <profiles>
+      <profile>
+         <id>distribution</id>
+         <activation>
+            <property>
+               <name>dist</name>
+            </property>
+         </activation>
+         <modules>
+            <module>dist</module>
+            <module>docs</module>
+         </modules>
+      </profile>
+   </profiles>
 
    <scm>
       <connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/drools/trunk</connection>
