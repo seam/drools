@@ -46,6 +46,7 @@
 
    <dependencyManagement>
       <dependencies>
+
          <dependency>
             <groupId>org.jboss.seam</groupId>
             <artifactId>seam</artifactId>
@@ -53,6 +54,20 @@
             <scope>import</scope>
             <type>pom</type>
          </dependency>
+
+         <!-- Override dependencyManagement from org.jboss.seam:seam -->
+         <dependency>
+            <groupId>org.jboss.seam.drools</groupId>
+            <artifactId>seam-drools-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.seam.drools</groupId>
+            <artifactId>seam-drools-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
       </dependencies>
    </dependencyManagement>
 

@@ -89,9 +89,9 @@
       <dependency>
          <artifactId>seam-drools-api</artifactId>
          <groupId>org.jboss.seam.drools</groupId>
-         <version>${project.version}</version>
          <scope>compile</scope>
       </dependency>
+      
    </dependencies>
 
 </project>
