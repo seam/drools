@@ -55,7 +55,7 @@ public class SeamDelegate implements Globals
       {
          Bean<?> bean = beans.iterator().next();
          CreationalContext<?> context = manager.createCreationalContext(bean);
-         return manager.getReference(bean, Object.class, context);
+         return manager.getReference(bean, bean.getBeanClass(), context);
       }
       else
       {

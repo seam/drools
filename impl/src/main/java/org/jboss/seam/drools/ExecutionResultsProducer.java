@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -73,6 +74,7 @@ public class ExecutionResultsProducer implements Serializable
    @SuppressWarnings("unchecked")
    @Produces
    @Stateless
+   @Default
    @RequestScoped
    public ExecutionResults produceStatelessExecutionResults(StatelessKnowledgeSession ksession) {
       return ksession.execute(CommandFactory.newBatchExecution(getCommandList()));

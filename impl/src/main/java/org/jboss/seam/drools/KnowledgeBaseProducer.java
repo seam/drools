@@ -28,6 +28,7 @@ import java.io.StringReader;
 import java.util.Iterator;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -70,6 +71,7 @@ public class KnowledgeBaseProducer implements Serializable
    DroolsExtension droolsExtension;
 
    @Produces
+   @Default
    @ApplicationScoped
    public KnowledgeBase produceKnowledgeBase(DroolsConfig config) throws Exception
    {

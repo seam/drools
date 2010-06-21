@@ -27,6 +27,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
 
 import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
@@ -60,8 +61,15 @@ public class DelegateTest
       return archive;
    }
    
+   
+   @Inject
+   DelegateBean delegateBean;
+   
+   @Inject
+   @Default @DefaultConfig StatefulKnowledgeSession ksession;
+   
    @Test
-   public void testDelegate(DelegateBean delegateBean, @Default @DefaultConfig StatefulKnowledgeSession ksession) {
+   public void testDelegate() {
       assertNotNull(ksession);
       assertNotNull(delegateBean);
       ksession.fireAllRules();

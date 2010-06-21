@@ -64,27 +64,6 @@
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-extensions</artifactId>
 		</dependency>
-		<!-- Test Dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.xml</groupId>
-			<artifactId>seam-xml-config</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-weld-embedded</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>
