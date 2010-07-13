@@ -43,6 +43,6 @@ import javax.inject.Qualifier;
 @Documented
 @Retention(RUNTIME)
 @Inherited
-public @interface CEPRealitimeClockConfig {
+public @interface CEPRealtimeClockConfig {
 
 }

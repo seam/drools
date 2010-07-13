@@ -21,13 +21,13 @@
  */ 
 package org.jboss.seam.drools.config;
 
-import org.jboss.seam.drools.qualifiers.config.CEPRealitimeClockConfig;
+import org.jboss.seam.drools.qualifiers.config.CEPRealtimeClockConfig;
 
 /**
  * 
  * @author Tihomir Surdilovic
  */
-@CEPRealitimeClockConfig
+@CEPRealtimeClockConfig
 public class CEPRealtimeClockRuleResources extends RuleResources
 {
 
