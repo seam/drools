@@ -26,8 +26,9 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 	<d:DefaultRuleResources>
   		<s:modifies/>
-   		<d:resources>
-   			<s:value>classpath;kbasetest.drl;DRL;forkbasetest</s:value>
-   		</d:resources>
+  		<s:Exact>org.jboss.seam.drools.config.DefaultRuleResources</s:Exact>
+   	<d:resources>
+   		<s:value>classpath;kbasetest.drl;DRL;forkbasetest</s:value>
+   	</d:resources>
 	</d:DefaultRuleResources>
 </beans>       

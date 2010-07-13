@@ -26,6 +26,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 	<d:DefaultRuleResources>
   		<s:modifies/>
+  		<s:Exact>org.jboss.seam.drools.config.DefaultRuleResources</s:Exact>
    		<d:resources>
    			<s:value>classpath;flowtest.drl;DRL</s:value>
    			<s:value>classpath;flowtest.rf;DRF</s:value>
