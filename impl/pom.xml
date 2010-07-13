@@ -76,6 +76,7 @@
 			<groupId>org.jboss.seam.xml</groupId>
 			<artifactId>seam-xml-config</artifactId>
 			<scope>test</scope>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<!-- Test Dependencies -->
 		<dependency>
