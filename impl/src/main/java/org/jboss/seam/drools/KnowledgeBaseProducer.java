@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools;
 
 import java.io.InputStream;
@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
@@ -35,11 +36,14 @@ import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
+import org.drools.base.evaluators.EvaluatorDefinition;
 import org.drools.builder.KnowledgeBuilder;
+import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderError;
 import org.drools.builder.KnowledgeBuilderErrors;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
+import org.drools.builder.conf.EvaluatorOption;
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.io.ResourceFactory;
 import org.drools.template.ObjectDataCompiler;
@@ -63,10 +67,10 @@ public class KnowledgeBaseProducer implements Serializable
 
    @Inject
    BeanManager manager;
-   
+
    @Inject
    ResourceProvider resourceProvider;
-   
+
    @Inject
    DroolsExtension droolsExtension;
 
@@ -75,13 +79,15 @@ public class KnowledgeBaseProducer implements Serializable
    @ApplicationScoped
    public KnowledgeBase produceKnowledgeBase(DroolsConfig config) throws Exception
    {
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(config.getKnowledgeBuilderConfiguration());
+      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(addCustomEvaluators(config.getKnowledgeBuilderConfiguration()));
 
-      if(config.getRuleResources().getResources() == null || config.getRuleResources().getResources().length == 0) {
+      if (config.getRuleResources().getResources() == null || config.getRuleResources().getResources().length == 0)
+      {
          throw new IllegalStateException("No rule resources are specified.");
       }
-      
-      for(String resourceEntry : config.getRuleResources().getResources()) {
+
+      for (String resourceEntry : config.getRuleResources().getResources())
+      {
          addResource(kbuilder, resourceEntry);
       }
 
@@ -103,6 +109,17 @@ public class KnowledgeBaseProducer implements Serializable
       return kbase;
    }
 
+   private KnowledgeBuilderConfiguration addCustomEvaluators(KnowledgeBuilderConfiguration config)
+   {
+      Iterator<Entry<String, EvaluatorDefinition>> allCustomEvaluators = droolsExtension.getEvaluatorDefinitions().entrySet().iterator();
+      while (allCustomEvaluators.hasNext())
+      {
+         Entry<String, EvaluatorDefinition> nextEvalInfo = allCustomEvaluators.next();
+         config.setOption(EvaluatorOption.get(nextEvalInfo.getKey(), nextEvalInfo.getValue()));
+      }
+      return config;
+   }
+
    private void addEventListeners(KnowledgeBase kbase)
    {
       Iterator<KnowledgeBaseEventListener> allKBaseEventListeners = droolsExtension.getKbaseEventListenerSet().iterator();
@@ -117,7 +134,7 @@ public class KnowledgeBaseProducer implements Serializable
    private void addResource(KnowledgeBuilder kbuilder, String entry) throws Exception
    {
       String[] entryParts = RuleResources.DIVIDER.split(entry.trim());
-      
+
       if (entryParts.length >= 3)
       {
          ResourceType resourceType = ResourceType.getResourceType(entryParts[RuleResources.RESOURCE_TYPE]);

@@ -20,7 +20,7 @@
 	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config:org.jboss.seam.drools.qualifiers.config"
 	xmlns:drools="urn:java:org.drools:org.drools.runtime">
 
-	<s:genericBean class="org.jboss.seam.drools.config.DroolsConfig">
+	<!--  <s:genericBean class="org.jboss.seam.drools.config.DroolsConfig">
 		<d:KnowledgeBaseProducer>
 			<s:modifies />
 			<d:produceKnowledgeBase>
@@ -275,7 +275,7 @@
 				</s:parameters>
 			</d:produceScannedQueryResults>
 		</d:QueryResultsProducer>
-	</s:genericBean>
+	</s:genericBean> -->
 
 	<d:DroolsConfig>
 		<s:modifies />

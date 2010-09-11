@@ -41,6 +41,7 @@ import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.jboss.seam.drools.utils.ConfigUtils;
+import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 
 import org.slf4j.Logger;
@@ -51,6 +52,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
+@GenericConfiguration
 public class DroolsConfig
 {
    private static final Logger log = LoggerFactory.getLogger(DroolsConfig.class);

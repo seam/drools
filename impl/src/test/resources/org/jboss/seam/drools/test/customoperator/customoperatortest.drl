@@ -1,0 +1,38 @@
+package org.jboss.seam.drools.test.customoperator
+
+import org.jboss.seam.drools.test.customoperator.MessageBean;
+/**
+rule teststartswith
+when
+	$m : MessageBean( routingValue str[startsWith] "R1" )
+then
+	System.out.println(" Message starts with R1 ");
+end
+
+rule testsendswith
+when
+	$m : MessageBean( routingValue str[endsWith] "R2" )
+then
+	System.out.println(" Message ends with R2 ");
+end
+
+rule testlength
+when
+	$m : MessageBean( routingValue str[length] 17 )
+then
+	System.out.println(" Message length is 17 ");
+end
+
+rule testnotstartswith
+when
+	$m : MessageBean( routingValue not str[startsWith] "R2" )
+then
+	System.out.println(" Message does not start with R2 ");
+end
+*/
+rule testmultiple
+when
+	$m : MessageBean( routingValue str[startsWith] "R1" && str[endsWith] "R2" && str[length] 17)
+then
+	$m.setResult("Message starts with R1, ends with R2 and it's length is 17");
+end

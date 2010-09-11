@@ -36,10 +36,12 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.util.AnnotationLiteral;
 
+import org.drools.base.evaluators.EvaluatorDefinition;
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.runtime.process.WorkItemHandler;
 import org.jboss.seam.drools.FactProvider;
 import org.jboss.seam.drools.TemplateDataProvider;
+import org.jboss.seam.drools.qualifiers.EvaluatorDef;
 import org.jboss.seam.drools.qualifiers.KBaseEventListener;
 import org.jboss.seam.drools.qualifiers.KSessionEventListener;
 import org.jboss.seam.drools.qualifiers.TemplateData;
@@ -55,6 +57,7 @@ public class DroolsExtension implements Extension
    private Map<String, WorkItemHandler> workItemHandlers = new HashMap<String, WorkItemHandler>();
    private Map<String, TemplateDataProvider> templateDataProviders = new HashMap<String, TemplateDataProvider>();
    private Set<FactProvider> factProviderSet = new HashSet<FactProvider>();
+   private Map<String, EvaluatorDefinition> evaluatorDefinitions = new HashMap<String, EvaluatorDefinition>();
    
    @SuppressWarnings("serial")
    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
@@ -105,6 +108,28 @@ public class DroolsExtension implements Extension
          }
       }
       log.info("End creating [" + (allWorkItemHandlers == null ? 0 : allWorkItemHandlers.size())+ "] workitem handlers");      
+      
+      //EvaluatorDefinitions
+      log.info("Start creating evaluator definitions");
+      Set<Bean<?>> allEvaluatorDefinitions = bm.getBeans(EvaluatorDefinition.class, new AnnotationLiteral<Any>(){});
+      if(allEvaluatorDefinitions != null) {
+          Iterator<Bean<?>> iter = allEvaluatorDefinitions.iterator();
+          while (iter.hasNext())
+          {
+             Bean<?> evaluator = iter.next();
+             EvaluatorDef evaluatorAnnotation = evaluator.getBeanClass().getAnnotation(EvaluatorDef.class);
+             String evaluatorName = evaluatorAnnotation.value();
+             if(evaluatorName.length() > 0) {
+                CreationalContext<?> context = bm.createCreationalContext(evaluator);
+                EvaluatorDefinition evaluatorInstance = (EvaluatorDefinition) bm.getReference(evaluator, EvaluatorDefinition.class, context);
+                evaluatorDefinitions.put(evaluatorName, evaluatorInstance);
+             } else {
+                throw new IllegalStateException("Evaluator name cannot be empty in class: " + evaluator.getBeanClass().getName());
+             }
+          }
+       }
+      log.info("End creating [" + ( allEvaluatorDefinitions== null ? 0 : allEvaluatorDefinitions.size())+ "] evaluator definitions");      
+      
       
       //Template Data Providers
       log.info("Start creating template providers");
@@ -166,5 +191,8 @@ public class DroolsExtension implements Extension
    {
       return templateDataProviders;
    }
-   
+
+   public Map<String, EvaluatorDefinition> getEvaluatorDefinitions() {
+	   return evaluatorDefinitions;
+   }  
 }
