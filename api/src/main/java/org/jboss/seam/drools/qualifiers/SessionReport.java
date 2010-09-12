@@ -44,7 +44,7 @@ import javax.inject.Qualifier;
 @Documented
 @Retention(RUNTIME)
 @Inherited
-public @interface Query
+public @interface SessionReport
 {
    @Nonbinding
    String value() default "";

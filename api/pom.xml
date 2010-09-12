@@ -36,30 +36,37 @@
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-core</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-compiler</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-api</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-templates</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-decisiontables</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
 			<artifactId>drools-workitems</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
-			<artifactId>drools-transformer-xstream</artifactId>
+			<artifactId>drools-pipeline</artifactId>
+			<version>${drools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld</groupId>

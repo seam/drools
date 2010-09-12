@@ -1,0 +1,19 @@
+package org.jboss.seam.drools.test.channel
+
+import org.jboss.seam.drools.test.channel.Person; 
+
+rule eligiblePerson
+	when
+		$p : Person( age <= 18 )
+	then
+		$p.setEligible(true);
+		channels["testChannel"].send( $p );
+end
+
+rule notElibiglePerson
+	when
+		$p : Person( age > 18 )
+	then
+		$p.setEligible(false);
+	    channels["testChannel"].send( $p );
+end

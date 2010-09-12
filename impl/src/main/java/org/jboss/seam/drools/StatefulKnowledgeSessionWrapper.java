@@ -39,6 +39,8 @@ import org.drools.marshalling.Marshaller;
 import org.drools.marshalling.MarshallerFactory;
 import org.drools.marshalling.ObjectMarshallingStrategy;
 import org.drools.marshalling.ObjectMarshallingStrategyAcceptor;
+import org.drools.runtime.Calendars;
+import org.drools.runtime.Channel;
 import org.drools.runtime.Environment;
 import org.drools.runtime.ExecutionResults;
 import org.drools.runtime.ExitPoint;
@@ -50,7 +52,9 @@ import org.drools.runtime.process.WorkItemManager;
 import org.drools.runtime.rule.Agenda;
 import org.drools.runtime.rule.AgendaFilter;
 import org.drools.runtime.rule.FactHandle;
+import org.drools.runtime.rule.LiveQuery;
 import org.drools.runtime.rule.QueryResults;
+import org.drools.runtime.rule.ViewChangedEventListener;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
 import org.drools.time.SessionClock;
 
@@ -281,7 +285,7 @@ public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession
    @SuppressWarnings("unchecked")
    public ExecutionResults execute(Command command)
    {
-      return ksession.execute(command);
+      return (ExecutionResults) ksession.execute(command);
    }
 
    public void addEventListener(AgendaEventListener listener)
@@ -332,6 +336,49 @@ public class StatefulKnowledgeSessionWrapper implements StatefulKnowledgeSession
    public WorkingMemoryEntryPoint getWorkingMemoryEntryPoint(String name)
    {
       return ksession.getWorkingMemoryEntryPoint(name);
+   }
+   
+   
+
+   public Calendars getCalendars()
+   {
+      return ksession.getCalendars();
+   }
+
+   public Map<String, Channel> getChannels()
+   {
+      return ksession.getChannels();
+   }
+
+   public void registerChannel(String arg0, Channel arg1)
+   {
+      ksession.registerChannel(arg0, arg1);
+      
+   }
+
+   public void unregisterChannel(String arg0)
+   {
+      ksession.unregisterChannel(arg0);
+   }
+
+   public void signalEvent(String arg0, Object arg1, long arg2)
+   {
+      ksession.signalEvent(arg0, arg1, arg2);
+   }
+
+   public LiveQuery openLiveQuery(String arg0, Object[] arg1, ViewChangedEventListener arg2)
+   {
+      return ksession.openLiveQuery(arg0, arg1, arg2);
+   }
+
+   public String getEntryPointId()
+   {
+      return ksession.getEntryPointId();
+   }
+
+   public long getFactCount()
+   {
+      return ksession.getFactCount();
    }
 
    public Collection<? extends WorkingMemoryEntryPoint> getWorkingMemoryEntryPoints()

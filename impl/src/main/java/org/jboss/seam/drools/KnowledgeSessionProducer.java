@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -67,7 +66,7 @@ public class KnowledgeSessionProducer implements Serializable
    
    @Inject 
    SeamDelegate delegate;
-
+   
    @Produces
    @RequestScoped
    public StatefulKnowledgeSession produceStatefulSession(KnowledgeBase kbase,DroolsConfig config) throws Exception
@@ -79,6 +78,7 @@ public class KnowledgeSessionProducer implements Serializable
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
+      addChannels(ksession);
       
       return ksession;
    }
@@ -95,6 +95,7 @@ public class KnowledgeSessionProducer implements Serializable
       addEventListeners(ksession);
       addWorkItemHandlers(ksession);
       addFactProviders(ksession);
+      addChannels(ksession);
 
       return ksession;
    }
@@ -176,6 +177,15 @@ public class KnowledgeSessionProducer implements Serializable
       {
          String name = iter.next();
          ksession.getWorkItemManager().registerWorkItemHandler(name, droolsExtension.getWorkItemHandlers().get(name));
+      }
+   }
+   
+   private void addChannels(StatefulKnowledgeSession ksession) {
+      Iterator<String> iter = droolsExtension.getChannels().keySet().iterator();
+      while(iter.hasNext())
+      {
+         String channelName = iter.next();
+         ksession.registerChannel(channelName, droolsExtension.getChannels().get(channelName));
       }
    }
    

@@ -36,6 +36,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.util.AnnotationLiteral;
 
+import org.drools.runtime.Channel;
 import org.drools.base.evaluators.EvaluatorDefinition;
 import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.runtime.process.WorkItemHandler;
@@ -58,6 +59,7 @@ public class DroolsExtension implements Extension
    private Map<String, TemplateDataProvider> templateDataProviders = new HashMap<String, TemplateDataProvider>();
    private Set<FactProvider> factProviderSet = new HashSet<FactProvider>();
    private Map<String, EvaluatorDefinition> evaluatorDefinitions = new HashMap<String, EvaluatorDefinition>();
+   private Map<String, Channel> channels = new HashMap<String, Channel>();
    
    @SuppressWarnings("serial")
    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
@@ -130,6 +132,27 @@ public class DroolsExtension implements Extension
        }
       log.info("End creating [" + ( allEvaluatorDefinitions== null ? 0 : allEvaluatorDefinitions.size())+ "] evaluator definitions");      
       
+      // Channels
+      log.info("Start creating channel definitions");
+      Set<Bean<?>> allChannels = bm.getBeans(org.drools.runtime.Channel.class, new AnnotationLiteral<Any>(){});
+      if(allChannels != null) {
+          Iterator<Bean<?>> iter = allChannels.iterator();
+          while (iter.hasNext())
+          {
+             Bean<?> channel = iter.next();
+             org.jboss.seam.drools.qualifiers.Channel evaluatorAnnotation = channel.getBeanClass().getAnnotation(org.jboss.seam.drools.qualifiers.Channel.class);
+             String channelName = evaluatorAnnotation.value();
+             if(channelName.length() > 0) {
+                CreationalContext<?> context = bm.createCreationalContext(channel);
+                org.drools.runtime.Channel channelInstance = (org.drools.runtime.Channel) bm.getReference(channel, org.drools.runtime.Channel.class, context);
+                channels.put(channelName, channelInstance);
+             } else {
+                throw new IllegalStateException("Channel name cannot be empty in class: " + channel.getBeanClass().getName());
+             }
+          }
+       }
+      log.info("End creating [" + ( allChannels== null ? 0 : allChannels.size())+ "] channel definitions");      
+      
       
       //Template Data Providers
       log.info("Start creating template providers");
@@ -194,5 +217,15 @@ public class DroolsExtension implements Extension
 
    public Map<String, EvaluatorDefinition> getEvaluatorDefinitions() {
 	   return evaluatorDefinitions;
+   }
+
+   public static Logger getLog()
+   {
+      return log;
+   }
+
+   public Map<String, Channel> getChannels()
+   {
+      return channels;
    }  
 }

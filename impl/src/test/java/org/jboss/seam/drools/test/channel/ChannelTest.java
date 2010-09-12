@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.seam.drools.test.customoperator;
+package org.jboss.seam.drools.test.channel;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -41,42 +41,77 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class CustomOperatorTest
+public class ChannelTest
 {
    @Deployment
    public static JavaArchive createTestArchive()
    {
-      String pkgPath = CustomOperatorTest.class.getPackage().getName().replaceAll("\\.", "/");
+      String pkgPath = ChannelTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
-      .addPackages(true, new DroolsModuleFilter("customoperator"), KnowledgeBaseProducer.class.getPackage())
+      .addPackages(true, new DroolsModuleFilter("channel"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(MessageBean.class)
-      .addClass(StrEvaluator.class)
-      .addClass(StrEvaluatorDefinition.class)
-      .addResource(pkgPath + "/customoperatortest.drl", ArchivePaths.create("customoperatortest.drl"))
+      .addClass(ChannelBean.class)
+      .addClass(Person.class)
+      .addResource(pkgPath + "/channeltest.drl", ArchivePaths.create("channeltest.drl"))
       // .addResource(pkgPath + "/kbuilderconfig.properties",
       // ArchivePaths.create("kbuilderconfig.properties"))
       // .addResource(pkgPath + "/kbaseconfig.properties",
       // ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/CustomOperatorTest-beans.xml", ArchivePaths.create("beans.xml"));
+      .addManifestResource(pkgPath + "/ChannelTest-beans.xml", ArchivePaths.create("beans.xml"));
       // System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
-
+   
    @Inject
    @Default
    @DefaultConfig
    StatefulKnowledgeSession ksession;
-
+   
+   @Inject ChannelBean channelBean;
+   
    @Test
-   public void testCustomOperator()
+   public void testChannel()
    {
       assertNotNull(ksession);
-      MessageBean mb = new MessageBean();
-      mb.setRoutingValue("R1:messageBody:R2");
-      org.drools.runtime.rule.FactHandle mbHandle = ksession.insert(mb);
+      assertNotNull(channelBean);
+      
+      Person p1 = new Person();
+      p1.setAge(12);
+      
+      Person p2 = new Person();
+      p2.setAge(20);
+      
+      Person p3 = new Person();
+      p3.setAge(4);
+      
+      Person p4 = new Person();
+      p4.setAge(19);
+      
+      Person p5 = new Person();
+      p5.setAge(33);
+      
+      Person p6 = new Person();
+      p6.setAge(55);
+      
+      Person p7 = new Person();
+      p7.setAge(15);
+      
+      Person p8 = new Person();
+      p8.setAge(69);
+      
+      ksession.insert(p1);
+      ksession.insert(p2);
+      ksession.insert(p3);
+      ksession.insert(p4);
+      ksession.insert(p5);
+      ksession.insert(p6);
+      ksession.insert(p7);
+      ksession.insert(p8);
+      
       ksession.fireAllRules();
-      MessageBean mbAfterEval = (MessageBean) ksession.getObject(mbHandle);
-      assertTrue(mbAfterEval.getResult().equals("Message starts with R1, ends with R2 and it's length is 17"));
+      
+      assertTrue(channelBean.getEligiblesList().size() == 5);
+      assertTrue(channelBean.getNotEligiblesList().size() == 3);
+      
    }
 }
