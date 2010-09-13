@@ -21,6 +21,8 @@
  */ 
 package org.jboss.seam.drools;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
@@ -41,7 +43,7 @@ import org.jboss.seam.drools.qualifiers.SessionReport;
  * @author Tihomir Surdilovic
  */
 @SessionScoped
-public class SessionReportProducer
+public class SessionReportProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(SessionReportProducer.class);
    
