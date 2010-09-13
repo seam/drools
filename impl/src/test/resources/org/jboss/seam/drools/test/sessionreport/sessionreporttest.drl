@@ -1,0 +1,10 @@
+package org.jboss.seam.drools.test.sessionreport
+
+import org.jboss.seam.drools.test.sessionreport.Cheese;
+
+rule stilltonCheeses
+	when
+		$c : Cheese( type == "stillton" )
+	then
+		System.out.println($c.getPrice());
+end

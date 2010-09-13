@@ -47,5 +47,8 @@ import javax.inject.Qualifier;
 public @interface SessionReport
 {
    @Nonbinding
-   String value() default "";
+   String name() default "";
+   
+   @Nonbinding
+   String template() default "";
 }

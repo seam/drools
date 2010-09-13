@@ -22,9 +22,19 @@
 package org.jboss.seam.drools;
 
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.drools.core.util.debug.SessionInspector;
+import org.drools.core.util.debug.SessionReporter;
+import org.drools.core.util.debug.StatefulKnowledgeSessionInfo;
+import org.drools.runtime.StatefulKnowledgeSession;
+import org.jboss.seam.drools.qualifiers.Scanned;
+import org.jboss.seam.drools.qualifiers.SessionReport;
 
 /**
  * 
@@ -34,5 +44,36 @@ import org.slf4j.LoggerFactory;
 public class SessionReportProducer
 {
    private static final Logger log = LoggerFactory.getLogger(SessionReportProducer.class);
+   
+   @Produces
+   @Default
+   @SessionReport
+   public SessionReportWrapper produceSessionReport(StatefulKnowledgeSession ksession, InjectionPoint ip) {
+      return generate(ksession, ip.getAnnotated().getAnnotation(SessionReport.class).name(), ip.getAnnotated().getAnnotation(SessionReport.class).template());
+   }
+   
+   @Produces
+   @Scanned
+   @SessionReport
+   public SessionReportWrapper produceScannedSessionReport(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) {
+      return generate(ksession, ip.getAnnotated().getAnnotation(SessionReport.class).name(), ip.getAnnotated().getAnnotation(SessionReport.class).template());
+   }
+   
+   private SessionReportWrapper generate(StatefulKnowledgeSession ksession, String name, String template) {
+      if(name == null)
+      {
+         name = "simple";
+      }
+      SessionInspector inspector = new SessionInspector( ksession );
+      StatefulKnowledgeSessionInfo info = inspector.getSessionInfo();
+      if(template != null) 
+      {
+         SessionReporter.addNamedTemplate( name, getClass().getResourceAsStream( template ) );
+      }
+      
+      SessionReportWrapper sessionReportWrapper = new SessionReportWrapper();
+      sessionReportWrapper.setReport(SessionReporter.generateReport( name, info, null ));
+      return sessionReportWrapper;
+   }
    
 }
