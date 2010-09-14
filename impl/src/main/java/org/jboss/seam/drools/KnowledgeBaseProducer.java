@@ -78,7 +78,6 @@ public class KnowledgeBaseProducer implements Serializable
    BeanManager manager;
 
    @Inject
-   //@Exact(org.jboss.weld.extensions.resourceLoader.ResourceProvider.class)
    ResourceProvider resourceProvider;
 
    @Inject
