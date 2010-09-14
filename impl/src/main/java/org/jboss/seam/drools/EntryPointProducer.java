@@ -27,11 +27,15 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
+import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.qualifiers.EntryPoint;
 import org.jboss.seam.drools.qualifiers.Scanned;
+import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericProduct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,20 +44,30 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @SessionScoped
+@Generic(DroolsConfig.class)
 public class EntryPointProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
 
+   @Inject
+   @GenericProduct
+   StatefulKnowledgeSession statefullKsession;
+   
+   @Inject
+   @Scanned
+   @GenericProduct
+   StatefulKnowledgeSession statefulKnowledgeSession;
+
    @Produces
    @Default
    @EntryPoint
-   public WorkingMemoryEntryPoint produceEntryPoint(StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
+   public WorkingMemoryEntryPoint produceEntryPoint(InjectionPoint ip) throws Exception
    {
       String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
       if (entryPointName != null && entryPointName.length() > 0)
       {
          log.debug("EntryPoint Name requested: " + entryPointName);
-         WorkingMemoryEntryPoint entryPoint = ksession.getWorkingMemoryEntryPoint( entryPointName );
+         WorkingMemoryEntryPoint entryPoint = statefullKsession.getWorkingMemoryEntryPoint( entryPointName );
          return entryPoint;
       }
       else
@@ -65,13 +79,13 @@ public class EntryPointProducer implements Serializable
    @Produces
    @Scanned
    @EntryPoint
-   public WorkingMemoryEntryPoint produceScannedEntryPoint(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) throws Exception
+   public WorkingMemoryEntryPoint produceScannedEntryPoint(InjectionPoint ip) throws Exception
    {
       String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
       if (entryPointName != null && entryPointName.length() > 0)
       {
          log.debug("EntryPoint Name requested: " + entryPointName);
-         return ksession.getWorkingMemoryEntryPoint(entryPointName);
+         return statefulKnowledgeSession.getWorkingMemoryEntryPoint(entryPointName);
       }
       else
       {

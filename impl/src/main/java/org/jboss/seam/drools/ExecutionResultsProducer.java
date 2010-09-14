@@ -46,9 +46,12 @@ import org.drools.runtime.pipeline.PipelineFactory;
 import org.drools.runtime.pipeline.ResultHandler;
 import org.drools.runtime.pipeline.Transformer;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
+import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.Stateful;
 import org.jboss.seam.drools.qualifiers.Stateless;
+import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericProduct;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,26 +61,44 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @SessionScoped
+@Generic(DroolsConfig.class)
 public class ExecutionResultsProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(ExecutionResultsProducer.class);
 
    @Inject
    BeanManager manager;
-   
-   @Inject
-   ResourceProvider resourceProvider;
-   
+    
    @Inject
    DroolsExtension droolsExtension;
    
+   @Inject
+   @Default
+   @GenericProduct
+   StatelessKnowledgeSession statelessKsession;
+
+   @Inject
+   @Scanned
+   @GenericProduct
+   StatelessKnowledgeSession scannedStatelessKsession;
+
+   @Inject
+   @GenericProduct
+   StatefulKnowledgeSession statefullKsession;
+
+   @Inject
+   @Scanned
+   @GenericProduct
+   StatefulKnowledgeSession scannedStatefullKSession;
+
    @SuppressWarnings("unchecked")
    @Produces
    @Stateless
    @Default
    @RequestScoped
-   public ExecutionResults produceStatelessExecutionResults(StatelessKnowledgeSession ksession) {
-      return ksession.execute(CommandFactory.newBatchExecution(getCommandList()));
+   public ExecutionResults produceStatelessExecutionResults()
+   {
+      return statelessKsession.execute(CommandFactory.newBatchExecution(getCommandList()));
    }
    
    @SuppressWarnings("unchecked")
@@ -85,16 +106,18 @@ public class ExecutionResultsProducer implements Serializable
    @Stateless
    @Scanned
    @RequestScoped
-   public ExecutionResults produceStatelessScannedExecutionResults(@Scanned StatelessKnowledgeSession ksession) {
-      return ksession.execute(CommandFactory.newBatchExecution(getCommandList()));
+   public ExecutionResults produceStatelessScannedExecutionResults()
+   {
+      return scannedStatelessKsession.execute(CommandFactory.newBatchExecution(getCommandList()));
    }
    
    @Produces
    @Stateful
    @RequestScoped
-   public ExecutionResults produceStateFulExecutionResults(StatefulKnowledgeSession ksession) {
+   public ExecutionResults produceStateFulExecutionResults()
+   {
       ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
-      Pipeline pip = getPipelineStateful(ksession);
+      Pipeline pip = getPipelineStateful(statefullKsession);
       Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
       while(iter.hasNext())
       {
@@ -111,9 +134,10 @@ public class ExecutionResultsProducer implements Serializable
    @Stateful
    @Scanned
    @RequestScoped
-   public ExecutionResults produceStateFulScannedExecutionResults(@Scanned StatefulKnowledgeSession ksession) {
+   public ExecutionResults produceStateFulScannedExecutionResults()
+   {
       ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
-      Pipeline pip = getPipelineStateful(ksession);
+      Pipeline pip = getPipelineStateful(scannedStatefullKSession);
       Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
       while(iter.hasNext())
       {

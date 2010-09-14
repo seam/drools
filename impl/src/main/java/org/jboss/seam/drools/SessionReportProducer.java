@@ -27,6 +27,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,30 +36,43 @@ import org.drools.core.util.debug.SessionInspector;
 import org.drools.core.util.debug.SessionReporter;
 import org.drools.core.util.debug.StatefulKnowledgeSessionInfo;
 import org.drools.runtime.StatefulKnowledgeSession;
+import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.SessionReport;
+import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericProduct;
 
 /**
  * 
  * @author Tihomir Surdilovic
  */
 @SessionScoped
+@Generic(DroolsConfig.class)
 public class SessionReportProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(SessionReportProducer.class);
    
+   @Inject
+   @GenericProduct
+   StatefulKnowledgeSession statefullKsession;
+
+   @Inject
+   @Scanned
+   @GenericProduct
+   StatefulKnowledgeSession scannedStatefullKsession;
+   
    @Produces
    @Default
    @SessionReport
-   public SessionReportWrapper produceSessionReport(StatefulKnowledgeSession ksession, InjectionPoint ip) {
-      return generate(ksession, ip.getAnnotated().getAnnotation(SessionReport.class).name(), ip.getAnnotated().getAnnotation(SessionReport.class).template());
+   public SessionReportWrapper produceSessionReport(InjectionPoint ip) {
+      return generate(statefullKsession, ip.getAnnotated().getAnnotation(SessionReport.class).name(), ip.getAnnotated().getAnnotation(SessionReport.class).template());
    }
    
    @Produces
    @Scanned
    @SessionReport
-   public SessionReportWrapper produceScannedSessionReport(@Scanned StatefulKnowledgeSession ksession, InjectionPoint ip) {
-      return generate(ksession, ip.getAnnotated().getAnnotation(SessionReport.class).name(), ip.getAnnotated().getAnnotation(SessionReport.class).template());
+   public SessionReportWrapper produceScannedSessionReport(InjectionPoint ip) {
+      return generate(scannedStatefullKsession, ip.getAnnotated().getAnnotation(SessionReport.class).name(), ip.getAnnotated().getAnnotation(SessionReport.class).template());
    }
    
    private SessionReportWrapper generate(StatefulKnowledgeSession ksession, String name, String template) {

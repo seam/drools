@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.enterprise.inject.Default;
-import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
 import org.jboss.arquillian.api.Deployment;
@@ -35,9 +34,7 @@ import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,19 +47,20 @@ public class KBaseTest
       String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
       .addPackages(true, new DroolsModuleFilter("kbase"), KnowledgeBaseProducer.class.getPackage())
-      .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(KBaseTestRules.class)
+      .addClass(KBaseTestProducer.class)
       .addClass(MyKnowledgeBaseEventListener.class)
       .addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl"))
       .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
       .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"));
+      .addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"))
+      .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
       //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
 
    @Test
-   public void testKBase(@Default @DefaultConfig KnowledgeBase kbase)
+   public void testKBase(@DefaultConfig @Default KnowledgeBase kbase)
    {
       assertNotNull(kbase);
       assertTrue(kbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 3);

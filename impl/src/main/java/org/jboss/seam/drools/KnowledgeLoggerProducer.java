@@ -25,8 +25,7 @@ import java.io.Serializable;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 import org.drools.event.KnowledgeRuntimeEventManager;
 import org.drools.logger.KnowledgeRuntimeLogger;
@@ -34,7 +33,10 @@ import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
 import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.DroolsConfigUtil;
 import org.jboss.seam.drools.qualifiers.Scanned;
+import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericProduct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,84 +46,107 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @SessionScoped
+@Generic(DroolsConfig.class)
 public class KnowledgeLoggerProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeLoggerProducer.class);
 
-   @Produces
+   @Inject
+   DroolsConfig config;
+
+   @Inject
+   DroolsConfigUtil configUtils;
+
+   @Inject
+   @GenericProduct
+   StatefulKnowledgeSession statefullKsession;
+
+   @Inject
+   @Scanned
+   @GenericProduct
+   StatefulKnowledgeSession scannedStatefullKsession;
+
+   @Inject
+   @GenericProduct
+   StatelessKnowledgeSession statelessKsession;
+
+   @Inject
+   @Scanned
+   @GenericProduct
+   StatelessKnowledgeSession scannedStatelessKsession;
+
    @RequestScoped
-   public KnowledgeRuntimeLogger produceStatefulKnowledgeLogger(StatefulKnowledgeSession ksession, DroolsConfig config)
+   public KnowledgeRuntimeLogger produceStatefulKnowledgeLogger()
    {
-      return getLogger(ksession, config);
+      return getLogger(statefullKsession);
    }
 
-   @Produces
    @Scanned
    @RequestScoped
-   public KnowledgeRuntimeLogger produceScannedStatefulKnowledgeLogger(@Scanned StatefulKnowledgeSession ksession, DroolsConfig config)
+   public KnowledgeRuntimeLogger produceScannedStatefulKnowledgeLogger()
    {
-      return getLogger(ksession, config);
+      return getLogger(scannedStatefullKsession);
    }
 
-   @Produces
+
    @RequestScoped
-   public KnowledgeRuntimeLogger produceStatelessKnowledgeLogger(StatelessKnowledgeSession ksession, DroolsConfig config)
+   public KnowledgeRuntimeLogger produceStatelessKnowledgeLogger()
    {
-      return getLogger(ksession, config);
+      return getLogger(statelessKsession);
    }
 
-   @Produces
+
    @Scanned
    @RequestScoped
-   public KnowledgeRuntimeLogger produceScannedStatelessKnowledgeLogger(@Scanned StatelessKnowledgeSession ksession, DroolsConfig config)
+   public KnowledgeRuntimeLogger produceScannedStatelessKnowledgeLogger()
    {
-      return getLogger(ksession, config);
+      return getLogger(scannedStatelessKsession);
    }
 
-   private KnowledgeRuntimeLogger getLogger(KnowledgeRuntimeEventManager ksession, DroolsConfig config)
+   private KnowledgeRuntimeLogger getLogger(KnowledgeRuntimeEventManager ksession)
    {
       KnowledgeRuntimeLogger krLogger = null;
-      if (config.getLoggerType() != null && config.getLoggerType().equalsIgnoreCase("file"))
+      if (config.loggerType() != null && config.loggerType().equalsIgnoreCase("file"))
       {
-         if (config.getLoggerPath() == null || config.getLoggerName() == null)
+         if (config.loggerPath() == null || config.loggerName() == null)
          {
-            log.error("Invalid file logger information - path: " + config.getLoggerPath() + ", name: " + config.getLoggerName());
+            log.error("Invalid file logger information - path: " + config.loggerPath() + ", name: " + config.loggerName());
          }
          else
          {
-            String logName = config.getLoggerPath() + config.getLoggerName() + System.currentTimeMillis();
+            String logName = config.loggerPath() + config.loggerName() + System.currentTimeMillis();
             krLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, logName);
          }
       }
-      else if (config.getLoggerType() != null && config.getLoggerType().equalsIgnoreCase("console"))
+      else if (config.loggerType() != null && config.loggerType().equalsIgnoreCase("console"))
       {
          krLogger = KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
       }
-      else if (config.getLoggerType() != null && config.getLoggerType().equalsIgnoreCase("threaded"))
+      else if (config.loggerType() != null && config.loggerType().equalsIgnoreCase("threaded"))
       {
-         if (config.getLoggerPath() == null || config.getLoggerName() == null || config.getLoggerInterval() == -1)
+         if (config.loggerPath() == null || config.loggerName() == null || config.loggerInterval() == -1)
          {
-            log.error("Invalid threaded logger information - path: " + config.getLoggerPath() + ", name: " + config.getLoggerName() + ", interval: " + config.getLoggerInterval());
+            log.error("Invalid threaded logger information - path: " + config.loggerPath() + ", name: " + config.loggerName() + ", interval: " + config.loggerInterval());
          }
          else
          {
-            String logName = config.getLoggerPath() + config.getLoggerName() + System.currentTimeMillis();
-            krLogger = KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, logName, config.getLoggerInterval());
+            String logName = config.loggerPath() + config.loggerName() + System.currentTimeMillis();
+            krLogger = KnowledgeRuntimeLoggerFactory.newThreadedFileLogger(ksession, logName, config.loggerInterval());
          }
       }
       else
       {
-         log.error("Invalid logger specified: type: " + config.getLoggerType() + " path: " + config.getLoggerPath() + " interval: " + config.getLoggerInterval());
+         log.error("Invalid logger specified: type: " + config.loggerType() + " path: " + config.loggerPath() + " interval: " + config.loggerInterval());
       }
       return krLogger;
    }
 
-   public void disposeKnowledgeRuntimeLogger(@Disposes KnowledgeRuntimeLogger logger)
+   public void disposeKnowledgeRuntimeLogger(/* @Disposes */KnowledgeRuntimeLogger logger)
    {
       logger.close();
    }
 
-   public void disposeScannedKnowledgeRuntimeLogger(@Disposes @Scanned KnowledgeRuntimeLogger logger)
+   public void disposeScannedKnowledgeRuntimeLogger(/* @Disposes */@Scanned KnowledgeRuntimeLogger logger)
    {
       logger.close();
    }

@@ -24,7 +24,6 @@ package org.jboss.seam.drools;
 import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -36,8 +35,10 @@ import org.drools.agent.KnowledgeAgentFactory;
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.DroolsConfigUtil;
 import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.qualifiers.Scanned;
+import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @ApplicationScoped
+@Generic(DroolsConfig.class)
 public class KnowledgeAgentProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeAgentProducer.class);
@@ -58,50 +60,57 @@ public class KnowledgeAgentProducer implements Serializable
    @Inject
    ResourceProvider resourceProvider;
 
+   @Inject
+   DroolsConfig config;
+
+   @Inject
+   DroolsConfigUtil configUtils;
+
    @Produces
    @ApplicationScoped
-   public KnowledgeAgent produceKnowledgeAgent(DroolsConfig config) throws Exception
+   public KnowledgeAgent produceKnowledgeAgent() throws Exception
    {
-      return getAgent(config);
+      return getAgent();
    }
    
    @Produces
    @Scanned
    @ApplicationScoped
-   public KnowledgeBase produceScannedKnowledgeBase(DroolsConfig config) throws Exception
+   public KnowledgeBase produceScannedKnowledgeBase() throws Exception
    {
-      KnowledgeAgent agent = getAgent(config);
+      KnowledgeAgent agent = getAgent();
       return agent.getKnowledgeBase();
    }
    
-   private KnowledgeAgent getAgent(DroolsConfig config) throws Exception
+   private KnowledgeAgent getAgent() throws Exception
    {
-      if (config.getAgentName() == null || config.getAgentName().length() < 1)
+      if (config.agentName() == null || config.agentName().length() < 1)
       {
          throw new IllegalStateException("KnowledgeAgent configuration does not specify the name of the KnowlegeAgent.");
       }
 
-      if(config.getRuleResources().getResources() == null || config.getRuleResources().getResources().length == 0) 
+      if (config.ruleResources().length == 0)
       {
          throw new IllegalStateException("No change set rule resource specified.");
       }
       
-      if(config.getRuleResources().getResources().length > 1) {
+      if (config.ruleResources().length > 1)
+      {
          throw new IllegalStateException("More than one change set rule resource specified for KnowledgeAgent. Make sure only a single change set resource is specified.");
       }
 
-      ResourceFactory.getResourceChangeScannerService().configure(config.getResourceChangeScannerConfiguration());
+      ResourceFactory.getResourceChangeScannerService().configure(configUtils.getResourceChangeScannerConfiguration());
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(config.getKnowledgeBaseConfiguration());
-      KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(config.getAgentName(), kbase, config.getKnowledgeAgentConfiguration());
+      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
+      KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(config.agentName(), kbase, configUtils.getKnowledgeAgentConfiguration());
 
-      applyChangeSet(kagent, config.getRuleResources().getResources()[0]);
+      applyChangeSet(kagent, config.ruleResources()[0].value());
 
-      if (config.isStartChangeNotifierService())
+      if (config.startChangeNotifierService())
       {
          ResourceFactory.getResourceChangeNotifierService().start();
       }
-      if (config.isStartChangeScannerService())
+      if (config.startChangeScannerService())
       {
          ResourceFactory.getResourceChangeScannerService().start();
       }
@@ -110,7 +119,7 @@ public class KnowledgeAgentProducer implements Serializable
 
    }
 
-   public void disposeScannedKnowledgeBase(@Disposes @Scanned KnowledgeBase kbase)
+   public void disposeScannedKnowledgeBase(/* @Disposes */@Scanned KnowledgeBase kbase)
    {
       // do we really want to stop ?
       ResourceFactory.getResourceChangeNotifierService().stop();

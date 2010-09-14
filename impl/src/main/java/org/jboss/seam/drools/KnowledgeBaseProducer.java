@@ -29,7 +29,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
+import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -49,9 +51,15 @@ import org.drools.io.ResourceFactory;
 import org.drools.template.ObjectDataCompiler;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.DroolsConfigUtil;
+import org.jboss.seam.drools.config.RuleResource;
 import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
+import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericBean;
+import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.core.Exact;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +69,7 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @ApplicationScoped
+@Generic(DroolsConfig.class)
 public class KnowledgeBaseProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
@@ -69,26 +78,35 @@ public class KnowledgeBaseProducer implements Serializable
    BeanManager manager;
 
    @Inject
+   //@Exact(org.jboss.weld.extensions.resourceLoader.ResourceProvider.class)
    ResourceProvider resourceProvider;
 
    @Inject
    DroolsExtension droolsExtension;
 
-   @Produces
-   @Default
-   @ApplicationScoped
-   public KnowledgeBase produceKnowledgeBase(DroolsConfig config) throws Exception
-   {
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(addCustomEvaluators(config.getKnowledgeBuilderConfiguration()));
+   @Inject
+   DroolsConfig config;
 
-      if (config.getRuleResources().getResources() == null || config.getRuleResources().getResources().length == 0)
+   @Inject
+   @GenericBean
+   DroolsConfigUtil configUtils;
+
+   @Produces
+   @ApplicationScoped
+   @Default
+   public KnowledgeBase produceKnowledgeBase() throws Exception
+   {
+      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(addCustomEvaluators(configUtils.getKnowledgeBuilderConfiguration()));
+
+      if (config.ruleResources().length == 0)
       {
          throw new IllegalStateException("No rule resources are specified.");
       }
 
-      for (String resourceEntry : config.getRuleResources().getResources())
+      for (RuleResource resourceEntry : config.ruleResources())
       {
-         addResource(kbuilder, resourceEntry);
+         System.out.println(config.ruleResources());
+         addResource(kbuilder, resourceEntry.value());
       }
 
       KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
@@ -101,7 +119,7 @@ public class KnowledgeBaseProducer implements Serializable
          manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
       }
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(config.getKnowledgeBaseConfiguration());
+      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
       addEventListeners(kbase);

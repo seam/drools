@@ -276,7 +276,7 @@
 			</d:produceScannedQueryResults>
 		</d:QueryResultsProducer>
 	</s:genericBean> -->
-
+<!-- 
 	<d:DroolsConfig>
 		<s:modifies />
 		<d:DefaultConfig />
@@ -385,6 +385,6 @@
 			</d:RuleResources>
 		</s:parameters>
 	</d:DroolsConfig>
-	
+	 -->
    
 </beans>
