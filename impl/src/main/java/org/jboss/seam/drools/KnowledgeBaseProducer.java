@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.New;
@@ -68,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@ApplicationScoped
+@Dependent
 @Generic(DroolsConfig.class)
 public class KnowledgeBaseProducer implements Serializable
 {

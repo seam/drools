@@ -21,13 +21,20 @@
  */ 
 package org.jboss.seam.drools.test.ksession;
 
+import javax.enterprise.inject.Default;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
+import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
-import org.jboss.seam.drools.test.kbase.KBaseTestProducer;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +49,7 @@ public class KSessionTest
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
       .addPackages(true, new DroolsModuleFilter("ksession"), KnowledgeBaseProducer.class.getPackage())
       .addClass(KSessionTestRules.class)
-      .addClass(KBaseTestProducer.class)
+      .addClass(KSessionTestProducer.class)
       .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
       .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
       .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
@@ -52,23 +59,10 @@ public class KSessionTest
       return archive;
    }
    
-   /**
    @Test
-   public void testKSession(@Default @DefaultConfig StatefulKnowledgeSession ksession,
-         @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession,
-         @Default @MVELDialectConfig StatefulKnowledgeSession mvelksession2)
+   public void testKSession(@DefaultConfig @Default StatefulKnowledgeSession ksession)
    {
       assertNotNull(ksession);
       assertTrue(ksession.getId() >= 0);
-      
-      assertNotNull(mvelksession);
-      assertTrue(mvelksession.getId() >= 0);
-      
-      assertNotSame(ksession, mvelksession);
-      assertSame(mvelksession, mvelksession2);
-   }**/
-   @Test
-   public void nothingToTest() {
-      
    }
  }

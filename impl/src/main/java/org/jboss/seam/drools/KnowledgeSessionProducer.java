@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@SessionScoped
+@Dependent
 @Generic(DroolsConfig.class)
 public class KnowledgeSessionProducer implements Serializable
 {
@@ -154,12 +155,12 @@ public class KnowledgeSessionProducer implements Serializable
       return ksession;
    }
 
-   public void disposeStatefulSession( @Disposes StatefulKnowledgeSession session)
+   public void disposeStatefulSession( /** @Disposes @Default **/ StatefulKnowledgeSession session)
    {
       session.dispose();
    }
    
-   public void disposeScannedStatefulSession( @Disposes @Scanned StatefulKnowledgeSession session)
+   public void disposeScannedStatefulSession( /** @Disposes @Scanned **/ StatefulKnowledgeSession session)
    {
       session.dispose();
    }
