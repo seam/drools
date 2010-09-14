@@ -21,27 +21,14 @@
  */ 
 package org.jboss.seam.drools.test.ksession;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotSame;
-
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-
-import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.annotations.InsertFact;
-import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
-import org.jboss.seam.drools.qualifiers.config.MVELDialectConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.seam.drools.test.kbase.KBaseTestProducer;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,7 +41,6 @@ public class KSessionTest
       String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
       .addPackages(true, new DroolsModuleFilter("ksession"), KnowledgeBaseProducer.class.getPackage())
-      .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(KSessionTestRules.class)
       .addClass(KBaseTestProducer.class)
       .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
