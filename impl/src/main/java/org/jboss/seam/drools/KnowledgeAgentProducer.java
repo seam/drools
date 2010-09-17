@@ -22,8 +22,10 @@
 package org.jboss.seam.drools;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -32,13 +34,15 @@ import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.agent.KnowledgeAgent;
 import org.drools.agent.KnowledgeAgentFactory;
-import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
-import org.jboss.seam.drools.config.DroolsConfig;
-import org.jboss.seam.drools.config.DroolsConfigUtil;
+import org.jboss.seam.drools.config.Drools;
+import org.jboss.seam.drools.config.RuleResource;
 import org.jboss.seam.drools.config.RuleResources;
+import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.core.Veto;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +52,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@ApplicationScoped
-@Generic(DroolsConfig.class)
+@Veto
+@Dependent
+@Generic(Drools.class)
 public class KnowledgeAgentProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeAgentProducer.class);
@@ -61,10 +66,15 @@ public class KnowledgeAgentProducer implements Serializable
    ResourceProvider resourceProvider;
 
    @Inject
-   DroolsConfig config;
-
+   Drools config;
+   
    @Inject
+   @GenericProduct
    DroolsConfigUtil configUtils;
+   
+   @Inject 
+   @GenericProduct
+   RuleResources ruleResources;
 
    @Produces
    @ApplicationScoped
@@ -84,28 +94,16 @@ public class KnowledgeAgentProducer implements Serializable
    
    private KnowledgeAgent getAgent() throws Exception
    {
-      if (config.agentName() == null || config.agentName().length() < 1)
-      {
-         throw new IllegalStateException("KnowledgeAgent configuration does not specify the name of the KnowlegeAgent.");
-      }
-
-      if (config.ruleResources().length == 0)
-      {
-         throw new IllegalStateException("No change set rule resource specified.");
-      }
-      
-      if (config.ruleResources().length > 1)
-      {
-         throw new IllegalStateException("More than one change set rule resource specified for KnowledgeAgent. Make sure only a single change set resource is specified.");
-      }
-
       ResourceFactory.getResourceChangeScannerService().configure(configUtils.getResourceChangeScannerConfiguration());
 
       KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
       KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(config.agentName(), kbase, configUtils.getKnowledgeAgentConfiguration());
 
-      applyChangeSet(kagent, config.ruleResources()[0].value());
-
+      Iterator<RuleResource> resourceIterator = ruleResources.iterator();
+      while(resourceIterator.hasNext()) {
+         kagent.applyChangeSet(resourceIterator.next().getDroolsResouce());
+      }
+      
       if (config.startChangeNotifierService())
       {
          ResourceFactory.getResourceChangeNotifierService().start();
@@ -114,7 +112,6 @@ public class KnowledgeAgentProducer implements Serializable
       {
          ResourceFactory.getResourceChangeScannerService().start();
       }
-
       return kagent;
 
    }
@@ -125,42 +122,4 @@ public class KnowledgeAgentProducer implements Serializable
       ResourceFactory.getResourceChangeNotifierService().stop();
       ResourceFactory.getResourceChangeScannerService().stop();
    }
-   
-   private void applyChangeSet(KnowledgeAgent kagent, String entry)
-   {
-      String[] entryParts = RuleResources.DIVIDER.split(entry.trim());
-      
-      if (entryParts.length >= 3)
-      {
-         ResourceType resourceType = ResourceType.getResourceType(entryParts[RuleResources.RESOURCE_TYPE]);
-         if (resourceType.equals(ResourceType.CHANGE_SET))
-         {
-            if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_URL))
-            {
-               kagent.applyChangeSet(ResourceFactory.newUrlResource(entryParts[RuleResources.RESOURCE_PATH]));
-            }
-            else if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_FILE))
-            {
-               kagent.applyChangeSet(ResourceFactory.newFileResource(entryParts[RuleResources.RESOURCE_PATH]));
-            }
-            else if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_CLASSPATH))
-            {
-               kagent.applyChangeSet(ResourceFactory.newClassPathResource(entryParts[RuleResources.RESOURCE_PATH]));
-            }
-            else
-            {
-               log.error("Invalid resource: " + entry);
-            }
-         }
-         else
-         {
-            log.error("Resource must be of type CHANGE_SET");
-         }
-      }
-      else
-      {
-         log.error("Invalid resource definition: " + entry);
-      }
-   }
-
 }

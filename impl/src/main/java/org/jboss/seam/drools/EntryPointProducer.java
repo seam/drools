@@ -31,11 +31,12 @@ import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
-import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.EntryPoint;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +44,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
+@Veto
 @SessionScoped
-@Generic(DroolsConfig.class)
+@Generic(Drools.class)
 public class EntryPointProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);

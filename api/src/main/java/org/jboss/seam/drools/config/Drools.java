@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright ${year}, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -18,8 +18,8 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
-package org.jboss.seam.drools.qualifiers.config;
+ */
+package org.jboss.seam.drools.config;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -27,22 +27,49 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
+import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
 
 /**
+ * Drools configuration file.
  * 
  * @author Tihomir Surdilovic
+ * @author Stuart Douglas
  */
-@Qualifier
-@Target( { TYPE, METHOD, FIELD, PARAMETER })
-@Documented
 @Retention(RUNTIME)
-@Inherited
-public @interface MVELDialectConfig {
+@Target( { METHOD, FIELD, PARAMETER, TYPE })
+@GenericConfiguration
+public @interface Drools
+{
+   public String name() default "";
+   public String kbuilderConfigFile() default "";
+   public String kbaseConfigFile() default "";
+   public String ksessionConfigFile() default "";
+   public String kagentConfigFile() default "";
+   public String envConfigFile() default "";
 
+   public boolean startChangeNotifierService() default false;
+   public boolean startChangeScannerService() default false;
+   public int scannerInterval() default -1;
+   public String agentName() default "";
+
+   public String loggerName() default "";
+   public String loggerType() default "";
+   public String loggerPath() default "";
+   public int loggerInterval() default 0;
+
+   public boolean disableSeamDelegate() default false;
+   
+   public DroolsProperty[] kbuilderProperties() default {};
+
+   public DroolsProperty[] kbaseProperties() default {};
+
+   public DroolsProperty[] ksessionProperties() default {};
+
+   public DroolsProperty[] kagentPropertiest() default {};
+  
+   public DroolsProperty[] envProperties() default {};
+   
 }

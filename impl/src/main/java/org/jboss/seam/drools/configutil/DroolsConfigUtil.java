@@ -1,4 +1,4 @@
-package org.jboss.seam.drools.config;
+package org.jboss.seam.drools.configutil;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,13 +21,15 @@ import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.KnowledgeSessionConfiguration;
+import org.jboss.seam.drools.config.Drools;
+import org.jboss.seam.drools.config.DroolsProperty;
 import org.jboss.seam.drools.utils.ConfigUtils;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Generic(DroolsConfig.class)
+@Generic(Drools.class)
 @ApplicationScoped
 public class DroolsConfigUtil implements Serializable
 {
@@ -37,21 +39,22 @@ public class DroolsConfigUtil implements Serializable
    ResourceProvider resourceProvider;
 
    @Inject
-   DroolsConfig config;
-
+   Drools config;
+   
    private final Map<String, String> kbuilderPropertiesMap = new HashMap<String, String>();
    private final Map<String, String> kbasePropertiesMap = new HashMap<String, String>();
    private final Map<String, String> ksessionPropertiesMap = new HashMap<String, String>();
    private final Map<String, String> kagentPropertiestMap = new HashMap<String, String>();
+   private final Map<String, String> envPropertiestMap = new HashMap<String, String>();
 
    @PostConstruct
    public void setup()
    {
-      readProperties(kbuilderPropertiesMap, config.kbuilderProperties(), config.knowledgeBuilderConfigProperties());
-      readProperties(kbasePropertiesMap, config.kbaseProperties(), config.knowledgeBaseConfigProperties());
-      readProperties(ksessionPropertiesMap, config.ksessionProperties(), config.knowledgeSessionProperties());
-      readProperties(kagentPropertiestMap, config.kagentPropertiest(), config.knowledgeAgentProperties());
-
+      readProperties(kbuilderPropertiesMap, config.kbuilderProperties(), config.kbuilderConfigFile());
+      readProperties(kbasePropertiesMap, config.kbaseProperties(), config.kbaseConfigFile());
+      readProperties(ksessionPropertiesMap, config.ksessionProperties(), config.ksessionConfigFile());
+      readProperties(kagentPropertiestMap, config.kagentPropertiest(), config.kagentConfigFile());
+      readProperties(envPropertiestMap, config.envProperties(), config.envConfigFile());
    }
 
    public ResourceChangeScannerConfiguration getResourceChangeScannerConfiguration()

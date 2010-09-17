@@ -23,6 +23,7 @@ package org.jboss.seam.drools;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
@@ -36,7 +37,7 @@ import org.drools.core.util.debug.SessionInspector;
 import org.drools.core.util.debug.SessionReporter;
 import org.drools.core.util.debug.StatefulKnowledgeSessionInfo;
 import org.drools.runtime.StatefulKnowledgeSession;
-import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.SessionReport;
 import org.jboss.weld.extensions.bean.generic.Generic;
@@ -46,8 +47,8 @@ import org.jboss.weld.extensions.bean.generic.GenericProduct;
  * 
  * @author Tihomir Surdilovic
  */
-@SessionScoped
-@Generic(DroolsConfig.class)
+@Dependent
+@Generic(Drools.class)
 public class SessionReportProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(SessionReportProducer.class);

@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
@@ -46,12 +47,13 @@ import org.drools.runtime.pipeline.PipelineFactory;
 import org.drools.runtime.pipeline.ResultHandler;
 import org.drools.runtime.pipeline.Transformer;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
-import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.Stateful;
 import org.jboss.seam.drools.qualifiers.Stateless;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.core.Veto;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +62,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@SessionScoped
-@Generic(DroolsConfig.class)
+@Veto
+@Dependent
+@Generic(Drools.class)
 public class ExecutionResultsProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(ExecutionResultsProducer.class);

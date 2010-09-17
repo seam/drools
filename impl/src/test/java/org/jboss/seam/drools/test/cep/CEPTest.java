@@ -37,7 +37,6 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
 import org.jboss.seam.drools.qualifiers.EntryPoint;
-import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

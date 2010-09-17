@@ -27,7 +27,6 @@ import org.jboss.seam.drools.annotations.InsertFact;
 import org.jboss.seam.drools.annotations.flow.AbortProcess;
 import org.jboss.seam.drools.annotations.flow.SignalEvent;
 import org.jboss.seam.drools.annotations.flow.StartProcess;
-import org.jboss.seam.drools.qualifiers.config.CEPPseudoClockConfig;
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 
 public class InterceptorsTestBean
@@ -40,7 +39,7 @@ public class InterceptorsTestBean
       return p;
    }
    
-   @InsertFact(fire=true, entrypoint="peopleStream") @Default @CEPPseudoClockConfig
+   @InsertFact(fire=true, entrypoint="peopleStream") @Default //@CEPPseudoClockConfig
    public Person getPersonForEntryPoint() {
       Person p = new Person();
       p.setEligible(false);

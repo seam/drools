@@ -28,11 +28,10 @@ import java.io.StringReader;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
-import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -40,6 +39,8 @@ import javax.inject.Inject;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.base.evaluators.EvaluatorDefinition;
+import org.drools.builder.DecisionTableConfiguration;
+import org.drools.builder.DecisionTableInputType;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderError;
@@ -51,16 +52,15 @@ import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.drools.io.ResourceFactory;
 import org.drools.template.ObjectDataCompiler;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
-import org.jboss.seam.drools.config.DroolsConfig;
-import org.jboss.seam.drools.config.DroolsConfigUtil;
+import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.config.RuleResource;
 import org.jboss.seam.drools.config.RuleResources;
+import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.bean.generic.GenericBean;
 import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.core.Exact;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @Dependent
-@Generic(DroolsConfig.class)
+@Generic(Drools.class)
 public class KnowledgeBaseProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
@@ -84,29 +84,27 @@ public class KnowledgeBaseProducer implements Serializable
    @Inject
    DroolsExtension droolsExtension;
 
-   @Inject
-   DroolsConfig config;
-
+   @Inject 
+   Drools drools;
+   
    @Inject
    @GenericBean
    DroolsConfigUtil configUtils;
-
+   
+   @Inject 
+   @GenericProduct
+   RuleResources ruleResources;
+   
+   
    @Produces
    @ApplicationScoped
-   @Default
    public KnowledgeBase produceKnowledgeBase() throws Exception
    {
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(addCustomEvaluators(configUtils.getKnowledgeBuilderConfiguration()));
-
-      if (config.ruleResources().length == 0)
-      {
-         throw new IllegalStateException("No rule resources are specified.");
-      }
-
-      for (RuleResource resourceEntry : config.ruleResources())
-      {
-         System.out.println(config.ruleResources());
-         addResource(kbuilder, resourceEntry.value());
+      
+      Iterator<RuleResource> resourceIterator = ruleResources.iterator();
+      while(resourceIterator.hasNext()) {
+         addResource(kbuilder, resourceIterator.next());
       }
 
       KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
@@ -149,23 +147,18 @@ public class KnowledgeBaseProducer implements Serializable
       }
    }
 
-   private void addResource(KnowledgeBuilder kbuilder, String entry) throws Exception
+   private void addResource(KnowledgeBuilder kbuilder, RuleResource resource) throws Exception
    {
-      String[] entryParts = RuleResources.DIVIDER.split(entry.trim());
-
-      if (entryParts.length >= 3)
-      {
-         ResourceType resourceType = ResourceType.getResourceType(entryParts[RuleResources.RESOURCE_TYPE]);
-
-         if (entryParts.length == 4)
+         ResourceType resourceType = ResourceType.getResourceType(resource.getType());
+         if (!isEmpty(resource.getTemplateData()))
          {
-            TemplateDataProvider templateDataProvider = droolsExtension.getTemplateDataProviders().get(entryParts[RuleResources.TEMPLATE_DATAPROVIDER_NAME]);
+            TemplateDataProvider templateDataProvider = droolsExtension.getTemplateDataProviders().get(resource.getTemplateData());
             if (templateDataProvider != null)
             {
-               InputStream templateStream = resourceProvider.loadResourceStream(entryParts[RuleResources.RESOURCE_PATH]);
+               InputStream templateStream = resource.getDroolsResouce().getInputStream();
                if (templateStream == null)
                {
-                  throw new IllegalStateException("Could not load rule template: " + entryParts[RuleResources.RESOURCE_PATH]);
+                  throw new IllegalStateException("Could not load rule template: " + resource.getFullPath());
                }
                ObjectDataCompiler converter = new ObjectDataCompiler();
                String drl = converter.compile(templateDataProvider.getTemplateData(), templateStream);
@@ -176,35 +169,33 @@ public class KnowledgeBaseProducer implements Serializable
             }
             else
             {
-               throw new IllegalStateException("Requested template data provider: " + entryParts[RuleResources.TEMPLATE_DATAPROVIDER_NAME] + " for resource " + entryParts[RuleResources.RESOURCE_PATH] + " has not been created. Check to make sure you have defined one.");
+               throw new IllegalStateException("Requested template data provider: " + resource.getTemplateData() + " for resource " + resource.getFullPath() + " has not been created. Check to make sure you have defined one.");
             }
          }
          else
          {
-            if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_URL))
-            {
-               kbuilder.add(ResourceFactory.newUrlResource(entryParts[RuleResources.RESOURCE_PATH]), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(entryParts[RuleResources.RESOURCE_PATH]));
-            }
-            else if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_FILE))
-            {
-               kbuilder.add(ResourceFactory.newFileResource(entryParts[RuleResources.RESOURCE_PATH]), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(entryParts[RuleResources.RESOURCE_PATH]));
-            }
-            else if (entryParts[RuleResources.LOCATION_TYPE].equals(RuleResources.LOCATION_TYPE_CLASSPATH))
-            {
-               kbuilder.add(ResourceFactory.newClassPathResource(entryParts[RuleResources.RESOURCE_PATH]), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(entryParts[RuleResources.RESOURCE_PATH]));
-            }
-            else
-            {
-               log.error("Invalid resource: " + entryParts[RuleResources.RESOURCE_PATH]);
+            if(resourceType == ResourceType.DTABLE) {
+               DecisionTableConfiguration dtconf = KnowledgeBuilderFactory.newDecisionTableConfiguration();
+               if(!isEmpty(resource.getDtType())) {
+                  dtconf.setInputType( DecisionTableInputType.valueOf(resource.getDtType()) );
+               } else {
+                  dtconf.setInputType( DecisionTableInputType.XLS );
+               }
+               if(!isEmpty(resource.getDtWorksheetName())) {
+                  dtconf.setWorksheetName( resource.getDtWorksheetName() );
+               }
+               kbuilder.add( resource.getDroolsResouce(),
+                                   resourceType,
+                                   dtconf );
+               manager.fireEvent(new RuleResourceAddedEvent(resource.getFullPath()));
+            } else {
+               kbuilder.add( resource.getDroolsResouce(), resourceType);
+               manager.fireEvent(new RuleResourceAddedEvent(resource.getFullPath()));
             }
          }
       }
-      else
-      {
-         log.error("Invalid resource entry definition: " + entry);
-      }
+      
+   private boolean isEmpty(String value) {
+      return (value == null || value.trim().length() <= 0);
    }
 }

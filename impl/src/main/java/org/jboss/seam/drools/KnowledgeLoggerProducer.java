@@ -23,6 +23,7 @@ package org.jboss.seam.drools;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -32,8 +33,8 @@ import org.drools.logger.KnowledgeRuntimeLogger;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.StatelessKnowledgeSession;
-import org.jboss.seam.drools.config.DroolsConfig;
-import org.jboss.seam.drools.config.DroolsConfigUtil;
+import org.jboss.seam.drools.config.Drools;
+import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.bean.generic.GenericProduct;
@@ -45,14 +46,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@SessionScoped
-@Generic(DroolsConfig.class)
+@Dependent
+@Generic(Drools.class)
 public class KnowledgeLoggerProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeLoggerProducer.class);
 
    @Inject
-   DroolsConfig config;
+   Drools config;
 
    @Inject
    DroolsConfigUtil configUtils;

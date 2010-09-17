@@ -23,6 +23,7 @@ package org.jboss.seam.drools;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
@@ -31,7 +32,7 @@ import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.QueryResults;
-import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.Query;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.weld.extensions.bean.generic.Generic;
@@ -43,8 +44,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
-@SessionScoped
-@Generic(DroolsConfig.class)
+@Dependent
+@Generic(Drools.class)
 public class QueryResultsProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(QueryResultsProducer.class);

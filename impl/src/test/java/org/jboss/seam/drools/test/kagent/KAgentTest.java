@@ -32,7 +32,7 @@ import org.drools.runtime.rule.FactHandle;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.config.DroolsConfig;
+import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

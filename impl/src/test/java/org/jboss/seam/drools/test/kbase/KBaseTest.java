@@ -24,13 +24,10 @@ package org.jboss.seam.drools.test.kbase;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.enterprise.inject.Default;
-
 import org.drools.KnowledgeBase;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -47,10 +44,12 @@ public class KBaseTest
       String pkgPath = KBaseTest.class.getPackage().getName().replaceAll("\\.", "/");
       JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
       .addPackages(true, new DroolsModuleFilter("kbase"), KnowledgeBaseProducer.class.getPackage())
-      .addClass(KBaseTestRules.class)
-      .addClass(KBaseTestProducer.class)
+      .addClass(CreditRules.class)
+      .addClass(DebitRules.class)
+      .addClass(KBaseTestRuleResources.class)
       .addClass(MyKnowledgeBaseEventListener.class)
       .addResource(pkgPath + "/kbasetest.drl", ArchivePaths.create("kbasetest.drl"))
+      .addResource(pkgPath + "/kbasetest.xls", ArchivePaths.create("kbasetest.xls"))
       .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
       .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
       .addManifestResource(pkgPath + "/KBaseTest-beans.xml", ArchivePaths.create("beans.xml"))
@@ -58,11 +57,17 @@ public class KBaseTest
       //System.out.println(archive.toString(Formatters.VERBOSE));
       return archive;
    }
-
+   
    @Test
-   public void testKBase(@DefaultConfig @Default KnowledgeBase kbase)
+   public void testKBase(@CreditRules KnowledgeBase ckbase, @DebitRules KnowledgeBase dkbase)
    {
-      assertNotNull(kbase);
-      assertTrue(kbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 3);
+      assertNotNull(ckbase);
+      assertNotNull(dkbase);
+      
+      assertTrue(ckbase.getKnowledgePackages().size() == 1);
+      assertTrue(ckbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 3);
+      
+      assertTrue(dkbase.getKnowledgePackages().size() == 1);
+      assertTrue(dkbase.getKnowledgePackage("org.jboss.seam.drools.test.kbase").getRules().size() == 2);
    }
 }

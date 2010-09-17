@@ -32,7 +32,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
     	<class>org.jboss.seam.drools.interceptor.AbortProcessInterceptor</class>
     </interceptors>
     
-	<d:DefaultRuleResources>
+	<!--<d:DefaultRuleResources>
   		<s:modifies/>
   		<s:Exact>org.jboss.seam.drools.config.DefaultRuleResources</s:Exact>
    	<d:resources>
@@ -65,4 +65,4 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 	</d:DroolsConfig>
 	
 		
-</beans>       
+--></beans>       
