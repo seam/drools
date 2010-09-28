@@ -44,10 +44,12 @@ import org.drools.runtime.StatelessKnowledgeSession;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
 import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.configutil.DroolsConfigUtil;
+import org.jboss.seam.drools.qualifiers.Persisted;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.bean.generic.GenericBean;
 import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.core.Veto;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +58,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Tihomir Surdilovic
  */
+@Veto
 @Dependent
-@Generic(Drools.class)
+//@Generic(Drools.class)
 public class KnowledgeSessionProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeSessionProducer.class);
@@ -75,27 +78,28 @@ public class KnowledgeSessionProducer implements Serializable
    SeamDelegate delegate;
    
    @Inject
-   Drools config;
+   Drools drools;
    
    @Inject
+   //@GenericBean
    DroolsConfigUtil configUtils;
       
    @Inject
-   @GenericBean
+   //@GenericBean
    KnowledgeBase kbase;
       
    @Inject
    @Scanned
-   @GenericBean
+   //@GenericBean
    KnowledgeBase scannedKbase;
    
    @Produces
    @Default
-   @RequestScoped
+   @SessionScoped
    public StatefulKnowledgeSession produceStatefulSession() throws Exception
    {
       StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession(configUtils.getKnowledgeSessionConfiguration(), null);
-      if (!config.disableSeamDelegate())
+      if (!drools.disableSeamDelegate())
       {
          addSeamDelegate(ksession);
       }
@@ -106,15 +110,24 @@ public class KnowledgeSessionProducer implements Serializable
       
       return ksession;
    }
+   
+   @Produces 
+   @Persisted
+   @SessionScoped
+   public StatefulKnowledgeSession producePersistedStatefulKnowledgeSession() throws Exception
+   {
+      // TODO finish this
+      return null;
+   }
 
 
    @Produces
    @Scanned
-   @RequestScoped
+   @SessionScoped
    public StatefulKnowledgeSession produceScannedStatefulSession() throws Exception
    {
       StatefulKnowledgeSession ksession = scannedKbase.newStatefulKnowledgeSession(configUtils.getKnowledgeSessionConfiguration(), null);
-      if (!config.disableSeamDelegate())
+      if (!drools.disableSeamDelegate())
       {
          addSeamDelegate(ksession);
       }
@@ -132,7 +145,7 @@ public class KnowledgeSessionProducer implements Serializable
    public StatelessKnowledgeSession produceScannedStatelessSession() throws Exception
    {
       StatelessKnowledgeSession ksession = scannedKbase.newStatelessKnowledgeSession(configUtils.getKnowledgeSessionConfiguration());
-      if (!config.disableSeamDelegate())
+      if (!drools.disableSeamDelegate())
       {
          addSeamDelegate(ksession);
       }
@@ -147,7 +160,7 @@ public class KnowledgeSessionProducer implements Serializable
    public StatelessKnowledgeSession produceStatelessSession() throws Exception
    {
       StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession(configUtils.getKnowledgeSessionConfiguration());
-      if (!config.disableSeamDelegate())
+      if (!drools.disableSeamDelegate())
       {
          addSeamDelegate(ksession);
       }
@@ -155,6 +168,8 @@ public class KnowledgeSessionProducer implements Serializable
       
       return ksession;
    }
+   
+   
 
    public void disposeStatefulSession( /** @Disposes @Default **/ StatefulKnowledgeSession session)
    {

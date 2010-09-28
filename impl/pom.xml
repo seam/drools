@@ -17,6 +17,11 @@
 
 	<dependencies>
 		<dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>${weld.version}</version>
+         </dependency>
+		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>el-api</artifactId>
 		</dependency>
@@ -71,73 +76,98 @@
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-extensions</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>${antlr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>stringtemplate</artifactId>
+			<version>${stringtemplate.version}</version>
+		</dependency>
 		<dependency>
 			<artifactId>seam-drools-api</artifactId>
 			<groupId>org.jboss.seam.drools</groupId>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.0.0.Beta4</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.jboss.seam.xml</groupId>
 			<artifactId>seam-xml-config</artifactId>
 			<scope>test</scope>
-			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-	         <groupId>javax.servlet</groupId>
-	         <artifactId>servlet-api</artifactId>
-	         <version>2.5</version>
-	         <scope>test</scope>
-	    </dependency>
-		<!-- Test Dependencies -->
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.arquillian</groupId>
-			<artifactId>arquillian-junit</artifactId>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-junit</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>test</scope>
+         </dependency>
+         
+         <dependency>
+           <groupId>org.jboss.arquillian.container</groupId>
+           <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
+           <version>${arquillian.version}</version>
+           <scope>test</scope>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>${weld.version}</version>
+            <scope>test</scope>
+         </dependency>
+         
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.arquillian.container</groupId>
-			<artifactId>arquillian-weld-embedded</artifactId>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.0.0.Beta4</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-simple</artifactId>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
-   
-   <profiles>
-      <profile>
-         <id>code-coverage</id>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>emma-maven-plugin</artifactId>
-               </plugin>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-               </plugin>
-               <plugin>
-                  <groupId>org.sonatype.maven.plugin</groupId>
-                  <artifactId>emma4it-maven-plugin</artifactId>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-   </profiles>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>code-coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>emma-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.maven.plugin</groupId>
+						<artifactId>emma4it-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

@@ -45,7 +45,7 @@ public class DroolsConfigUtil implements Serializable
    private final Map<String, String> kbasePropertiesMap = new HashMap<String, String>();
    private final Map<String, String> ksessionPropertiesMap = new HashMap<String, String>();
    private final Map<String, String> kagentPropertiestMap = new HashMap<String, String>();
-   private final Map<String, String> envPropertiestMap = new HashMap<String, String>();
+   private final Map<String, String> serializationSigningPropertiesMap = new HashMap<String, String>();
 
    @PostConstruct
    public void setup()
@@ -54,7 +54,7 @@ public class DroolsConfigUtil implements Serializable
       readProperties(kbasePropertiesMap, config.kbaseProperties(), config.kbaseConfigFile());
       readProperties(ksessionPropertiesMap, config.ksessionProperties(), config.ksessionConfigFile());
       readProperties(kagentPropertiestMap, config.kagentPropertiest(), config.kagentConfigFile());
-      readProperties(envPropertiestMap, config.envProperties(), config.envConfigFile());
+      readProperties(serializationSigningPropertiesMap, config.serializationSigningProperties(), config.serializationSigningConfigFile());
    }
 
    public ResourceChangeScannerConfiguration getResourceChangeScannerConfiguration()

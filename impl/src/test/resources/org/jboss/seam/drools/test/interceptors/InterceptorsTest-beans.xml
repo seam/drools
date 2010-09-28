@@ -27,9 +27,9 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 	<interceptors>
     	<class>org.jboss.seam.drools.interceptor.InsertFactInterceptor</class>
     	<class>org.jboss.seam.drools.interceptor.FireRulesInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.StartProcessInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.SignalEventInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.AbortProcessInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.flow.StartProcessInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.flow.SignalEventInterceptor</class>
+    	<class>org.jboss.seam.drools.interceptor.flow.AbortProcessInterceptor</class>
     </interceptors>
     
 	<!--<d:DefaultRuleResources>

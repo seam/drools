@@ -46,7 +46,7 @@ public class KSessionTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
       /**.addPackages(true, new DroolsModuleFilter("ksession"), KnowledgeBaseProducer.class.getPackage())
       .addClass(KSessionTestRules.class)
       .addClass(KSessionTestProducer.class)

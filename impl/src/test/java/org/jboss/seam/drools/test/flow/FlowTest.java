@@ -51,7 +51,7 @@ public class FlowTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = FlowTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
       /**.addPackages(true, new DroolsModuleFilter("flow"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(Person.class)

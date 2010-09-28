@@ -53,7 +53,7 @@ public class SessionReportTest
    public static JavaArchive createTestArchive()
    {
       String pkgPath = QueryTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create("test.jar", JavaArchive.class)
+      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
       /**.addPackages(true, new DroolsModuleFilter("sessionreport"), KnowledgeBaseProducer.class.getPackage())
       .addPackages(true, ResourceProvider.class.getPackage())
       .addClass(Cheese.class)

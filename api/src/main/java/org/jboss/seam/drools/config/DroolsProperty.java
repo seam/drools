@@ -37,4 +37,5 @@ public @interface DroolsProperty
    String value();
 
    String name();
+   
 }

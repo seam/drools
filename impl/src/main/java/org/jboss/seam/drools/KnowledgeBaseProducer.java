@@ -85,6 +85,7 @@ public class KnowledgeBaseProducer implements Serializable
    DroolsExtension droolsExtension;
 
    @Inject 
+   @GenericBean
    Drools drools;
    
    @Inject

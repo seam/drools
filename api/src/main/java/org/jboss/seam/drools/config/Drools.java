@@ -48,7 +48,7 @@ public @interface Drools
    public String kbaseConfigFile() default "";
    public String ksessionConfigFile() default "";
    public String kagentConfigFile() default "";
-   public String envConfigFile() default "";
+   public String serializationSigningConfigFile() default "";
 
    public boolean startChangeNotifierService() default false;
    public boolean startChangeScannerService() default false;
@@ -69,7 +69,7 @@ public @interface Drools
    public DroolsProperty[] ksessionProperties() default {};
 
    public DroolsProperty[] kagentPropertiest() default {};
-  
-   public DroolsProperty[] envProperties() default {};
+   
+   public DroolsProperty[] serializationSigningProperties() default {};
    
 }

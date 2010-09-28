@@ -46,18 +46,18 @@ import org.slf4j.LoggerFactory;
  */
 @Veto
 @SessionScoped
-@Generic(Drools.class)
+//@Generic(Drools.class)
 public class EntryPointProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
 
    @Inject
-   @GenericProduct
+   //@GenericProduct
    StatefulKnowledgeSession statefullKsession;
    
    @Inject
    @Scanned
-   @GenericProduct
+   //@GenericProduct
    StatefulKnowledgeSession statefulKnowledgeSession;
 
    @Produces

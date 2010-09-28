@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 @Veto
 @Dependent
-@Generic(Drools.class)
+//@Generic(Drools.class)
 public class ExecutionResultsProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(ExecutionResultsProducer.class);
@@ -77,12 +77,12 @@ public class ExecutionResultsProducer implements Serializable
    
    @Inject
    @Default
-   @GenericProduct
+   //@GenericProduct
    StatelessKnowledgeSession statelessKsession;
 
    @Inject
    @Scanned
-   @GenericProduct
+   //@GenericProduct
    StatelessKnowledgeSession scannedStatelessKsession;
 
    @Inject
@@ -91,7 +91,7 @@ public class ExecutionResultsProducer implements Serializable
 
    @Inject
    @Scanned
-   @GenericProduct
+   //@GenericProduct
    StatefulKnowledgeSession scannedStatefullKSession;
 
    @SuppressWarnings("unchecked")

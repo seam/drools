@@ -42,24 +42,26 @@ import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.SessionReport;
 import org.jboss.weld.extensions.bean.generic.Generic;
 import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.core.Veto;
 
 /**
  * 
  * @author Tihomir Surdilovic
  */
+@Veto
 @Dependent
-@Generic(Drools.class)
+//@Generic(Drools.class)
 public class SessionReportProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(SessionReportProducer.class);
    
    @Inject
-   @GenericProduct
+   //@GenericProduct
    StatefulKnowledgeSession statefullKsession;
 
    @Inject
    @Scanned
-   @GenericProduct
+   //@GenericProduct
    StatefulKnowledgeSession scannedStatefullKsession;
    
    @Produces

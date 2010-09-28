@@ -50,6 +50,10 @@
 		<drools.version>5.1.1</drools.version>
 		<seam.version>3.0.0.b01</seam.version>
 		<weld-extensions.version>1.0.0-SNAPSHOT</weld-extensions.version>
+		<stringtemplate.version>3.0</stringtemplate.version>
+		<antlr.version>2.7.6-brew</antlr.version>
+		<weld.version>1.1.0.Beta1</weld.version>
+		<arquillian.version>1.0.0.Alpha4</arquillian.version>
 	</properties>
 
 	<dependencyManagement>
