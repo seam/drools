@@ -131,9 +131,9 @@
 
 
 	<scm>
-		<connection>scm:svn:http://anonsvn.jboss.org/repos/seam/modules/drools/trunk</connection>
-		<developerConnection>scm:svn:https://svn.jboss.org/repos/seam/modules/drools/trunk</developerConnection>
-		<url>http://fisheye.jboss.org/browse/Seam/modules/drools/trunk</url>
+		<connection>scm:git:git://github.com/seam/drools.git</connection>
+		<developerConnection>scm:git:git@github.com:seam/drools.git</developerConnection>
+		<url>http://github.com/seam/drools</url>
 	</scm>
 
 </project>
