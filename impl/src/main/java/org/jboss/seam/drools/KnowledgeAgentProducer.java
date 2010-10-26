@@ -36,17 +36,15 @@ import org.drools.agent.KnowledgeAgent;
 import org.drools.agent.KnowledgeAgentFactory;
 import org.drools.io.ResourceFactory;
 import org.jboss.seam.drools.config.Drools;
+import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.config.RuleResource;
 import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericBean;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
 import org.jboss.weld.extensions.core.Veto;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * KnowledgeAgent producer.
@@ -55,10 +53,10 @@ import org.slf4j.LoggerFactory;
  */
 @Veto
 @Dependent
-//@Generic(Drools.class)
+@GenericConfiguration(Drools.class)
 public class KnowledgeAgentProducer implements Serializable
 {
-   private static final Logger log = LoggerFactory.getLogger(KnowledgeAgentProducer.class);
+   private static final long serialVersionUID = 4910933194538463561L;
 
    @Inject
    BeanManager manager;
@@ -66,15 +64,14 @@ public class KnowledgeAgentProducer implements Serializable
    @Inject
    ResourceProvider resourceProvider;
 
-   @Inject
-   Drools config;
+   @Inject @Generic DroolsConfig config;
    
    @Inject
    //@GenericBean
    DroolsConfigUtil configUtils;
    
    @Inject 
-   //@GenericProduct
+   @Generic
    RuleResources ruleResources;
 
    @Produces
@@ -95,21 +92,25 @@ public class KnowledgeAgentProducer implements Serializable
    
    private KnowledgeAgent getAgent() throws Exception
    {
-      ResourceFactory.getResourceChangeScannerService().configure(configUtils.getResourceChangeScannerConfiguration());
+      ResourceFactory.getResourceChangeScannerService().configure(
+            configUtils.getResourceChangeScannerConfiguration());
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
-      KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(config.agentName(), kbase, configUtils.getKnowledgeAgentConfiguration());
+      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(
+            configUtils.getKnowledgeBaseConfiguration());
+      
+      KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(
+            config.getAgentName(), kbase, configUtils.getKnowledgeAgentConfiguration());
 
       Iterator<RuleResource> resourceIterator = ruleResources.iterator();
       while(resourceIterator.hasNext()) {
          kagent.applyChangeSet(resourceIterator.next().getDroolsResouce());
       }
       
-      if (config.startChangeNotifierService())
+      if (config.getStartChangeNotifierService())
       {
          ResourceFactory.getResourceChangeNotifierService().start();
       }
-      if (config.startChangeScannerService())
+      if (config.getStartChangeScannerService())
       {
          ResourceFactory.getResourceChangeScannerService().start();
       }

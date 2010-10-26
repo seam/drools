@@ -30,7 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
+import org.jboss.weld.extensions.bean.generic.GenericType;
 
 /**
  * Drools configuration file.
@@ -40,36 +40,8 @@ import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
  */
 @Retention(RUNTIME)
 @Target( { METHOD, FIELD, PARAMETER, TYPE })
-@GenericConfiguration
+@GenericType(DroolsConfig.class)
 public @interface Drools
 {
-   public String name() default "";
-   public String kbuilderConfigFile() default "";
-   public String kbaseConfigFile() default "";
-   public String ksessionConfigFile() default "";
-   public String kagentConfigFile() default "";
-   public String serializationSigningConfigFile() default "";
-
-   public boolean startChangeNotifierService() default false;
-   public boolean startChangeScannerService() default false;
-   public int scannerInterval() default -1;
-   public String agentName() default "";
-
-   public String loggerName() default "";
-   public String loggerType() default "";
-   public String loggerPath() default "";
-   public int loggerInterval() default 0;
-
-   public boolean disableSeamDelegate() default false;
-   
-   public DroolsProperty[] kbuilderProperties() default {};
-
-   public DroolsProperty[] kbaseProperties() default {};
-
-   public DroolsProperty[] ksessionProperties() default {};
-
-   public DroolsProperty[] kagentPropertiest() default {};
-   
-   public DroolsProperty[] serializationSigningProperties() default {};
-   
+   public String name() default "";   
 }

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
 
-@Generic(Drools.class)
+@GenericConfiguration(Drools.class)
 public class RuleResources
 {
    private List<RuleResource> ruleResources = new ArrayList<RuleResource>();

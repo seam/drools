@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -22,24 +22,26 @@ import org.drools.io.ResourceChangeScannerConfiguration;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.jboss.seam.drools.config.Drools;
+import org.jboss.seam.drools.config.DroolsConfig;
 import org.jboss.seam.drools.config.DroolsProperty;
 import org.jboss.seam.drools.utils.ConfigUtils;
-import org.jboss.weld.extensions.bean.generic.Generic;
+import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
 import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Generic(Drools.class)
+@GenericConfiguration(Drools.class)
 @ApplicationScoped
 public class DroolsConfigUtil implements Serializable
 {
+   private static final long serialVersionUID = 3602744739839624526L;
+
    private static final Logger log = LoggerFactory.getLogger(DroolsConfigUtil.class);
 
    @Inject
    ResourceProvider resourceProvider;
 
-   @Inject
-   Drools config;
+   @Inject DroolsConfig config;
    
    private final Map<String, String> kbuilderPropertiesMap = new HashMap<String, String>();
    private final Map<String, String> kbasePropertiesMap = new HashMap<String, String>();
@@ -50,20 +52,25 @@ public class DroolsConfigUtil implements Serializable
    @PostConstruct
    public void setup()
    {
-      readProperties(kbuilderPropertiesMap, config.kbuilderProperties(), config.kbuilderConfigFile());
-      readProperties(kbasePropertiesMap, config.kbaseProperties(), config.kbaseConfigFile());
-      readProperties(ksessionPropertiesMap, config.ksessionProperties(), config.ksessionConfigFile());
-      readProperties(kagentPropertiestMap, config.kagentPropertiest(), config.kagentConfigFile());
-      readProperties(serializationSigningPropertiesMap, config.serializationSigningProperties(), config.serializationSigningConfigFile());
+      readProperties(kbuilderPropertiesMap, config.getKBuilderProperties(), config.getKBuilderConfigFile());
+      readProperties(kbasePropertiesMap, config.getKBaseProperties(), config.getKBaseConfigFile());
+      readProperties(ksessionPropertiesMap, config.getKSessionProperties(), config.getKSessionConfigFile());
+      readProperties(kagentPropertiestMap, config.getKAgentProperties(), config.getKAgentConfigFile());
+      readProperties(serializationSigningPropertiesMap, config.getSerializationSigningProperties(), 
+            config.getSerializationSigningConfigFile());
    }
 
    public ResourceChangeScannerConfiguration getResourceChangeScannerConfiguration()
    {
-      ResourceChangeScannerConfiguration sconf = ResourceFactory.getResourceChangeScannerService().newResourceChangeScannerConfiguration();
-      if (config.scannerInterval() >= 0)
+      ResourceChangeScannerConfiguration sconf = ResourceFactory
+          .getResourceChangeScannerService()
+          .newResourceChangeScannerConfiguration();
+      
+      if (config.getScannerInterval() >= 0)
       {
-         sconf.setProperty("drools.resource.scanner.interval", String.valueOf(config.scannerInterval()));
+         sconf.setProperty("drools.resource.scanner.interval", String.valueOf(config.getScannerInterval()));
       }
+      
       return sconf;
    }
 

@@ -10,7 +10,7 @@ import org.jboss.seam.drools.config.RuleResources;
 
 public class KBaseTestRuleResources
 {
-   @Drools(kbuilderConfigFile = "kbuilderconfig.properties", kbaseConfigFile = "kbaseconfig.properties")
+   @Drools//(kbuilderConfigFile = "kbuilderconfig.properties", kbaseConfigFile = "kbaseconfig.properties")
    @Produces
    @ApplicationScoped
    @CreditRules
@@ -19,7 +19,7 @@ public class KBaseTestRuleResources
       return new RuleResources().add(new RuleResource("classpath:kbasetest.drl", "DRL", "forkbasetest"));
    }
    
-   @Drools(kbuilderProperties = { @DroolsProperty(name="drools.dialect.default", value="java") })
+   @Drools//(kbuilderProperties = { @DroolsProperty(name="drools.dialect.default", value="java") })
    @Produces
    @ApplicationScoped
    @DebitRules

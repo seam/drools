@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
@@ -52,11 +51,8 @@ import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.Stateful;
 import org.jboss.seam.drools.qualifiers.Stateless;
 import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
+import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
 import org.jboss.weld.extensions.core.Veto;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -64,10 +60,10 @@ import org.slf4j.LoggerFactory;
  */
 @Veto
 @Dependent
-//@Generic(Drools.class)
+@GenericConfiguration(Drools.class)
 public class ExecutionResultsProducer implements Serializable
 {
-   private static final Logger log = LoggerFactory.getLogger(ExecutionResultsProducer.class);
+   private static final long serialVersionUID = -8930175070602484726L;
 
    @Inject
    BeanManager manager;
@@ -77,21 +73,20 @@ public class ExecutionResultsProducer implements Serializable
    
    @Inject
    @Default
-   //@GenericProduct
+   @Generic
    StatelessKnowledgeSession statelessKsession;
 
    @Inject
    @Scanned
-   //@GenericProduct
+   @Generic
    StatelessKnowledgeSession scannedStatelessKsession;
 
    @Inject
-   @GenericProduct
    StatefulKnowledgeSession statefullKsession;
 
    @Inject
    @Scanned
-   //@GenericProduct
+   @Generic
    StatefulKnowledgeSession scannedStatefullKSession;
 
    @SuppressWarnings("unchecked")
@@ -177,8 +172,8 @@ public class ExecutionResultsProducer implements Serializable
    }
 
    
-   @SuppressWarnings("unchecked")
-   private List getCommandList() {
+   @SuppressWarnings({"unchecked", "rawtypes"})
+   private List getCommandList() {      
       List commandList = new ArrayList();
       Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
       while(iter.hasNext())
