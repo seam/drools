@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -24,12 +24,12 @@ import org.drools.runtime.KnowledgeSessionConfiguration;
 import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.config.DroolsProperty;
 import org.jboss.seam.drools.utils.ConfigUtils;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
+import org.jboss.seam.solder.bean.generic.Generic;
+import org.jboss.seam.solder.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Generic(Drools.class)
+@Generic
 @ApplicationScoped
 public class DroolsConfigUtil implements Serializable
 {

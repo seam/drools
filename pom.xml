@@ -5,55 +5,29 @@
 	<parent>
 		<groupId>org.jboss.seam</groupId>
 		<artifactId>seam-parent</artifactId>
-		<version>3</version>
+		<version>6</version>
 	</parent>
 	
-	<artifactId>seam-drools-parent</artifactId>
 	<groupId>org.jboss.seam.drools</groupId>
+	<artifactId>seam-drools-parent</artifactId>
+	<packaging>pom</packaging>
 	<version>3.0.0-SNAPSHOT</version>
 
-	<packaging>pom</packaging>
-	<name>Seam Drools Parent</name>
+	<name>Seam Drools Module</name>
 
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
-
-	<description>
-		The Parent for Seam Drools Modules
-	</description>
-
-	<url>http://www.seamframework.org</url>
+   <description>CDI integration for Drools</description>
+	<url>http://seamframework.org/Seam3/Drools</url>
 
 	<modules>
 		<module>api</module>
 		<module>impl</module>
-		<module>docs</module>
-		<!-- <module>examples</module> -->
+		<!-- <module>combined</module> -->
 	</modules>
 
-	<developers>
-		<developer>
-			<name>Tihomir Surdilovic</name>
-			<email>tsurdilo@redhat.com</email>
-			<url>http://in.relation.to/Bloggers/Tihomir</url>
-			<organization>JBoss, by Red Hat</organization>
-			<organizationUrl>http://jboss.org</organizationUrl>
-			<timezone>EST</timezone>
-			<roles>
-				<role>Module Lead</role>
-			</roles>
-		</developer>
-	</developers>
-
 	<properties>
-		<drools.version>5.1.1</drools.version>
-		<seam.version>3.0.0.b01</seam.version>
-		<weld-extensions.version>1.0.0-SNAPSHOT</weld-extensions.version>
+		<seam.version>3.0.0.b05</seam.version>
 		<stringtemplate.version>3.0</stringtemplate.version>
 		<antlr.version>2.7.6-brew</antlr.version>
-		<weld.version>1.1.0.Beta1</weld.version>
-		<arquillian.version>1.0.0.Alpha4</arquillian.version>
 	</properties>
 
 	<dependencyManagement>
@@ -61,7 +35,7 @@
 
 			<dependency>
 				<groupId>org.jboss.seam</groupId>
-				<artifactId>seam</artifactId>
+				<artifactId>seam-bom</artifactId>
 				<version>${seam.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
@@ -79,15 +53,25 @@
 				<artifactId>seam-drools-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-            	<groupId>org.jboss.weld</groupId>
-            	<artifactId>weld-extensions</artifactId>
-            	<version>${weld-extensions.version}</version>
-         	</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<profiles>
+      <profile>
+         <id>distribution</id>
+         <activation>
+            <property>
+               <name>release</name>
+            </property>
+         </activation>
+         <modules>
+            <module>docs</module>
+            <!--
+            <module>examples/short-ly</module>
+            -->
+            <module>dist</module>
+         </modules>
+      </profile>
       <profile>
          <id>jboss-public-repository</id>
          <activation>
@@ -129,11 +113,34 @@
       </profile>
    </profiles>
 
-
 	<scm>
 		<connection>scm:git:git://github.com/seam/drools.git</connection>
 		<developerConnection>scm:git:git@github.com:seam/drools.git</developerConnection>
 		<url>http://github.com/seam/drools</url>
 	</scm>
+
+   <issueManagement>
+      <system>JIRA</system>
+      <url>http://issues.jboss.org/browse/SEAMDROOLS</url>
+   </issueManagement>
+
+   <ciManagement>
+      <system>Hudson</system>
+      <url>http://hudson.jboss.org/hudson/view/Seam/job/Seam-3.X-drools-CI</url>
+   </ciManagement>
+
+	<developers>
+		<developer>
+			<name>Tihomir Surdilovic</name>
+			<email>tsurdilo@redhat.com</email>
+			<url>http://in.relation.to/Bloggers/Tihomir</url>
+			<organization>JBoss, by Red Hat</organization>
+			<organizationUrl>http://jboss.org</organizationUrl>
+			<timezone>EST</timezone>
+			<roles>
+				<role>Module Lead</role>
+			</roles>
+		</developer>
+	</developers>
 
 </project>

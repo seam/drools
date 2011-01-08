@@ -24,10 +24,8 @@ package org.jboss.seam.drools.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
-
+import org.jboss.seam.solder.resourceLoader.ResourceProvider;
 
 /**
  * 

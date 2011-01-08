@@ -40,11 +40,8 @@ import org.jboss.seam.drools.config.RuleResource;
 import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.qualifiers.Scanned;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericBean;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.core.Veto;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
+import org.jboss.seam.solder.core.Veto;
+import org.jboss.seam.solder.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

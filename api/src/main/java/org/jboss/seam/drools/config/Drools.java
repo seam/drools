@@ -30,7 +30,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
+import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
+import org.jboss.seam.solder.bean.generic.GenericConfiguration;
 
 /**
  * Drools configuration file.
@@ -40,7 +41,7 @@ import org.jboss.weld.extensions.bean.generic.GenericConfiguration;
  */
 @Retention(RUNTIME)
 @Target( { METHOD, FIELD, PARAMETER, TYPE })
-@GenericConfiguration
+@GenericConfiguration(DefaultConfig.class)
 public @interface Drools
 {
    public String name() default "";

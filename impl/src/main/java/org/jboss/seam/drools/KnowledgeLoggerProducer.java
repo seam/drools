@@ -25,7 +25,6 @@ import java.io.Serializable;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 import org.drools.event.KnowledgeRuntimeEventManager;
@@ -36,10 +35,7 @@ import org.drools.runtime.StatelessKnowledgeSession;
 import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.qualifiers.Scanned;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericBean;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.core.Veto;
+import org.jboss.seam.solder.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,12 +68,12 @@ public class KnowledgeLoggerProducer implements Serializable
    StatefulKnowledgeSession scannedStatefullKsession;
 
    @Inject
-   @GenericBean
+   //@GenericBean
    StatelessKnowledgeSession statelessKsession;
 
    @Inject
    @Scanned
-   @GenericProduct
+   //@GenericProduct
    StatelessKnowledgeSession scannedStatelessKsession;
 
    @RequestScoped

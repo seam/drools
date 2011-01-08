@@ -24,7 +24,6 @@ package org.jboss.seam.drools;
 import java.io.Serializable;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -32,12 +31,9 @@ import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.QueryResults;
-import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.Query;
 import org.jboss.seam.drools.qualifiers.Scanned;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.core.Veto;
+import org.jboss.seam.solder.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

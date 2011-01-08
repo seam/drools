@@ -28,10 +28,8 @@ import java.io.StringReader;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -58,10 +56,8 @@ import org.jboss.seam.drools.config.RuleResources;
 import org.jboss.seam.drools.configutil.DroolsConfigUtil;
 import org.jboss.seam.drools.events.KnowledgeBuilderErrorsEvent;
 import org.jboss.seam.drools.events.RuleResourceAddedEvent;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericBean;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
+import org.jboss.seam.solder.bean.generic.Generic;
+import org.jboss.seam.solder.resourceLoader.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * @author Tihomir Surdilovic
  */
 @Dependent
-@Generic(Drools.class)
+@Generic
 public class KnowledgeBaseProducer implements Serializable
 {
    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
@@ -85,15 +81,15 @@ public class KnowledgeBaseProducer implements Serializable
    DroolsExtension droolsExtension;
 
    @Inject 
-   @GenericBean
+   //@GenericBean
    Drools drools;
    
    @Inject
-   @GenericBean
+   //@GenericBean
    DroolsConfigUtil configUtils;
    
    @Inject 
-   @GenericProduct
+   //@GenericProduct
    RuleResources ruleResources;
    
    

@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
@@ -47,14 +46,10 @@ import org.drools.runtime.pipeline.PipelineFactory;
 import org.drools.runtime.pipeline.ResultHandler;
 import org.drools.runtime.pipeline.Transformer;
 import org.jboss.seam.drools.bootstrap.DroolsExtension;
-import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.Scanned;
 import org.jboss.seam.drools.qualifiers.Stateful;
 import org.jboss.seam.drools.qualifiers.Stateless;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.core.Veto;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
+import org.jboss.seam.solder.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +81,7 @@ public class ExecutionResultsProducer implements Serializable
    StatelessKnowledgeSession scannedStatelessKsession;
 
    @Inject
-   @GenericProduct
+   //@GenericProduct
    StatefulKnowledgeSession statefullKsession;
 
    @Inject

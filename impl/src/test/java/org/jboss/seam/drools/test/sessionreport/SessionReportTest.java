@@ -21,28 +21,11 @@
  */ 
 package org.jboss.seam.drools.test.sessionreport;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotSame;
-
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-
-import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.SessionReportWrapper;
-import org.jboss.seam.drools.qualifiers.SessionReport;
-import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
-import org.jboss.seam.drools.test.DroolsModuleFilter;
 import org.jboss.seam.drools.test.query.QueryTest;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.weld.extensions.resourceLoader.ResourceProvider;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

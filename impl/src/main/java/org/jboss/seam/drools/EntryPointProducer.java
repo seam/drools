@@ -31,12 +31,9 @@ import javax.inject.Inject;
 
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.WorkingMemoryEntryPoint;
-import org.jboss.seam.drools.config.Drools;
 import org.jboss.seam.drools.qualifiers.EntryPoint;
 import org.jboss.seam.drools.qualifiers.Scanned;
-import org.jboss.weld.extensions.bean.generic.Generic;
-import org.jboss.weld.extensions.bean.generic.GenericProduct;
-import org.jboss.weld.extensions.core.Veto;
+import org.jboss.seam.solder.core.Veto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
