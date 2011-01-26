@@ -49,7 +49,7 @@
       <!-- FIXME ResourceProvider should be in Solder API -->
       <dependency>
          <groupId>org.jboss.seam.solder</groupId>
-         <artifactId>seam-solder-impl</artifactId>
+         <artifactId>seam-solder</artifactId>
          <scope>compile</scope>
       </dependency>
       <dependency>
