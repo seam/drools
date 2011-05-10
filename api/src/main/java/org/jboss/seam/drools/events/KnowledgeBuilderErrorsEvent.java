@@ -18,33 +18,29 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.events;
 
 import org.drools.builder.KnowledgeBuilderErrors;
 
 /**
  * This event is fires in case of KnowledgeBuilder errors.
- * 
+ *
  * @author Tihomir Surdilovic
  */
-public class KnowledgeBuilderErrorsEvent
-{
-   private KnowledgeBuilderErrors errors;
+public class KnowledgeBuilderErrorsEvent {
+    private KnowledgeBuilderErrors errors;
 
-   public KnowledgeBuilderErrorsEvent(KnowledgeBuilderErrors errors)
-   {
-      this.errors = errors;
-   }
+    public KnowledgeBuilderErrorsEvent(KnowledgeBuilderErrors errors) {
+        this.errors = errors;
+    }
 
-   public KnowledgeBuilderErrors getErrors()
-   {
-      return errors;
-   }
+    public KnowledgeBuilderErrors getErrors() {
+        return errors;
+    }
 
-   public void setErrors(KnowledgeBuilderErrors errors)
-   {
-      this.errors = errors;
-   }
+    public void setErrors(KnowledgeBuilderErrors errors) {
+        this.errors = errors;
+    }
 
 }

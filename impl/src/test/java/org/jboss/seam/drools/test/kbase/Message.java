@@ -1,27 +1,26 @@
 package org.jboss.seam.drools.test.kbase;
 
-public class Message
-{
-   public static final int HELLO = 0;
-   public static final int GOODBYE = 1;
+public class Message {
+    public static final int HELLO = 0;
+    public static final int GOODBYE = 1;
 
-   private String message;
+    private String message;
 
-   private int status;
+    private int status;
 
-   public String getMessage() {
-      return this.message;
-   }
+    public String getMessage() {
+        return this.message;
+    }
 
-   public void setMessage(String message) {
-      this.message = message;
-   }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-   public int getStatus() {
-      return this.status;
-   }
+    public int getStatus() {
+        return this.status;
+    }
 
-   public void setStatus(int status) {
-      this.status = status;
-   }
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

@@ -18,12 +18,8 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.annotations.flow;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -32,23 +28,23 @@ import java.lang.annotation.Target;
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Starts a Rule Flow process.
- * 
+ *
  * @author Tihomir Surdilovic
  */
 @InterceptorBinding
-@Target( { TYPE, METHOD })
+@Target({TYPE, METHOD})
 @Documented
 @Retention(RUNTIME)
-public @interface StartProcess
-{
-   @Nonbinding
-   String processName() default "";
-   
-   @Nonbinding
-   boolean fire() default false;
-   
-   @Nonbinding 
-   boolean untilHalt() default false;
+public @interface StartProcess {
+    @Nonbinding String processName() default "";
+
+    @Nonbinding boolean fire() default false;
+
+    @Nonbinding boolean untilHalt() default false;
 }

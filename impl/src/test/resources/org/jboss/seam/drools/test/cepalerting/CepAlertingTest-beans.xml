@@ -18,12 +18,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this software; if not, write to the Free
 Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 02110-1301 USA, or see the FSF site: http://www.fsf.org.
---> 
+-->
 <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:s="urn:java:ee" 
-	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
-	xmlns:test="urn:java:org.jboss.seam.drools.test.ksession">
+       xmlns:s="urn:java:ee"
+       xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+       xmlns:test="urn:java:org.jboss.seam.drools.test.ksession">
 
-	
-	
-</beans>       
+
+</beans>

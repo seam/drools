@@ -27,7 +27,6 @@ import org.jboss.seam.drools.annotations.cep.Event;
 
 @Event
 @Interceptor
-public class EventInterceptor
-{
+public class EventInterceptor {
 
 }

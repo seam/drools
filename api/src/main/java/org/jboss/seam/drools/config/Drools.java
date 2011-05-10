@@ -21,56 +21,66 @@
  */
 package org.jboss.seam.drools.config;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
 import org.jboss.seam.solder.bean.generic.GenericConfiguration;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Drools configuration file.
- * 
+ *
  * @author Tihomir Surdilovic
  * @author Stuart Douglas
  */
 @Retention(RUNTIME)
-@Target( { METHOD, FIELD, PARAMETER, TYPE })
+@Target({METHOD, FIELD, PARAMETER, TYPE})
 @GenericConfiguration(DefaultConfig.class)
-public @interface Drools
-{
-   public String name() default "";
-   public String kbuilderConfigFile() default "";
-   public String kbaseConfigFile() default "";
-   public String ksessionConfigFile() default "";
-   public String kagentConfigFile() default "";
-   public String serializationSigningConfigFile() default "";
+public @interface Drools {
+    public String name() default "";
 
-   public boolean startChangeNotifierService() default false;
-   public boolean startChangeScannerService() default false;
-   public int scannerInterval() default -1;
-   public String agentName() default "";
+    public String kbuilderConfigFile() default "";
 
-   public String loggerName() default "";
-   public String loggerType() default "";
-   public String loggerPath() default "";
-   public int loggerInterval() default 0;
+    public String kbaseConfigFile() default "";
 
-   public boolean disableSeamDelegate() default false;
-   
-   public DroolsProperty[] kbuilderProperties() default {};
+    public String ksessionConfigFile() default "";
 
-   public DroolsProperty[] kbaseProperties() default {};
+    public String kagentConfigFile() default "";
 
-   public DroolsProperty[] ksessionProperties() default {};
+    public String serializationSigningConfigFile() default "";
 
-   public DroolsProperty[] kagentPropertiest() default {};
-   
-   public DroolsProperty[] serializationSigningProperties() default {};
-   
+    public boolean startChangeNotifierService() default false;
+
+    public boolean startChangeScannerService() default false;
+
+    public int scannerInterval() default -1;
+
+    public String agentName() default "";
+
+    public String loggerName() default "";
+
+    public String loggerType() default "";
+
+    public String loggerPath() default "";
+
+    public int loggerInterval() default 0;
+
+    public boolean disableSeamDelegate() default false;
+
+    public DroolsProperty[] kbuilderProperties() default {};
+
+    public DroolsProperty[] kbaseProperties() default {};
+
+    public DroolsProperty[] ksessionProperties() default {};
+
+    public DroolsProperty[] kagentPropertiest() default {};
+
+    public DroolsProperty[] serializationSigningProperties() default {};
+
 }

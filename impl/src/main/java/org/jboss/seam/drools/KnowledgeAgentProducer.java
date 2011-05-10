@@ -47,77 +47,70 @@ import org.slf4j.LoggerFactory;
 
 /**
  * KnowledgeAgent producer.
- * 
+ *
  * @author Tihomir Surdilovic
  */
 @Veto
 @Dependent
 //@Generic(Drools.class)
-public class KnowledgeAgentProducer implements Serializable
-{
-   private static final Logger log = LoggerFactory.getLogger(KnowledgeAgentProducer.class);
+public class KnowledgeAgentProducer implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(KnowledgeAgentProducer.class);
 
-   @Inject
-   BeanManager manager;
-   
-   @Inject
-   ResourceProvider resourceProvider;
+    @Inject
+    BeanManager manager;
 
-   @Inject
-   Drools config;
-   
-   @Inject
-   //@GenericBean
-   DroolsConfigUtil configUtils;
-   
-   @Inject 
-   //@GenericProduct
-   RuleResources ruleResources;
+    @Inject
+    ResourceProvider resourceProvider;
 
-   @Produces
-   @ApplicationScoped
-   public KnowledgeAgent produceKnowledgeAgent() throws Exception
-   {
-      return getAgent();
-   }
-   
-   @Produces
-   @Scanned
-   @ApplicationScoped
-   public KnowledgeBase produceScannedKnowledgeBase() throws Exception
-   {
-      KnowledgeAgent agent = getAgent();
-      return agent.getKnowledgeBase();
-   }
-   
-   private KnowledgeAgent getAgent() throws Exception
-   {
-      ResourceFactory.getResourceChangeScannerService().configure(configUtils.getResourceChangeScannerConfiguration());
+    @Inject
+    Drools config;
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
-      KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(config.agentName(), kbase, configUtils.getKnowledgeAgentConfiguration());
+    @Inject
+    //@GenericBean
+            DroolsConfigUtil configUtils;
 
-      Iterator<RuleResource> resourceIterator = ruleResources.iterator();
-      while(resourceIterator.hasNext()) {
-         kagent.applyChangeSet(resourceIterator.next().getDroolsResouce());
-      }
-      
-      if (config.startChangeNotifierService())
-      {
-         ResourceFactory.getResourceChangeNotifierService().start();
-      }
-      if (config.startChangeScannerService())
-      {
-         ResourceFactory.getResourceChangeScannerService().start();
-      }
-      return kagent;
+    @Inject
+    //@GenericProduct
+            RuleResources ruleResources;
 
-   }
+    @Produces
+    @ApplicationScoped
+    public KnowledgeAgent produceKnowledgeAgent() throws Exception {
+        return getAgent();
+    }
 
-   public void disposeScannedKnowledgeBase(/* @Disposes */@Scanned KnowledgeBase kbase)
-   {
-      // do we really want to stop ?
-      ResourceFactory.getResourceChangeNotifierService().stop();
-      ResourceFactory.getResourceChangeScannerService().stop();
-   }
+    @Produces
+    @Scanned
+    @ApplicationScoped
+    public KnowledgeBase produceScannedKnowledgeBase() throws Exception {
+        KnowledgeAgent agent = getAgent();
+        return agent.getKnowledgeBase();
+    }
+
+    private KnowledgeAgent getAgent() throws Exception {
+        ResourceFactory.getResourceChangeScannerService().configure(configUtils.getResourceChangeScannerConfiguration());
+
+        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
+        KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent(config.agentName(), kbase, configUtils.getKnowledgeAgentConfiguration());
+
+        Iterator<RuleResource> resourceIterator = ruleResources.iterator();
+        while (resourceIterator.hasNext()) {
+            kagent.applyChangeSet(resourceIterator.next().getDroolsResouce());
+        }
+
+        if (config.startChangeNotifierService()) {
+            ResourceFactory.getResourceChangeNotifierService().start();
+        }
+        if (config.startChangeScannerService()) {
+            ResourceFactory.getResourceChangeScannerService().start();
+        }
+        return kagent;
+
+    }
+
+    public void disposeScannedKnowledgeBase(/* @Disposes */@Scanned KnowledgeBase kbase) {
+        // do we really want to stop ?
+        ResourceFactory.getResourceChangeNotifierService().stop();
+        ResourceFactory.getResourceChangeScannerService().stop();
+    }
 }

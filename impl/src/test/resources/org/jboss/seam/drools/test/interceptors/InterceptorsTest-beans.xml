@@ -18,51 +18,52 @@ You should have received a copy of the GNU Lesser General Public
 License along with this software; if not, write to the Free
 Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 02110-1301 USA, or see the FSF site: http://www.fsf.org.
---> 
+-->
 <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:s="urn:java:ee" 
-	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
-	xmlns:test="urn:java:org.jboss.seam.drools.test.interceptors">
+       xmlns:s="urn:java:ee"
+       xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+       xmlns:test="urn:java:org.jboss.seam.drools.test.interceptors">
 
-	<interceptors>
-    	<class>org.jboss.seam.drools.interceptor.InsertFactInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.FireRulesInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.flow.StartProcessInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.flow.SignalEventInterceptor</class>
-    	<class>org.jboss.seam.drools.interceptor.flow.AbortProcessInterceptor</class>
+    <interceptors>
+        <class>org.jboss.seam.drools.interceptor.InsertFactInterceptor</class>
+        <class>org.jboss.seam.drools.interceptor.FireRulesInterceptor</class>
+        <class>org.jboss.seam.drools.interceptor.flow.StartProcessInterceptor</class>
+        <class>org.jboss.seam.drools.interceptor.flow.SignalEventInterceptor</class>
+        <class>org.jboss.seam.drools.interceptor.flow.AbortProcessInterceptor</class>
     </interceptors>
-    
-	<!--<d:DefaultRuleResources>
-  		<s:modifies/>
-  		<s:Exact>org.jboss.seam.drools.config.DefaultRuleResources</s:Exact>
-   	<d:resources>
-   		<s:value>classpath;interceptorstest.drl;DRL</s:value>
-   	</d:resources>
-	</d:DefaultRuleResources>
-	
-	<d:CEPPseudoClockRuleResources>
-  		<s:modifies/>
-  		<s:Exact>org.jboss.seam.drools.config.CEPPseudoClockRuleResources</s:Exact>
-   	<d:resources>
-   		<s:value>classpath;interceptorstestcep.drl;DRL</s:value>
-   	</d:resources>
-	</d:CEPPseudoClockRuleResources>
-	
-	<d:RuleResources>
-		<s:overrides/>
-		<test:InterceptorsTestConfig/>
-		<d:resources>
-   			<s:value>classpath;interceptorstestflow.drl;DRL</s:value>
-   			<s:value>classpath;interceptortests.rf;DRF</s:value>
-   		</d:resources>
-	</d:RuleResources>
-	<d:DroolsConfig>
-		<test:InterceptorsTestConfig/>
-		<d:ruleResources>
-			<s:Inject/>
-			<test:InterceptorsTestConfig/>
-		</d:ruleResources>
-	</d:DroolsConfig>
-	
-		
---></beans>       
+
+    <!--<d:DefaultRuleResources>
+              <s:modifies/>
+              <s:Exact>org.jboss.seam.drools.config.DefaultRuleResources</s:Exact>
+           <d:resources>
+               <s:value>classpath;interceptorstest.drl;DRL</s:value>
+           </d:resources>
+        </d:DefaultRuleResources>
+
+        <d:CEPPseudoClockRuleResources>
+              <s:modifies/>
+              <s:Exact>org.jboss.seam.drools.config.CEPPseudoClockRuleResources</s:Exact>
+           <d:resources>
+               <s:value>classpath;interceptorstestcep.drl;DRL</s:value>
+           </d:resources>
+        </d:CEPPseudoClockRuleResources>
+
+        <d:RuleResources>
+            <s:overrides/>
+            <test:InterceptorsTestConfig/>
+            <d:resources>
+                   <s:value>classpath;interceptorstestflow.drl;DRL</s:value>
+                   <s:value>classpath;interceptortests.rf;DRF</s:value>
+               </d:resources>
+        </d:RuleResources>
+        <d:DroolsConfig>
+            <test:InterceptorsTestConfig/>
+            <d:ruleResources>
+                <s:Inject/>
+                <test:InterceptorsTestConfig/>
+            </d:ruleResources>
+        </d:DroolsConfig>
+
+
+    -->
+</beans>

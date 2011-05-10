@@ -18,26 +18,23 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.query;
 
-public class Person
-{
-   private int age;
+public class Person {
+    private int age;
 
-   public Person(int age) {
-      this.age = age;
-   }
-   
-   public int getAge()
-   {
-      return age;
-   }
+    public Person(int age) {
+        this.age = age;
+    }
 
-   public void setAge(int age)
-   {
-      this.age = age;
-   }
-   
-   
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+
 }

@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.flow;
 
 import org.jboss.arquillian.api.Deployment;
@@ -29,43 +29,41 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class FlowTest
-{
-   @Deployment
-   public static JavaArchive createTestArchive()
-   {
-      String pkgPath = FlowTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      /**.addPackages(true, new DroolsModuleFilter("flow"), KnowledgeBaseProducer.class.getPackage())
-      .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(Person.class)
-      .addResource(pkgPath + "/flowtest.drl", ArchivePaths.create("flowtest.drl"))
-      .addResource(pkgPath + "/flowtest.rf", ArchivePaths.create("flowtest.rf"))
-      //.addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
-      //.addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/FlowTest-beans.xml", ArchivePaths.create("beans.xml"));
-      //System.out.println(archive.toString(Formatters.VERBOSE))**/;
-      return archive;
-   }
-   /**
-   
-   @SuppressWarnings("unchecked")
-   @Test
-   public void testFlow(@Default @DefaultConfig StatefulKnowledgeSession ksession) {
-      assertNotNull(ksession);
-      ksession.setGlobal("errors", new ArrayList<String>());
-      ksession.insert(new Person("Tihomir", ""));     
-      
-      ksession.startProcess("validationflow");
-      ksession.fireAllRules();
-      
-      assertTrue( ((ArrayList<String>) ksession.getGlobal("errors")).size() == 1 );
-      assertTrue( ((ArrayList<String>) ksession.getGlobal("errors")).get(0).equals("You must enter a Telephone Number") );
-     
-   
-   }**/
-   @Test
-   public void nothingToTest() {
-      
-   }
+public class FlowTest {
+    @Deployment
+    public static JavaArchive createTestArchive() {
+        String pkgPath = FlowTest.class.getPackage().getName().replaceAll("\\.", "/");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                /**.addPackages(true, new DroolsModuleFilter("flow"), KnowledgeBaseProducer.class.getPackage())
+                 .addPackages(true, ResourceProvider.class.getPackage())
+                 .addClass(Person.class)
+                 .addResource(pkgPath + "/flowtest.drl", ArchivePaths.create("flowtest.drl"))
+                 .addResource(pkgPath + "/flowtest.rf", ArchivePaths.create("flowtest.rf"))
+                 //.addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
+                 //.addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
+                 .addManifestResource(pkgPath + "/FlowTest-beans.xml", ArchivePaths.create("beans.xml"));
+                 //System.out.println(archive.toString(Formatters.VERBOSE))**/;
+        return archive;
+    }
+
+    /**
+     * @SuppressWarnings("unchecked")
+     * @Test public void testFlow(@Default @DefaultConfig StatefulKnowledgeSession ksession) {
+     * assertNotNull(ksession);
+     * ksession.setGlobal("errors", new ArrayList<String>());
+     * ksession.insert(new Person("Tihomir", ""));
+     * <p/>
+     * ksession.startProcess("validationflow");
+     * ksession.fireAllRules();
+     * <p/>
+     * assertTrue( ((ArrayList<String>) ksession.getGlobal("errors")).size() == 1 );
+     * assertTrue( ((ArrayList<String>) ksession.getGlobal("errors")).get(0).equals("You must enter a Telephone Number") );
+     * <p/>
+     * <p/>
+     * }*
+     */
+    @Test
+    public void nothingToTest() {
+
+    }
 }

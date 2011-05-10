@@ -32,108 +32,107 @@ import org.drools.spi.InternalReadAccessor;
 import org.jboss.seam.drools.test.customoperator.StrEvaluatorDefinition.Operations;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 public class StrEvaluator extends BaseEvaluator {
 
-	public static final Operator STR_COMPARE = Operator.addOperatorToRegistry(
-			"str", false);
-	public static final Operator NOT_STR_COMPARE = Operator
-			.addOperatorToRegistry("str", true);
-	public static final String[] SUPPORTED_IDS = { STR_COMPARE
-			.getOperatorString() };
-	
-	private Operations parameter;
+    public static final Operator STR_COMPARE = Operator.addOperatorToRegistry(
+            "str", false);
+    public static final Operator NOT_STR_COMPARE = Operator
+            .addOperatorToRegistry("str", true);
+    public static final String[] SUPPORTED_IDS = {STR_COMPARE
+            .getOperatorString()};
 
-	public void setParameterText(String parameterText) {
-		this.parameter = Operations.valueOf(parameterText);
-	}
+    private Operations parameter;
 
-	public Operations getParameter() {
-		return parameter;
-	}
+    public void setParameterText(String parameterText) {
+        this.parameter = Operations.valueOf(parameterText);
+    }
 
-	public StrEvaluator(final ValueType type, final boolean isNegated) {
-		super(type, isNegated ? NOT_STR_COMPARE : STR_COMPARE);
-	}
+    public Operations getParameter() {
+        return parameter;
+    }
 
-	public boolean evaluate(InternalWorkingMemory workingMemory,
-			InternalReadAccessor extractor, Object object, FieldValue value) {
-		final Object objectValue = extractor
-.getValue(workingMemory, object);
-			switch (parameter) {
-			case startsWith:
-				return this.getOperator().isNegated() ^ (((String)objectValue).startsWith( (String)value.getValue() ));
-			case endsWith:
-				return this.getOperator().isNegated() ^ (((String)objectValue).endsWith( (String)value.getValue() ));
-			case length:
-				return this.getOperator().isNegated() ^ (((String)objectValue).length() == ((Long) value.getValue()).longValue() );
-			default:
-				throw new IllegalAccessError("Illegal str comparison parameter");
-			}
-	}
+    public StrEvaluator(final ValueType type, final boolean isNegated) {
+        super(type, isNegated ? NOT_STR_COMPARE : STR_COMPARE);
+    }
 
-	public boolean evaluate(InternalWorkingMemory workingMemory,
-			InternalReadAccessor leftExtractor, Object left,
-			InternalReadAccessor rightExtractor, Object right) {
-		final Object value1 = leftExtractor.getValue(workingMemory, left);
-		final Object value2 = rightExtractor.getValue(workingMemory, right);
-		
-			switch (parameter) {
-			case startsWith:
-				return this.getOperator().isNegated() ^ (((String)value1).startsWith( (String) value2 ));
-			case endsWith:
-				return this.getOperator().isNegated() ^ (((String)value1).endsWith( (String) value2 ));
-			case length:
-				return this.getOperator().isNegated() ^ (((String)value1).length() == ((Long) value2).longValue() );
-			default:
-				throw new IllegalAccessError("Illegal str comparison parameter");
-			}				
-		
-	}
+    public boolean evaluate(InternalWorkingMemory workingMemory,
+                            InternalReadAccessor extractor, Object object, FieldValue value) {
+        final Object objectValue = extractor
+                .getValue(workingMemory, object);
+        switch (parameter) {
+            case startsWith:
+                return this.getOperator().isNegated() ^ (((String) objectValue).startsWith((String) value.getValue()));
+            case endsWith:
+                return this.getOperator().isNegated() ^ (((String) objectValue).endsWith((String) value.getValue()));
+            case length:
+                return this.getOperator().isNegated() ^ (((String) objectValue).length() == ((Long) value.getValue()).longValue());
+            default:
+                throw new IllegalAccessError("Illegal str comparison parameter");
+        }
+    }
 
-	public boolean evaluateCachedLeft(InternalWorkingMemory workingMemory,
-			VariableContextEntry context, Object right) {
-		
-			switch (parameter) {
-			case startsWith:
-				return this.getOperator().isNegated() ^ (((String)right).startsWith( (String)((ObjectVariableContextEntry)
-						context).left) );
-			case endsWith:
-				return this.getOperator().isNegated() ^ (((String)right).endsWith( (String)((ObjectVariableContextEntry)
-						context).left));
-			case length:
-				return this.getOperator().isNegated() ^ (((String)right).length() ==  ((Long)((ObjectVariableContextEntry)
-						context).left).longValue());
-			default:
-				throw new IllegalAccessError("Illegal str comparison parameter");
-			}
-		
-	}
+    public boolean evaluate(InternalWorkingMemory workingMemory,
+                            InternalReadAccessor leftExtractor, Object left,
+                            InternalReadAccessor rightExtractor, Object right) {
+        final Object value1 = leftExtractor.getValue(workingMemory, left);
+        final Object value2 = rightExtractor.getValue(workingMemory, right);
 
-	public boolean evaluateCachedRight(InternalWorkingMemory workingMemory,
-			VariableContextEntry context, Object left) {
-			switch (parameter) {
-			case startsWith:
-				return this.getOperator().isNegated() ^ (((String)left).startsWith((String)((ObjectVariableContextEntry)
-						context).right));
-			case endsWith:
-				return this.getOperator().isNegated() ^ (((String)left).endsWith((String)((ObjectVariableContextEntry)
-						context).right));
-			case length:
-				return this.getOperator().isNegated() ^ (((String)left).length() == ((Long)((ObjectVariableContextEntry)
-						context).right).longValue());
-			default:
-				throw new IllegalAccessError("Illegal str comparison parameter");
-			}
-		
-	}
+        switch (parameter) {
+            case startsWith:
+                return this.getOperator().isNegated() ^ (((String) value1).startsWith((String) value2));
+            case endsWith:
+                return this.getOperator().isNegated() ^ (((String) value1).endsWith((String) value2));
+            case length:
+                return this.getOperator().isNegated() ^ (((String) value1).length() == ((Long) value2).longValue());
+            default:
+                throw new IllegalAccessError("Illegal str comparison parameter");
+        }
 
-	@Override
-	public String toString() {
-		return "StrEvaluatorDefinition str";
+    }
 
-	}
+    public boolean evaluateCachedLeft(InternalWorkingMemory workingMemory,
+                                      VariableContextEntry context, Object right) {
+
+        switch (parameter) {
+            case startsWith:
+                return this.getOperator().isNegated() ^ (((String) right).startsWith((String) ((ObjectVariableContextEntry)
+                        context).left));
+            case endsWith:
+                return this.getOperator().isNegated() ^ (((String) right).endsWith((String) ((ObjectVariableContextEntry)
+                        context).left));
+            case length:
+                return this.getOperator().isNegated() ^ (((String) right).length() == ((Long) ((ObjectVariableContextEntry)
+                        context).left).longValue());
+            default:
+                throw new IllegalAccessError("Illegal str comparison parameter");
+        }
+
+    }
+
+    public boolean evaluateCachedRight(InternalWorkingMemory workingMemory,
+                                       VariableContextEntry context, Object left) {
+        switch (parameter) {
+            case startsWith:
+                return this.getOperator().isNegated() ^ (((String) left).startsWith((String) ((ObjectVariableContextEntry)
+                        context).right));
+            case endsWith:
+                return this.getOperator().isNegated() ^ (((String) left).endsWith((String) ((ObjectVariableContextEntry)
+                        context).right));
+            case length:
+                return this.getOperator().isNegated() ^ (((String) left).length() == ((Long) ((ObjectVariableContextEntry)
+                        context).right).longValue());
+            default:
+                throw new IllegalAccessError("Illegal str comparison parameter");
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "StrEvaluatorDefinition str";
+
+    }
 
 }

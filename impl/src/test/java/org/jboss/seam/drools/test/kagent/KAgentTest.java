@@ -29,61 +29,57 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class KAgentTest
-{
-   @Deployment
-   public static JavaArchive createTestArchive()
-   {
-      String pkgPath = KAgentTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      /**.addPackages(true, new DroolsModuleFilter("kagent"), KnowledgeBaseProducer.class.getPackage())
-      .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(Person.class)
-      .addClass(KAgentTestConfig.class)
-      .addResource(pkgPath + "/kagenttestone.drl", ArchivePaths.create("kagenttestone.drl"))
-      .addResource(pkgPath + "/kagenttesttwo.drl", ArchivePaths.create("kagenttesttwo.drl"))
-      .addResource(pkgPath + "/kagenttestchangeset.xml", ArchivePaths.create("kagenttestchangeset.xml"))
-      // .addResource(pkgPath + "/kbuilderconfig.properties",
-            // ArchivePaths.create("kbuilderconfig.properties"))
-            // .addResource(pkgPath + "/kbaseconfig.properties",
-            // ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/KAgentTest-beans.xml", ArchivePaths.create("beans.xml"))
-      .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
-      // System.out.println(archive.toString(Formatters.VERBOSE))**/;
-      return archive;
-   }
+public class KAgentTest {
+    @Deployment
+    public static JavaArchive createTestArchive() {
+        String pkgPath = KAgentTest.class.getPackage().getName().replaceAll("\\.", "/");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                /**.addPackages(true, new DroolsModuleFilter("kagent"), KnowledgeBaseProducer.class.getPackage())
+                 .addPackages(true, ResourceProvider.class.getPackage())
+                 .addClass(Person.class)
+                 .addClass(KAgentTestConfig.class)
+                 .addResource(pkgPath + "/kagenttestone.drl", ArchivePaths.create("kagenttestone.drl"))
+                 .addResource(pkgPath + "/kagenttesttwo.drl", ArchivePaths.create("kagenttesttwo.drl"))
+                 .addResource(pkgPath + "/kagenttestchangeset.xml", ArchivePaths.create("kagenttestchangeset.xml"))
+                 // .addResource(pkgPath + "/kbuilderconfig.properties",
+                 // ArchivePaths.create("kbuilderconfig.properties"))
+                 // .addResource(pkgPath + "/kbaseconfig.properties",
+                 // ArchivePaths.create("kbaseconfig.properties"))
+                 .addManifestResource(pkgPath + "/KAgentTest-beans.xml", ArchivePaths.create("beans.xml"))
+                 .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
+                 // System.out.println(archive.toString(Formatters.VERBOSE))**/;
+        return archive;
+    }
 
-   /**
-   @Test
-   public void testKAgentConfiguration(@KAgentTestConfig DroolsConfig config)
-   {
-      assertNotNull(config);
-      assertTrue(!config.startChangeNotifierService());
-      assertTrue(!config.startChangeScannerService());
-      assertTrue(config.agentName() != null);
-      assertTrue(config.scannerInterval() > 0);
-   }
+    /**
+     * @Test public void testKAgentConfiguration(@KAgentTestConfig DroolsConfig config)
+     * {
+     * assertNotNull(config);
+     * assertTrue(!config.startChangeNotifierService());
+     * assertTrue(!config.startChangeScannerService());
+     * assertTrue(config.agentName() != null);
+     * assertTrue(config.scannerInterval() > 0);
+     * }
+     * @Test public void testKAgent( @KAgentTestConfig KnowledgeAgent agent, ResourceProvider resourceProvider)
+     * {
+     * assertNotNull(agent);
+     * assertNotNull(resourceProvider);
+     * Person p1 = new Person(19);
+     * StatefulKnowledgeSession ksession1 = agent.getKnowledgeBase().newStatefulKnowledgeSession();
+     * FactHandle fh1 = ksession1.insert(p1);
+     * ksession1.fireAllRules();
+     * Person p1f = (Person) ksession1.getObject(fh1);
+     * assertTrue(p1f.isEligible());
+     * <p/>
+     * //ResourceFactory.getResourceChangeNotifierService().stop();
+     * //ResourceFactory.getResourceChangeScannerService().stop();
+     * ksession1.dispose();
+     * <p/>
+     * }*
+     */
+    @Test
+    public void nothingToTest() {
 
-   @Test
-   public void testKAgent( @KAgentTestConfig KnowledgeAgent agent, ResourceProvider resourceProvider)
-   {
-      assertNotNull(agent);
-      assertNotNull(resourceProvider);
-      Person p1 = new Person(19);
-      StatefulKnowledgeSession ksession1 = agent.getKnowledgeBase().newStatefulKnowledgeSession();
-      FactHandle fh1 = ksession1.insert(p1);
-      ksession1.fireAllRules();
-      Person p1f = (Person) ksession1.getObject(fh1);
-      assertTrue(p1f.isEligible());
-      
-      //ResourceFactory.getResourceChangeNotifierService().stop();
-      //ResourceFactory.getResourceChangeScannerService().stop();
-      ksession1.dispose();
-      
-   }**/
-   @Test
-   public void nothingToTest() {
-      
-   }
+    }
 
 }

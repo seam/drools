@@ -18,57 +18,45 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.ksession;
 
-import javax.enterprise.inject.Default;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.drools.runtime.StatefulKnowledgeSession;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.seam.drools.KnowledgeBaseProducer;
-import org.jboss.seam.drools.qualifiers.config.DefaultConfig;
-import org.jboss.seam.drools.test.DroolsModuleFilter;
-import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class KSessionTest
-{
-   @Deployment
-   public static JavaArchive createTestArchive()
-   {
-      String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      /**.addPackages(true, new DroolsModuleFilter("ksession"), KnowledgeBaseProducer.class.getPackage())
-      .addClass(KSessionTestRules.class)
-      .addClass(KSessionTestProducer.class)
-      .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
-      .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
-      .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/KSessionTest-beans.xml", ArchivePaths.create("beans.xml"))
-      .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
-      //System.out.println(archive.toString(Formatters.VERBOSE)) **/;
-      return archive;
-   }
-   
-   /**@Test
-   public void testKSession(@DefaultConfig @Default StatefulKnowledgeSession ksession)
-   {
-      assertNotNull(ksession);
-      System.out.println("**** ksession : " + ksession);
-      assertTrue(ksession.getId() >= 0);
-   }**/
-   
-   @Test
-   public void nothingToTest() {
-      
-   }
- }
+public class KSessionTest {
+    @Deployment
+    public static JavaArchive createTestArchive() {
+        String pkgPath = KSessionTest.class.getPackage().getName().replaceAll("\\.", "/");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                /**.addPackages(true, new DroolsModuleFilter("ksession"), KnowledgeBaseProducer.class.getPackage())
+                 .addClass(KSessionTestRules.class)
+                 .addClass(KSessionTestProducer.class)
+                 .addResource(pkgPath + "/ksessiontest.drl", ArchivePaths.create("ksessiontest.drl"))
+                 .addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
+                 .addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
+                 .addManifestResource(pkgPath + "/KSessionTest-beans.xml", ArchivePaths.create("beans.xml"))
+                 .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
+                 //System.out.println(archive.toString(Formatters.VERBOSE)) **/;
+        return archive;
+    }
+
+    /**
+     * @Test public void testKSession(@DefaultConfig @Default StatefulKnowledgeSession ksession)
+     * {
+     * assertNotNull(ksession);
+     * System.out.println("**** ksession : " + ksession);
+     * assertTrue(ksession.getId() >= 0);
+     * }*
+     */
+
+    @Test
+    public void nothingToTest() {
+
+    }
+}

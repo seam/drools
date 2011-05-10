@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.delegate;
 
 import org.jboss.arquillian.api.Deployment;
@@ -29,42 +29,36 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DelegateTest
-{
-   @Deployment
-   public static JavaArchive createTestArchive()
-   {
-      String pkgPath = DelegateTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      /**.addPackages(true, new DroolsModuleFilter("delegate"), KnowledgeBaseProducer.class.getPackage())
-      .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(DelegateBean.class)
-      .addResource(pkgPath + "/delegatetest.drl", ArchivePaths.create("delegatetest.drl"))
-      //.addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
-      //.addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
-      .addManifestResource(pkgPath + "/DelegateTest-beans.xml", ArchivePaths.create("beans.xml"))
-      .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
-      //System.out.println(archive.toString(Formatters.VERBOSE))**/;
-      return archive;
-   }
-   
-   /**
-   
-   @Inject
-   DelegateBean delegateBean;
-   
-   @Inject
-   @Default @DefaultConfig StatefulKnowledgeSession ksession;
-   
-   @Test
-   public void testDelegate() {
-      assertNotNull(ksession);
-      assertNotNull(delegateBean);
-      ksession.fireAllRules();
-      assertTrue(delegateBean.isTouched());
-   }**/
-   @Test
-   public void nothingToTest() {
-      
-   }
+public class DelegateTest {
+    @Deployment
+    public static JavaArchive createTestArchive() {
+        String pkgPath = DelegateTest.class.getPackage().getName().replaceAll("\\.", "/");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                /**.addPackages(true, new DroolsModuleFilter("delegate"), KnowledgeBaseProducer.class.getPackage())
+                 .addPackages(true, ResourceProvider.class.getPackage())
+                 .addClass(DelegateBean.class)
+                 .addResource(pkgPath + "/delegatetest.drl", ArchivePaths.create("delegatetest.drl"))
+                 //.addResource(pkgPath + "/kbuilderconfig.properties", ArchivePaths.create("kbuilderconfig.properties"))
+                 //.addResource(pkgPath + "/kbaseconfig.properties", ArchivePaths.create("kbaseconfig.properties"))
+                 .addManifestResource(pkgPath + "/DelegateTest-beans.xml", ArchivePaths.create("beans.xml"))
+                 .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
+                 //System.out.println(archive.toString(Formatters.VERBOSE))**/;
+        return archive;
+    }
+
+    /**
+     * @Inject DelegateBean delegateBean;
+     * @Inject
+     * @Default @DefaultConfig StatefulKnowledgeSession ksession;
+     * @Test public void testDelegate() {
+     * assertNotNull(ksession);
+     * assertNotNull(delegateBean);
+     * ksession.fireAllRules();
+     * assertTrue(delegateBean.isTouched());
+     * }*
+     */
+    @Test
+    public void nothingToTest() {
+
+    }
 }

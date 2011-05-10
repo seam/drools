@@ -18,53 +18,46 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.interceptors;
 
-public class Person
-{
-   private String name;
-   private String telephoneNumber;
-   private int age;
-   private boolean eligible;
-   
-   public String getName()
-   {
-      return name;
-   }
-   public void setName(String name)
-   {
-      this.name = name;
-   }
-   public String getTelephoneNumber()
-   {
-      return telephoneNumber;
-   }
-   public void setTelephoneNumber(String telephoneNumber)
-   {
-      this.telephoneNumber = telephoneNumber;
-   }
+public class Person {
+    private String name;
+    private String telephoneNumber;
+    private int age;
+    private boolean eligible;
 
-   public int getAge()
-   {
-      return age;
-   }
+    public String getName() {
+        return name;
+    }
 
-   public void setAge(int age)
-   {
-      this.age = age;
-   }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-   public boolean isEligible()
-   {
-      return eligible;
-   }
+    public String getTelephoneNumber() {
+        return telephoneNumber;
+    }
 
-   public void setEligible(boolean eligible)
-   {
-      this.eligible = eligible;
-   }
-   
-   
-   
+    public void setTelephoneNumber(String telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public boolean isEligible() {
+        return eligible;
+    }
+
+    public void setEligible(boolean eligible) {
+        this.eligible = eligible;
+    }
+
+
 }

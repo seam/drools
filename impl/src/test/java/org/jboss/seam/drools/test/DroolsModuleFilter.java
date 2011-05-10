@@ -18,28 +18,26 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test;
 
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Filter;
 
-public class DroolsModuleFilter implements Filter<ArchivePath>
-{
-   private String testDirName;
-   
-   public DroolsModuleFilter(String testDirName) {
-      this.testDirName = testDirName;
-   }
+public class DroolsModuleFilter implements Filter<ArchivePath> {
+    private String testDirName;
 
-   public boolean include(ArchivePath path)
-   {
-      if(path.get().startsWith("/org/jboss/seam/drools/test")
-            && !(path.get().startsWith("/org/jboss/seam/drools/test/" + testDirName )) ) {
-         return false;
-      } else {
-         return true;
-      }
-   }
-   
+    public DroolsModuleFilter(String testDirName) {
+        this.testDirName = testDirName;
+    }
+
+    public boolean include(ArchivePath path) {
+        if (path.get().startsWith("/org/jboss/seam/drools/test")
+                && !(path.get().startsWith("/org/jboss/seam/drools/test/" + testDirName))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

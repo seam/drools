@@ -32,69 +32,56 @@ import org.drools.spi.Evaluator;
 import org.jboss.seam.drools.qualifiers.EvaluatorDef;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 @EvaluatorDef("str")
-public class StrEvaluatorDefinition implements EvaluatorDefinition
-{
+public class StrEvaluatorDefinition implements EvaluatorDefinition {
 
-   public enum Operations
-   {
-      startsWith, endsWith, length;
-   }
+    public enum Operations {
+        startsWith, endsWith, length;
+    }
 
-   private Evaluator[] evaluator;
+    private Evaluator[] evaluator;
 
-   public Evaluator getEvaluator(ValueType type, Operator operator)
-   {
-      return this.getEvaluator(type, operator.getOperatorString(), operator.isNegated(), null);
-   }
+    public Evaluator getEvaluator(ValueType type, Operator operator) {
+        return this.getEvaluator(type, operator.getOperatorString(), operator.isNegated(), null);
+    }
 
-   public Evaluator getEvaluator(ValueType type, Operator operator, String parameterText)
-   {
-      return this.getEvaluator(type, operator.getOperatorString(), operator.isNegated(), parameterText);
-   }
+    public Evaluator getEvaluator(ValueType type, Operator operator, String parameterText) {
+        return this.getEvaluator(type, operator.getOperatorString(), operator.isNegated(), parameterText);
+    }
 
-   public Evaluator getEvaluator(ValueType type, String operatorId, boolean isNegated, String parameterText)
-   {
-      return getEvaluator(type, operatorId, isNegated, parameterText, Target.FACT, Target.FACT);
-   }
+    public Evaluator getEvaluator(ValueType type, String operatorId, boolean isNegated, String parameterText) {
+        return getEvaluator(type, operatorId, isNegated, parameterText, Target.FACT, Target.FACT);
+    }
 
-   public Evaluator getEvaluator(ValueType type, String operatorId, boolean isNegated, String parameterText, Target leftTarget, Target rightTarget)
-   {
-      StrEvaluator evaluator = new StrEvaluator(type, isNegated);
-      evaluator.setParameterText(parameterText);
-      return evaluator;
-   }
+    public Evaluator getEvaluator(ValueType type, String operatorId, boolean isNegated, String parameterText, Target leftTarget, Target rightTarget) {
+        StrEvaluator evaluator = new StrEvaluator(type, isNegated);
+        evaluator.setParameterText(parameterText);
+        return evaluator;
+    }
 
-   public String[] getEvaluatorIds()
-   {
-      return StrEvaluator.SUPPORTED_IDS;
-   }
+    public String[] getEvaluatorIds() {
+        return StrEvaluator.SUPPORTED_IDS;
+    }
 
-   public Target getTarget()
-   {
-      return Target.FACT;
-   }
+    public Target getTarget() {
+        return Target.FACT;
+    }
 
-   public boolean isNegatable()
-   {
-      return true;
-   }
+    public boolean isNegatable() {
+        return true;
+    }
 
-   public boolean supportsType(ValueType type)
-   {
-      return true;
-   }
+    public boolean supportsType(ValueType type) {
+        return true;
+    }
 
-   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-   {
-      evaluator = (Evaluator[]) in.readObject();
-   }
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        evaluator = (Evaluator[]) in.readObject();
+    }
 
-   public void writeExternal(ObjectOutput out) throws IOException
-   {
-      out.writeObject(evaluator);
-   }
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(evaluator);
+    }
 }

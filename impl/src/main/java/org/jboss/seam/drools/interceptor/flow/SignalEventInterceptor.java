@@ -41,106 +41,81 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 @SignalEvent
 @Interceptor
-public class SignalEventInterceptor
-{
-   @Inject
-   BeanManager manager;
+public class SignalEventInterceptor {
+    @Inject
+    BeanManager manager;
 
-   @Inject
-   @Any
-   Instance<StatefulKnowledgeSession> ksessionSource;
+    @Inject
+    @Any
+    Instance<StatefulKnowledgeSession> ksessionSource;
 
-   private static final Logger log = LoggerFactory.getLogger(SignalEventInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(SignalEventInterceptor.class);
 
-   @AroundInvoke
-   public Object signalEvent(InvocationContext ctx) throws Exception
-   {
-      String processName = null;
-      String processId = null;
-      String type = null;
-      String event = null;
+    @AroundInvoke
+    public Object signalEvent(InvocationContext ctx) throws Exception {
+        String processName = null;
+        String processId = null;
+        String type = null;
+        String event = null;
 
-      Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
-      List<Annotation> annotationTypeList = new ArrayList<Annotation>();
+        Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
+        List<Annotation> annotationTypeList = new ArrayList<Annotation>();
 
-      for (Annotation nextAnnotation : methodAnnotations)
-      {
-         if (manager.isQualifier(nextAnnotation.annotationType()))
-         {
-            annotationTypeList.add(nextAnnotation);
-         }
-         if (manager.isInterceptorBinding(nextAnnotation.annotationType()))
-         {
-            if (nextAnnotation instanceof SignalEvent)
-            {
-               processName = ((SignalEvent) nextAnnotation).processName();
-               processId = ((SignalEvent) nextAnnotation).processId();
-               type = ((SignalEvent) nextAnnotation).type();
-               event = ((SignalEvent) nextAnnotation).event();
+        for (Annotation nextAnnotation : methodAnnotations) {
+            if (manager.isQualifier(nextAnnotation.annotationType())) {
+                annotationTypeList.add(nextAnnotation);
             }
-         }
-      }
+            if (manager.isInterceptorBinding(nextAnnotation.annotationType())) {
+                if (nextAnnotation instanceof SignalEvent) {
+                    processName = ((SignalEvent) nextAnnotation).processName();
+                    processId = ((SignalEvent) nextAnnotation).processId();
+                    type = ((SignalEvent) nextAnnotation).type();
+                    event = ((SignalEvent) nextAnnotation).event();
+                }
+            }
+        }
 
-      StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
-      if (ksession != null)
-      {
-         Object retObj = ctx.proceed();
-         if (type != null)
-         {
-            if (processName != null && processName.length() > 0)
-            {
-               Iterator<ProcessInstance> iter = ksession.getProcessInstances().iterator();
-               while (iter.hasNext())
-               {
-                  ProcessInstance pi = iter.next();
-                  if (pi.getProcessName().equals(processName))
-                  {
-                     if (event != null && event.length() > 0)
-                     {
+        StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
+        if (ksession != null) {
+            Object retObj = ctx.proceed();
+            if (type != null) {
+                if (processName != null && processName.length() > 0) {
+                    Iterator<ProcessInstance> iter = ksession.getProcessInstances().iterator();
+                    while (iter.hasNext()) {
+                        ProcessInstance pi = iter.next();
+                        if (pi.getProcessName().equals(processName)) {
+                            if (event != null && event.length() > 0) {
+                                pi.signalEvent(type, event);
+                            } else {
+                                pi.signalEvent(type, retObj);
+                            }
+                        }
+                    }
+                } else if (processId != null && processId.length() > 0) {
+                    ProcessInstance pi = ksession.getProcessInstance(Long.parseLong(processId));
+                    if (pi != null) {
                         pi.signalEvent(type, event);
-                     }
-                     else
-                     {
-                        pi.signalEvent(type, retObj);
-                     }
-                  }
-               }
-            }
-            else if(processId != null && processId.length() > 0) {
-               ProcessInstance pi = ksession.getProcessInstance(Long.parseLong(processId));
-               if(pi != null) {
-                  pi.signalEvent(type, event);
-               }
-            }
-            else
-            {
-               if (event != null && event.length() > 0)
-               {
-                  ksession.signalEvent(type, event);
-               }
-               else
-               {
-                  ksession.signalEvent(type, retObj);
-               }
+                    }
+                } else {
+                    if (event != null && event.length() > 0) {
+                        ksession.signalEvent(type, event);
+                    } else {
+                        ksession.signalEvent(type, retObj);
+                    }
 
+                }
+            } else {
+                log.error("Invalid type specified: " + type);
             }
-         }
-         else
-         {
-            log.error("Invalid type specified: " + type);
-         }
-         return retObj;
-      }
-      else
-      {
-         log.info("Could not obtain StatefulKnowledgeSession.");
-         return ctx.proceed();
-      }
+            return retObj;
+        } else {
+            log.info("Could not obtain StatefulKnowledgeSession.");
+            return ctx.proceed();
+        }
 
-   }
+    }
 }

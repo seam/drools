@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.kbase;
 
 import java.util.ArrayList;
@@ -30,23 +30,23 @@ import org.jboss.seam.drools.TemplateDataProvider;
 import org.jboss.seam.drools.qualifiers.TemplateData;
 
 @TemplateData("forkbasetest")
-public class SimpleTemplateDataProvider implements TemplateDataProvider
-{
-   private static Collection<Map<String, Object>> templateData = new ArrayList<Map<String,Object>>();
-   static {
-      Map<String, Object> m1 = new HashMap<String, Object>();
-      m1.put("name", "Tihomir");
-      templateData.add(m1);
-      Map<String, Object> m2 = new HashMap<String, Object>();
-      m2.put("name", "Stuart");
-      templateData.add(m2);
-      Map<String, Object> m3 = new HashMap<String, Object>();
-      m3.put("name", "Dan");
-      templateData.add(m3);
-   }
-   public Collection<Map<String, Object>> getTemplateData()
-   {
-      return templateData;
-   }
-   
+public class SimpleTemplateDataProvider implements TemplateDataProvider {
+    private static Collection<Map<String, Object>> templateData = new ArrayList<Map<String, Object>>();
+
+    static {
+        Map<String, Object> m1 = new HashMap<String, Object>();
+        m1.put("name", "Tihomir");
+        templateData.add(m1);
+        Map<String, Object> m2 = new HashMap<String, Object>();
+        m2.put("name", "Stuart");
+        templateData.add(m2);
+        Map<String, Object> m3 = new HashMap<String, Object>();
+        m3.put("name", "Dan");
+        templateData.add(m3);
+    }
+
+    public Collection<Map<String, Object>> getTemplateData() {
+        return templateData;
+    }
+
 }

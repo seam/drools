@@ -18,38 +18,37 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.bootstrap.util;
 
-public class DeclaredType
-{
-   private String name;
-   private Role role = Role.EVENT;
-   private String expires;
-   public String getName()
-   {
-      return name;
-   }
-   public void setName(String name)
-   {
-      this.name = name;
-   }
-   public Role getRole()
-   {
-      return role;
-   }
-   public void setRole(Role role)
-   {
-      this.role = role;
-   }
-   public String getExpires()
-   {
-      return expires;
-   }
-   public void setExpires(String expires)
-   {
-      this.expires = expires;
-   }
-   
-   
+public class DeclaredType {
+    private String name;
+    private Role role = Role.EVENT;
+    private String expires;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getExpires() {
+        return expires;
+    }
+
+    public void setExpires(String expires) {
+        this.expires = expires;
+    }
+
+
 }

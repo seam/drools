@@ -18,49 +18,49 @@ You should have received a copy of the GNU Lesser General Public
 License along with this software; if not, write to the Free
 Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 02110-1301 USA, or see the FSF site: http://www.fsf.org.
---> 
+-->
 <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:s="urn:java:ee" 
-	xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
-	xmlns:test="urn:java:org.jboss.seam.drools.test.kagent">
-  
-	<!--<d:RuleResources>
-  		<s:overrides/>
-  		<test:KAgentTestConfig/>
-   		<d:resources>
-   			<s:value>classpath;kagenttestchangeset.xml;CHANGE_SET</s:value>
-   		</d:resources>
-	</d:RuleResources>
-	
-	<d:DroolsConfig>
-		<test:KAgentTestConfig/>
-		<d:kagentPropertiestMap>
-			<s:entry>
-				<s:key>drools.agent.scanResources</s:key>
-				<s:value>true</s:value>
-			</s:entry>
-			<s:entry>
-				<s:key>drools.agent.scanDirectories</s:key>
-				<s:value>false</s:value>
-			</s:entry>
-			<s:entry>
-				<s:key>drools.agent.newInstance</s:key>
-				<s:value>true</s:value>
-			</s:entry>
-			<s:entry>
-				<s:key>drools.agent.monitorChangeSetEvents</s:key>
-				<s:value>true</s:value>
-			</s:entry>
-		</d:kagentPropertiestMap>
-		<d:startChangeNotifierService>false</d:startChangeNotifierService>
-		<d:startChangeScannerService>false</d:startChangeScannerService>
-		<d:scannerInterval>60</d:scannerInterval>
-		<d:agentName>
-			<s:value>testagent</s:value>
-		</d:agentName>
-		<d:ruleResources>
-			<s:Inject/>
-			<test:KAgentTestConfig/>
-		</d:ruleResources>
-	</d:DroolsConfig>
---></beans>       
+       xmlns:s="urn:java:ee"
+       xmlns:d="urn:java:org.jboss.seam.drools:org.jboss.seam.drools.config"
+       xmlns:test="urn:java:org.jboss.seam.drools.test.kagent">
+
+    <!--<d:RuleResources>
+              <s:overrides/>
+              <test:KAgentTestConfig/>
+               <d:resources>
+                   <s:value>classpath;kagenttestchangeset.xml;CHANGE_SET</s:value>
+               </d:resources>
+        </d:RuleResources>
+
+        <d:DroolsConfig>
+            <test:KAgentTestConfig/>
+            <d:kagentPropertiestMap>
+                <s:entry>
+                    <s:key>drools.agent.scanResources</s:key>
+                    <s:value>true</s:value>
+                </s:entry>
+                <s:entry>
+                    <s:key>drools.agent.scanDirectories</s:key>
+                    <s:value>false</s:value>
+                </s:entry>
+                <s:entry>
+                    <s:key>drools.agent.newInstance</s:key>
+                    <s:value>true</s:value>
+                </s:entry>
+                <s:entry>
+                    <s:key>drools.agent.monitorChangeSetEvents</s:key>
+                    <s:value>true</s:value>
+                </s:entry>
+            </d:kagentPropertiestMap>
+            <d:startChangeNotifierService>false</d:startChangeNotifierService>
+            <d:startChangeScannerService>false</d:startChangeScannerService>
+            <d:scannerInterval>60</d:scannerInterval>
+            <d:agentName>
+                <s:value>testagent</s:value>
+            </d:agentName>
+            <d:ruleResources>
+                <s:Inject/>
+                <test:KAgentTestConfig/>
+            </d:ruleResources>
+        </d:DroolsConfig>
+    --></beans>

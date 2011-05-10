@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools;
 
 import java.io.Serializable;
@@ -38,58 +38,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 @Veto
 @SessionScoped
 //@Generic(Drools.class)
-public class EntryPointProducer implements Serializable
-{
-   private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
+public class EntryPointProducer implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(EntryPointProducer.class);
 
-   @Inject
-   //@GenericProduct
-   StatefulKnowledgeSession statefullKsession;
-   
-   @Inject
-   @Scanned
-   //@GenericProduct
-   StatefulKnowledgeSession statefulKnowledgeSession;
+    @Inject
+    //@GenericProduct
+            StatefulKnowledgeSession statefullKsession;
 
-   @Produces
-   @Default
-   @EntryPoint
-   public WorkingMemoryEntryPoint produceEntryPoint(InjectionPoint ip) throws Exception
-   {
-      String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
-      if (entryPointName != null && entryPointName.length() > 0)
-      {
-         log.debug("EntryPoint Name requested: " + entryPointName);
-         WorkingMemoryEntryPoint entryPoint = statefullKsession.getWorkingMemoryEntryPoint( entryPointName );
-         return entryPoint;
-      }
-      else
-      {
-         throw new IllegalStateException("EntryPoint must have a name.");
-      }
-   }
+    @Inject
+    @Scanned
+    //@GenericProduct
+            StatefulKnowledgeSession statefulKnowledgeSession;
 
-   @Produces
-   @Scanned
-   @EntryPoint
-   public WorkingMemoryEntryPoint produceScannedEntryPoint(InjectionPoint ip) throws Exception
-   {
-      String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
-      if (entryPointName != null && entryPointName.length() > 0)
-      {
-         log.debug("EntryPoint Name requested: " + entryPointName);
-         return statefulKnowledgeSession.getWorkingMemoryEntryPoint(entryPointName);
-      }
-      else
-      {
-         throw new IllegalStateException("EntryPoint must have a name.");
-      }
-   }
+    @Produces
+    @Default
+    @EntryPoint
+    public WorkingMemoryEntryPoint produceEntryPoint(InjectionPoint ip) throws Exception {
+        String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
+        if (entryPointName != null && entryPointName.length() > 0) {
+            log.debug("EntryPoint Name requested: " + entryPointName);
+            WorkingMemoryEntryPoint entryPoint = statefullKsession.getWorkingMemoryEntryPoint(entryPointName);
+            return entryPoint;
+        } else {
+            throw new IllegalStateException("EntryPoint must have a name.");
+        }
+    }
+
+    @Produces
+    @Scanned
+    @EntryPoint
+    public WorkingMemoryEntryPoint produceScannedEntryPoint(InjectionPoint ip) throws Exception {
+        String entryPointName = ip.getAnnotated().getAnnotation(EntryPoint.class).value();
+        if (entryPointName != null && entryPointName.length() > 0) {
+            log.debug("EntryPoint Name requested: " + entryPointName);
+            return statefulKnowledgeSession.getWorkingMemoryEntryPoint(entryPointName);
+        } else {
+            throw new IllegalStateException("EntryPoint must have a name.");
+        }
+    }
 
 }

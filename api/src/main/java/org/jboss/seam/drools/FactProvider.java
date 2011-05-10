@@ -26,23 +26,23 @@ import java.util.Map;
 
 /**
  * Interface for fact data providers.
- * 
+ *
  * @author Tihomir Surdilovic
  */
 public interface FactProvider {
-	public List<Object> getFacts();
+    public List<Object> getFacts();
 
-	public void setFacts(List<Object> facts);
+    public void setFacts(List<Object> facts);
 
-	public Map<String, Object> getGlobals();
+    public Map<String, Object> getGlobals();
 
-	public void setGlobals(Map<String, Object> globals);
-	
-	public List<String> getQueries();
-	
-	public void setQueries(List<String> queries);
-	
-	public String getBatchXml();
-	
-	public void setBatchXml(String batchXml);
+    public void setGlobals(Map<String, Object> globals);
+
+    public List<String> getQueries();
+
+    public void setQueries(List<String> queries);
+
+    public String getBatchXml();
+
+    public void setBatchXml(String batchXml);
 }

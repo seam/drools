@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools;
 
 import java.io.Serializable;
@@ -54,169 +54,155 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 @Veto
 @Dependent
 //@Generic(Drools.class)
-public class ExecutionResultsProducer implements Serializable
-{
-   private static final Logger log = LoggerFactory.getLogger(ExecutionResultsProducer.class);
+public class ExecutionResultsProducer implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(ExecutionResultsProducer.class);
 
-   @Inject
-   BeanManager manager;
-    
-   @Inject
-   DroolsExtension droolsExtension;
-   
-   @Inject
-   @Default
-   //@GenericProduct
-   StatelessKnowledgeSession statelessKsession;
+    @Inject
+    BeanManager manager;
 
-   @Inject
-   @Scanned
-   //@GenericProduct
-   StatelessKnowledgeSession scannedStatelessKsession;
+    @Inject
+    DroolsExtension droolsExtension;
 
-   @Inject
-   //@GenericProduct
-   StatefulKnowledgeSession statefullKsession;
+    @Inject
+    @Default
+    //@GenericProduct
+            StatelessKnowledgeSession statelessKsession;
 
-   @Inject
-   @Scanned
-   //@GenericProduct
-   StatefulKnowledgeSession scannedStatefullKSession;
+    @Inject
+    @Scanned
+    //@GenericProduct
+            StatelessKnowledgeSession scannedStatelessKsession;
 
-   @SuppressWarnings("unchecked")
-   @Produces
-   @Stateless
-   @Default
-   @RequestScoped
-   public ExecutionResults produceStatelessExecutionResults()
-   {
-      return statelessKsession.execute(CommandFactory.newBatchExecution(getCommandList()));
-   }
-   
-   @SuppressWarnings("unchecked")
-   @Produces
-   @Stateless
-   @Scanned
-   @RequestScoped
-   public ExecutionResults produceStatelessScannedExecutionResults()
-   {
-      return scannedStatelessKsession.execute(CommandFactory.newBatchExecution(getCommandList()));
-   }
-   
-   @Produces
-   @Stateful
-   @RequestScoped
-   public ExecutionResults produceStateFulExecutionResults()
-   {
-      ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
-      Pipeline pip = getPipelineStateful(statefullKsession);
-      Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
-      while(iter.hasNext())
-      {
-         FactProvider factProvider = iter.next();
-         if(factProvider.getBatchXml() != null) {
-            pip.insert(factProvider.getBatchXml(), resultsHandler);
-         }
-      }
-      
-      return (ExecutionResults) BatchExecutionHelper.newXStreamMarshaller().fromXML((String) resultsHandler.getObject());
-   }
-   
-   @Produces
-   @Stateful
-   @Scanned
-   @RequestScoped
-   public ExecutionResults produceStateFulScannedExecutionResults()
-   {
-      ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
-      Pipeline pip = getPipelineStateful(scannedStatefullKSession);
-      Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
-      while(iter.hasNext())
-      {
-         FactProvider factProvider = iter.next();
-         if(factProvider.getBatchXml() != null) {
-            pip.insert(factProvider.getBatchXml(), resultsHandler);
-         }
-      }
-      
-      return (ExecutionResults) BatchExecutionHelper.newXStreamMarshaller().fromXML((String) resultsHandler.getObject());
-   
-   }
-   
-   private Pipeline getPipelineStateful(StatefulKnowledgeSession ksession)
-   {
-      Action executeResultHandler = PipelineFactory.newExecuteResultHandler();
+    @Inject
+    //@GenericProduct
+            StatefulKnowledgeSession statefullKsession;
 
-      Action assignResult = PipelineFactory.newAssignObjectAsResult();
-      assignResult.setReceiver(executeResultHandler);
+    @Inject
+    @Scanned
+    //@GenericProduct
+            StatefulKnowledgeSession scannedStatefullKSession;
 
-      Transformer outTransformer = PipelineFactory.newXStreamToXmlTransformer(BatchExecutionHelper.newXStreamMarshaller());
-      outTransformer.setReceiver(assignResult);
+    @SuppressWarnings("unchecked")
+    @Produces
+    @Stateless
+    @Default
+    @RequestScoped
+    public ExecutionResults produceStatelessExecutionResults() {
+        return statelessKsession.execute(CommandFactory.newBatchExecution(getCommandList()));
+    }
 
-      KnowledgeRuntimeCommand batchExecution = PipelineFactory.newCommandExecutor();
-      batchExecution.setReceiver(outTransformer);
+    @SuppressWarnings("unchecked")
+    @Produces
+    @Stateless
+    @Scanned
+    @RequestScoped
+    public ExecutionResults produceStatelessScannedExecutionResults() {
+        return scannedStatelessKsession.execute(CommandFactory.newBatchExecution(getCommandList()));
+    }
 
-      Transformer inTransformer = PipelineFactory.newXStreamFromXmlTransformer(BatchExecutionHelper.newXStreamMarshaller());
-      inTransformer.setReceiver(batchExecution);
-
-      Pipeline pipeline = PipelineFactory.newStatefulKnowledgeSessionPipeline(ksession);
-      pipeline.setReceiver(inTransformer);
-
-      return pipeline;
-   }
-
-   
-   @SuppressWarnings("unchecked")
-   private List getCommandList() {
-      List commandList = new ArrayList();
-      Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
-      while(iter.hasNext())
-      {
-         FactProvider factProvider = iter.next();
-         if(factProvider.getGlobals() != null) {
-            Iterator<Entry<String, Object>> globalIterator = factProvider.getGlobals().entrySet().iterator();
-            while(globalIterator.hasNext()) {
-               Entry<String, Object> nextEntry = globalIterator.next();
-               commandList.add(CommandFactory.newSetGlobal(nextEntry.getKey(), nextEntry.getValue()));
+    @Produces
+    @Stateful
+    @RequestScoped
+    public ExecutionResults produceStateFulExecutionResults() {
+        ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
+        Pipeline pip = getPipelineStateful(statefullKsession);
+        Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
+        while (iter.hasNext()) {
+            FactProvider factProvider = iter.next();
+            if (factProvider.getBatchXml() != null) {
+                pip.insert(factProvider.getBatchXml(), resultsHandler);
             }
-         }
-         
-         if(factProvider.getFacts() != null) {
-            for(Object nextFact : factProvider.getFacts()) {
-               commandList.add(CommandFactory.newInsert(nextFact));
+        }
+
+        return (ExecutionResults) BatchExecutionHelper.newXStreamMarshaller().fromXML((String) resultsHandler.getObject());
+    }
+
+    @Produces
+    @Stateful
+    @Scanned
+    @RequestScoped
+    public ExecutionResults produceStateFulScannedExecutionResults() {
+        ResultHandlerImpl resultsHandler = new ResultHandlerImpl();
+        Pipeline pip = getPipelineStateful(scannedStatefullKSession);
+        Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
+        while (iter.hasNext()) {
+            FactProvider factProvider = iter.next();
+            if (factProvider.getBatchXml() != null) {
+                pip.insert(factProvider.getBatchXml(), resultsHandler);
             }
-         }
-         if(factProvider.getQueries() != null) {
-            for(Object nextQuery : factProvider.getQueries()) {
-               commandList.add(CommandFactory.newQuery((String) nextQuery, (String) nextQuery));
+        }
+
+        return (ExecutionResults) BatchExecutionHelper.newXStreamMarshaller().fromXML((String) resultsHandler.getObject());
+
+    }
+
+    private Pipeline getPipelineStateful(StatefulKnowledgeSession ksession) {
+        Action executeResultHandler = PipelineFactory.newExecuteResultHandler();
+
+        Action assignResult = PipelineFactory.newAssignObjectAsResult();
+        assignResult.setReceiver(executeResultHandler);
+
+        Transformer outTransformer = PipelineFactory.newXStreamToXmlTransformer(BatchExecutionHelper.newXStreamMarshaller());
+        outTransformer.setReceiver(assignResult);
+
+        KnowledgeRuntimeCommand batchExecution = PipelineFactory.newCommandExecutor();
+        batchExecution.setReceiver(outTransformer);
+
+        Transformer inTransformer = PipelineFactory.newXStreamFromXmlTransformer(BatchExecutionHelper.newXStreamMarshaller());
+        inTransformer.setReceiver(batchExecution);
+
+        Pipeline pipeline = PipelineFactory.newStatefulKnowledgeSessionPipeline(ksession);
+        pipeline.setReceiver(inTransformer);
+
+        return pipeline;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private List getCommandList() {
+        List commandList = new ArrayList();
+        Iterator<FactProvider> iter = droolsExtension.getFactProviderSet().iterator();
+        while (iter.hasNext()) {
+            FactProvider factProvider = iter.next();
+            if (factProvider.getGlobals() != null) {
+                Iterator<Entry<String, Object>> globalIterator = factProvider.getGlobals().entrySet().iterator();
+                while (globalIterator.hasNext()) {
+                    Entry<String, Object> nextEntry = globalIterator.next();
+                    commandList.add(CommandFactory.newSetGlobal(nextEntry.getKey(), nextEntry.getValue()));
+                }
             }
-         }   
-      }
-      return commandList;
-   }
-   
-   public static class ResultHandlerImpl implements ResultHandler
-   {
-      Object object;
 
-      public void handleResult(Object object)
-      {
-         this.object = object;
-      }
+            if (factProvider.getFacts() != null) {
+                for (Object nextFact : factProvider.getFacts()) {
+                    commandList.add(CommandFactory.newInsert(nextFact));
+                }
+            }
+            if (factProvider.getQueries() != null) {
+                for (Object nextQuery : factProvider.getQueries()) {
+                    commandList.add(CommandFactory.newQuery((String) nextQuery, (String) nextQuery));
+                }
+            }
+        }
+        return commandList;
+    }
 
-      public Object getObject()
-      {
-         return this.object;
-      }
+    public static class ResultHandlerImpl implements ResultHandler {
+        Object object;
 
-   }
+        public void handleResult(Object object) {
+            this.object = object;
+        }
 
-   
+        public Object getObject() {
+            return this.object;
+        }
+
+    }
+
 
 }

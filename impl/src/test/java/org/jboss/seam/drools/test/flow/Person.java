@@ -18,35 +18,33 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.flow;
 
-public class Person
-{
-   private String name;
-   private String telephoneNumber;
-   
-   public Person(String name, String telphoneNumber) {
-      this.name = name;
-      this.telephoneNumber = telphoneNumber;
-   }
-   
-   public String getName()
-   {
-      return name;
-   }
-   public void setName(String name)
-   {
-      this.name = name;
-   }
-   public String getTelephoneNumber()
-   {
-      return telephoneNumber;
-   }
-   public void setTelephoneNumber(String telephoneNumber)
-   {
-      this.telephoneNumber = telephoneNumber;
-   }
-   
-   
+public class Person {
+    private String name;
+    private String telephoneNumber;
+
+    public Person(String name, String telphoneNumber) {
+        this.name = name;
+        this.telephoneNumber = telphoneNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTelephoneNumber() {
+        return telephoneNumber;
+    }
+
+    public void setTelephoneNumber(String telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
+    }
+
+
 }

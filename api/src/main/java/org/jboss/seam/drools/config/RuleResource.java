@@ -26,109 +26,102 @@ import java.util.regex.Pattern;
 import org.drools.io.ResourceFactory;
 
 /**
- * 
  * @author stuart
  * @author tihomir
- * 
  */
-public class RuleResource
-{
-   public static final Pattern DIVIDER = Pattern.compile(":");
-      
-      private String fullPath;
-      private String type; // ResourceType
-      private String templateData;
-      
-      private String dtType; // DecisionTableInputType
-      private String dtWorksheetName;
-      
-      private String location;
-      private String resourcePath;
-     
-      public RuleResource() {}
-      
-      public RuleResource(String fullPath, String type) {
-         this.fullPath = fullPath;
-         this.type = type;
-         splitFullPath();
-      }
-      
-      public RuleResource(String fullPath, String type, String dtType, String dtWorksheetName) {
-         this.fullPath = fullPath;
-         this.type = type;
-         this.dtType = dtType;
-         this.dtWorksheetName = dtWorksheetName;
-         splitFullPath();
-      }
-      
-      public RuleResource(String fullPath, String type, String templateData) {
-         this.fullPath = fullPath;
-         this.type = type;
-         this.templateData = templateData;
-         splitFullPath();
-      }
-      
-      private void splitFullPath() {
-         String[] parts = DIVIDER.split(fullPath.trim());
-         location = parts[0];
-         resourcePath = parts[1];
-      }
-      
-      public String getFullPath()
-      {
-         return fullPath;
-      }
-      public void setPath(String fullPath)
-      {
-         this.fullPath = fullPath;
-      }
-      public String getType()
-      {
-         return type;
-      }
-      public void setType(String type)
-      {
-         this.type = type;
-      }
-      public String getTemplateData()
-      {
-         return templateData;
-      }
-      public void setTemplateData(String templateData)
-      {
-         this.templateData = templateData;
-      }
-      
-      public String getDtType()
-      {
-         return dtType;
-      }
+public class RuleResource {
+    public static final Pattern DIVIDER = Pattern.compile(":");
 
-      public void setDtType(String dtType)
-      {
-         this.dtType = dtType;
-      }
+    private String fullPath;
+    private String type; // ResourceType
+    private String templateData;
 
-      public String getDtWorksheetName()
-      {
-         return dtWorksheetName;
-      }
+    private String dtType; // DecisionTableInputType
+    private String dtWorksheetName;
 
-      public void setDtWorksheetName(String dtWorksheetName)
-      {
-         this.dtWorksheetName = dtWorksheetName;
-      }
+    private String location;
+    private String resourcePath;
 
-      public org.drools.io.Resource getDroolsResouce() {
-         if(location.equals("classpath")) {
+    public RuleResource() {
+    }
+
+    public RuleResource(String fullPath, String type) {
+        this.fullPath = fullPath;
+        this.type = type;
+        splitFullPath();
+    }
+
+    public RuleResource(String fullPath, String type, String dtType, String dtWorksheetName) {
+        this.fullPath = fullPath;
+        this.type = type;
+        this.dtType = dtType;
+        this.dtWorksheetName = dtWorksheetName;
+        splitFullPath();
+    }
+
+    public RuleResource(String fullPath, String type, String templateData) {
+        this.fullPath = fullPath;
+        this.type = type;
+        this.templateData = templateData;
+        splitFullPath();
+    }
+
+    private void splitFullPath() {
+        String[] parts = DIVIDER.split(fullPath.trim());
+        location = parts[0];
+        resourcePath = parts[1];
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setPath(String fullPath) {
+        this.fullPath = fullPath;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTemplateData() {
+        return templateData;
+    }
+
+    public void setTemplateData(String templateData) {
+        this.templateData = templateData;
+    }
+
+    public String getDtType() {
+        return dtType;
+    }
+
+    public void setDtType(String dtType) {
+        this.dtType = dtType;
+    }
+
+    public String getDtWorksheetName() {
+        return dtWorksheetName;
+    }
+
+    public void setDtWorksheetName(String dtWorksheetName) {
+        this.dtWorksheetName = dtWorksheetName;
+    }
+
+    public org.drools.io.Resource getDroolsResouce() {
+        if (location.equals("classpath")) {
             return ResourceFactory.newClassPathResource(resourcePath);
-         } else if(location.equals("file")) {
+        } else if (location.equals("file")) {
             return ResourceFactory.newFileResource(resourcePath);
-         } else if(location.equals("url")) {
+        } else if (location.equals("url")) {
             return ResourceFactory.newUrlResource(resourcePath);
-         } else {
+        } else {
             return null;
-         }
-      }
-      
+        }
+    }
+
 }

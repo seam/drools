@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.ksession;
 
 import org.drools.runtime.process.WorkItem;
@@ -27,19 +27,16 @@ import org.drools.runtime.process.WorkItemManager;
 import org.jboss.seam.drools.qualifiers.WIHandler;
 
 @WIHandler("dummy1")
-public class MyDummyWorkItemHandler implements WorkItemHandler
-{
+public class MyDummyWorkItemHandler implements WorkItemHandler {
 
-   public void abortWorkItem(WorkItem arg0, WorkItemManager arg1)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    public void abortWorkItem(WorkItem arg0, WorkItemManager arg1) {
+        // TODO Auto-generated method stub
 
-   public void executeWorkItem(WorkItem arg0, WorkItemManager arg1)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    }
+
+    public void executeWorkItem(WorkItem arg0, WorkItemManager arg1) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

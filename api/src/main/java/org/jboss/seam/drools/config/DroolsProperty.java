@@ -26,16 +26,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
  * @author stuart
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {})
-public @interface DroolsProperty
-{
-   String value();
+@Target({})
+public @interface DroolsProperty {
+    String value();
 
-   String name();
-   
+    String name();
+
 }

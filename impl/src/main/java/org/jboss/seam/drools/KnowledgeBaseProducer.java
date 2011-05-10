@@ -62,137 +62,120 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 @Dependent
 @Generic
-public class KnowledgeBaseProducer implements Serializable
-{
-   private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
+public class KnowledgeBaseProducer implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(KnowledgeBaseProducer.class);
 
-   @Inject
-   BeanManager manager;
+    @Inject
+    BeanManager manager;
 
-   @Inject
-   ResourceProvider resourceProvider;
+    @Inject
+    ResourceProvider resourceProvider;
 
-   @Inject
-   DroolsExtension droolsExtension;
+    @Inject
+    DroolsExtension droolsExtension;
 
-   @Inject 
-   //@GenericBean
-   Drools drools;
-   
-   @Inject
-   //@GenericBean
-   DroolsConfigUtil configUtils;
-   
-   @Inject 
-   //@GenericProduct
-   RuleResources ruleResources;
-   
-   
-   @Produces
-   @ApplicationScoped
-   public KnowledgeBase produceKnowledgeBase() throws Exception
-   {
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(addCustomEvaluators(configUtils.getKnowledgeBuilderConfiguration()));
-      
-      Iterator<RuleResource> resourceIterator = ruleResources.iterator();
-      while(resourceIterator.hasNext()) {
-         addResource(kbuilder, resourceIterator.next());
-      }
+    @Inject
+    //@GenericBean
+            Drools drools;
 
-      KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
-      if (kbuildererrors.size() > 0)
-      {
-         for (KnowledgeBuilderError kbuildererror : kbuildererrors)
-         {
-            log.error(kbuildererror.getMessage());
-         }
-         manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
-      }
+    @Inject
+    //@GenericBean
+            DroolsConfigUtil configUtils;
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
-      kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
+    @Inject
+    //@GenericProduct
+            RuleResources ruleResources;
 
-      addEventListeners(kbase);
 
-      return kbase;
-   }
+    @Produces
+    @ApplicationScoped
+    public KnowledgeBase produceKnowledgeBase() throws Exception {
+        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(addCustomEvaluators(configUtils.getKnowledgeBuilderConfiguration()));
 
-   private KnowledgeBuilderConfiguration addCustomEvaluators(KnowledgeBuilderConfiguration config)
-   {
-      Iterator<Entry<String, EvaluatorDefinition>> allCustomEvaluators = droolsExtension.getEvaluatorDefinitions().entrySet().iterator();
-      while (allCustomEvaluators.hasNext())
-      {
-         Entry<String, EvaluatorDefinition> nextEvalInfo = allCustomEvaluators.next();
-         config.setOption(EvaluatorOption.get(nextEvalInfo.getKey(), nextEvalInfo.getValue()));
-      }
-      return config;
-   }
+        Iterator<RuleResource> resourceIterator = ruleResources.iterator();
+        while (resourceIterator.hasNext()) {
+            addResource(kbuilder, resourceIterator.next());
+        }
 
-   private void addEventListeners(KnowledgeBase kbase)
-   {
-      Iterator<KnowledgeBaseEventListener> allKBaseEventListeners = droolsExtension.getKbaseEventListenerSet().iterator();
-      while (allKBaseEventListeners.hasNext())
-      {
-         KnowledgeBaseEventListener listener = allKBaseEventListeners.next();
-         kbase.addEventListener(listener);
-         log.info("Added KnowledgeBaseEventListener: " + listener);
-      }
-   }
+        KnowledgeBuilderErrors kbuildererrors = kbuilder.getErrors();
+        if (kbuildererrors.size() > 0) {
+            for (KnowledgeBuilderError kbuildererror : kbuildererrors) {
+                log.error(kbuildererror.getMessage());
+            }
+            manager.fireEvent(new KnowledgeBuilderErrorsEvent(kbuildererrors));
+        }
 
-   private void addResource(KnowledgeBuilder kbuilder, RuleResource resource) throws Exception
-   {
-         ResourceType resourceType = ResourceType.getResourceType(resource.getType());
-         if (!isEmpty(resource.getTemplateData()))
-         {
+        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase(configUtils.getKnowledgeBaseConfiguration());
+        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
+
+        addEventListeners(kbase);
+
+        return kbase;
+    }
+
+    private KnowledgeBuilderConfiguration addCustomEvaluators(KnowledgeBuilderConfiguration config) {
+        Iterator<Entry<String, EvaluatorDefinition>> allCustomEvaluators = droolsExtension.getEvaluatorDefinitions().entrySet().iterator();
+        while (allCustomEvaluators.hasNext()) {
+            Entry<String, EvaluatorDefinition> nextEvalInfo = allCustomEvaluators.next();
+            config.setOption(EvaluatorOption.get(nextEvalInfo.getKey(), nextEvalInfo.getValue()));
+        }
+        return config;
+    }
+
+    private void addEventListeners(KnowledgeBase kbase) {
+        Iterator<KnowledgeBaseEventListener> allKBaseEventListeners = droolsExtension.getKbaseEventListenerSet().iterator();
+        while (allKBaseEventListeners.hasNext()) {
+            KnowledgeBaseEventListener listener = allKBaseEventListeners.next();
+            kbase.addEventListener(listener);
+            log.info("Added KnowledgeBaseEventListener: " + listener);
+        }
+    }
+
+    private void addResource(KnowledgeBuilder kbuilder, RuleResource resource) throws Exception {
+        ResourceType resourceType = ResourceType.getResourceType(resource.getType());
+        if (!isEmpty(resource.getTemplateData())) {
             TemplateDataProvider templateDataProvider = droolsExtension.getTemplateDataProviders().get(resource.getTemplateData());
-            if (templateDataProvider != null)
-            {
-               InputStream templateStream = resource.getDroolsResouce().getInputStream();
-               if (templateStream == null)
-               {
-                  throw new IllegalStateException("Could not load rule template: " + resource.getFullPath());
-               }
-               ObjectDataCompiler converter = new ObjectDataCompiler();
-               String drl = converter.compile(templateDataProvider.getTemplateData(), templateStream);
-               log.info("Generated following rule from template and template data: \n" + drl);
-               templateStream.close();
-               Reader rdr = new StringReader(drl);
-               kbuilder.add(ResourceFactory.newReaderResource(rdr), resourceType);
-            }
-            else
-            {
-               throw new IllegalStateException("Requested template data provider: " + resource.getTemplateData() + " for resource " + resource.getFullPath() + " has not been created. Check to make sure you have defined one.");
-            }
-         }
-         else
-         {
-            if(resourceType == ResourceType.DTABLE) {
-               DecisionTableConfiguration dtconf = KnowledgeBuilderFactory.newDecisionTableConfiguration();
-               if(!isEmpty(resource.getDtType())) {
-                  dtconf.setInputType( DecisionTableInputType.valueOf(resource.getDtType()) );
-               } else {
-                  dtconf.setInputType( DecisionTableInputType.XLS );
-               }
-               if(!isEmpty(resource.getDtWorksheetName())) {
-                  dtconf.setWorksheetName( resource.getDtWorksheetName() );
-               }
-               kbuilder.add( resource.getDroolsResouce(),
-                                   resourceType,
-                                   dtconf );
-               manager.fireEvent(new RuleResourceAddedEvent(resource.getFullPath()));
+            if (templateDataProvider != null) {
+                InputStream templateStream = resource.getDroolsResouce().getInputStream();
+                if (templateStream == null) {
+                    throw new IllegalStateException("Could not load rule template: " + resource.getFullPath());
+                }
+                ObjectDataCompiler converter = new ObjectDataCompiler();
+                String drl = converter.compile(templateDataProvider.getTemplateData(), templateStream);
+                log.info("Generated following rule from template and template data: \n" + drl);
+                templateStream.close();
+                Reader rdr = new StringReader(drl);
+                kbuilder.add(ResourceFactory.newReaderResource(rdr), resourceType);
             } else {
-               kbuilder.add( resource.getDroolsResouce(), resourceType);
-               manager.fireEvent(new RuleResourceAddedEvent(resource.getFullPath()));
+                throw new IllegalStateException("Requested template data provider: " + resource.getTemplateData() + " for resource " + resource.getFullPath() + " has not been created. Check to make sure you have defined one.");
             }
-         }
-      }
-      
-   private boolean isEmpty(String value) {
-      return (value == null || value.trim().length() <= 0);
-   }
+        } else {
+            if (resourceType == ResourceType.DTABLE) {
+                DecisionTableConfiguration dtconf = KnowledgeBuilderFactory.newDecisionTableConfiguration();
+                if (!isEmpty(resource.getDtType())) {
+                    dtconf.setInputType(DecisionTableInputType.valueOf(resource.getDtType()));
+                } else {
+                    dtconf.setInputType(DecisionTableInputType.XLS);
+                }
+                if (!isEmpty(resource.getDtWorksheetName())) {
+                    dtconf.setWorksheetName(resource.getDtWorksheetName());
+                }
+                kbuilder.add(resource.getDroolsResouce(),
+                        resourceType,
+                        dtconf);
+                manager.fireEvent(new RuleResourceAddedEvent(resource.getFullPath()));
+            } else {
+                kbuilder.add(resource.getDroolsResouce(), resourceType);
+                manager.fireEvent(new RuleResourceAddedEvent(resource.getFullPath()));
+            }
+        }
+    }
+
+    private boolean isEmpty(String value) {
+        return (value == null || value.trim().length() <= 0);
+    }
 }

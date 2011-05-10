@@ -29,109 +29,102 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class InterceptorsTest
-{
-   @Deployment
-   public static JavaArchive createTestArchive()
-   {
-      String pkgPath = InterceptorsTest.class.getPackage().getName().replaceAll("\\.", "/");
-      JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
-      /**.addPackages(true, new DroolsModuleFilter("interceptors"), KnowledgeBaseProducer.class.getPackage())
-      .addPackages(true, ResourceProvider.class.getPackage())
-      .addClass(Person.class).addClass(InterceptorsTestBean.class)
-      .addClass(InterceptorsTestConfig.class)
-      .addResource(pkgPath + "/interceptorstest.drl", ArchivePaths.create("interceptorstest.drl"))
-      .addResource(pkgPath + "/interceptorstestcep.drl", ArchivePaths.create("interceptorstestcep.drl"))
-      .addResource(pkgPath + "/interceptorstestflow.drl", ArchivePaths.create("interceptorstestflow.drl"))
-      .addResource(pkgPath + "/interceptortests.rf", ArchivePaths.create("interceptortests.rf"))
-      .addManifestResource(pkgPath + "/InterceptorsTest-beans.xml", ArchivePaths.create("beans.xml"))
-      .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
-      // System.out.println(archive.toString(Formatters.VERBOSE))**/;
-      return archive;
-   }
-   
-   /**
+public class InterceptorsTest {
+    @Deployment
+    public static JavaArchive createTestArchive() {
+        String pkgPath = InterceptorsTest.class.getPackage().getName().replaceAll("\\.", "/");
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class)
+                /**.addPackages(true, new DroolsModuleFilter("interceptors"), KnowledgeBaseProducer.class.getPackage())
+                 .addPackages(true, ResourceProvider.class.getPackage())
+                 .addClass(Person.class).addClass(InterceptorsTestBean.class)
+                 .addClass(InterceptorsTestConfig.class)
+                 .addResource(pkgPath + "/interceptorstest.drl", ArchivePaths.create("interceptorstest.drl"))
+                 .addResource(pkgPath + "/interceptorstestcep.drl", ArchivePaths.create("interceptorstestcep.drl"))
+                 .addResource(pkgPath + "/interceptorstestflow.drl", ArchivePaths.create("interceptorstestflow.drl"))
+                 .addResource(pkgPath + "/interceptortests.rf", ArchivePaths.create("interceptortests.rf"))
+                 .addManifestResource(pkgPath + "/InterceptorsTest-beans.xml", ArchivePaths.create("beans.xml"))
+                 .addManifestResource("META-INF/services/javax.enterprise.inject.spi.Extension", ArchivePaths.create("services/javax.enterprise.inject.spi.Extension"));
+                 // System.out.println(archive.toString(Formatters.VERBOSE))**/;
+        return archive;
+    }
 
-   @Test
-   public void testInsertAndFire(InterceptorsTestBean ibean, @Default @DefaultConfig StatefulKnowledgeSession ksession)
-   {
-      assertNotNull(ibean);
-      assertNotNull(ksession);
+    /**
+     * @Test public void testInsertAndFire(InterceptorsTestBean ibean, @Default @DefaultConfig StatefulKnowledgeSession ksession)
+     * {
+     * assertNotNull(ibean);
+     * assertNotNull(ksession);
+     * <p/>
+     * ibean.getPerson();
+     * <p/>
+     * Collection<?> allPeople = ksession.getObjects(new ObjectFilter()
+     * {
+     * public boolean accept(Object object)
+     * {
+     * return object instanceof Person;
+     * }
+     * });
+     * <p/>
+     * Person p = (Person) allPeople.toArray(new Object[0])[0];
+     * assertNotNull(p);
+     * assertTrue(p.isEligible());
+     * }
+     * @Test public void testInsertAndFireEntryPoint(InterceptorsTestBean ibean, @Default @CEPPseudoClockConfig StatefulKnowledgeSession ksession)
+     * {
+     * assertNotNull(ibean);
+     * assertNotNull(ksession);
+     * <p/>
+     * ibean.getPersonForEntryPoint();
+     * <p/>
+     * Collection<?> allPeople = ksession.getWorkingMemoryEntryPoint("peopleStream").getObjects(new ObjectFilter()
+     * {
+     * public boolean accept(Object object)
+     * {
+     * return object instanceof Person;
+     * }
+     * });
+     * <p/>
+     * Person p = (Person) allPeople.toArray(new Object[0])[0];
+     * assertNotNull(p);
+     * assertTrue(p.isEligible());
+     * }
+     * @Test public void testProcessStartAndSignal(InterceptorsTestBean ibean,
+     * @Default @InterceptorsTestConfig StatefulKnowledgeSession ksession) {
+     * assertNotNull(ibean);
+     * assertNotNull(ksession);
+     * <p/>
+     * ibean.getPersonForFlow();
+     * Collection<?> allPeople1 = ksession.getObjects(new ObjectFilter()
+     * {
+     * public boolean accept(Object object)
+     * {
+     * return object instanceof Person;
+     * }
+     * });
+     * <p/>
+     * Person p1 = (Person) allPeople1.toArray(new Object[0])[0];
+     * assertNotNull(p1);
+     * assertTrue(!p1.isEligible());
+     * <p/>
+     * ibean.startProcess();
+     * <p/>
+     * Collection<?> allPeople2 = ksession.getObjects(new ObjectFilter()
+     * {
+     * public boolean accept(Object object)
+     * {
+     * return object instanceof Person;
+     * }
+     * });
+     * <p/>
+     * Person p2 = (Person) allPeople2.toArray(new Object[0])[0];
+     * assertNotNull(p2);
+     * assertTrue(p2.isEligible());
+     * <p/>
+     * <p/>
+     * <p/>
+     * }*
+     */
+    @Test
+    public void nothingToTest() {
 
-      ibean.getPerson();
-
-      Collection<?> allPeople = ksession.getObjects(new ObjectFilter()
-      {
-         public boolean accept(Object object)
-         {
-            return object instanceof Person;
-         }
-      });
-      
-      Person p = (Person) allPeople.toArray(new Object[0])[0];
-      assertNotNull(p);
-      assertTrue(p.isEligible());
-   }
-   
-   @Test
-   public void testInsertAndFireEntryPoint(InterceptorsTestBean ibean, @Default @CEPPseudoClockConfig StatefulKnowledgeSession ksession)
-   {
-      assertNotNull(ibean);
-      assertNotNull(ksession);
-
-      ibean.getPersonForEntryPoint();
-
-      Collection<?> allPeople = ksession.getWorkingMemoryEntryPoint("peopleStream").getObjects(new ObjectFilter()
-      {
-         public boolean accept(Object object)
-         {
-            return object instanceof Person;
-         }
-      });
-      
-      Person p = (Person) allPeople.toArray(new Object[0])[0];
-      assertNotNull(p);
-      assertTrue(p.isEligible());
-   }
-   
-   @Test
-   public void testProcessStartAndSignal(InterceptorsTestBean ibean,
-         @Default @InterceptorsTestConfig StatefulKnowledgeSession ksession) {
-      assertNotNull(ibean);
-      assertNotNull(ksession);
-      
-      ibean.getPersonForFlow();
-      Collection<?> allPeople1 = ksession.getObjects(new ObjectFilter()
-      {
-         public boolean accept(Object object)
-         {
-            return object instanceof Person;
-         }
-      });
-      
-      Person p1 = (Person) allPeople1.toArray(new Object[0])[0];
-      assertNotNull(p1);
-      assertTrue(!p1.isEligible());
-   
-      ibean.startProcess();
-      
-      Collection<?> allPeople2 = ksession.getObjects(new ObjectFilter()
-      {
-         public boolean accept(Object object)
-         {
-            return object instanceof Person;
-         }
-      });
-      
-      Person p2 = (Person) allPeople2.toArray(new Object[0])[0];
-      assertNotNull(p2);
-      assertTrue(p2.isEligible());
-
-      
-
-   }**/
-   @Test
-   public void nothingToTest() {
-      
-   }
+    }
 }

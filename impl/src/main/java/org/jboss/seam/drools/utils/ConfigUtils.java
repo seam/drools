@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.utils;
 
 import java.io.IOException;
@@ -28,22 +28,18 @@ import java.util.Properties;
 import org.jboss.seam.solder.resourceLoader.ResourceProvider;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
-public class ConfigUtils
-{
-   public static Properties loadProperties(ResourceProvider resourceProvider, String path) throws IOException
-   {
-      Properties prop = new Properties();
-      InputStream in = resourceProvider.loadResourceStream(path);
-      if (in == null)
-      {
-         throw new IllegalStateException("Could not locate: " + path);
-      }
-      prop.load(in);
-      in.close();
-      return prop;
-   }
+public class ConfigUtils {
+    public static Properties loadProperties(ResourceProvider resourceProvider, String path) throws IOException {
+        Properties prop = new Properties();
+        InputStream in = resourceProvider.loadResourceStream(path);
+        if (in == null) {
+            throw new IllegalStateException("Could not locate: " + path);
+        }
+        prop.load(in);
+        in.close();
+        return prop;
+    }
 
 }

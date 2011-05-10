@@ -42,83 +42,65 @@ import org.slf4j.LoggerFactory;
 
 @InsertFact
 @Interceptor
-public class InsertFactInterceptor
-{
-   @Inject
-   BeanManager manager;
+public class InsertFactInterceptor {
+    @Inject
+    BeanManager manager;
 
-   @Inject
-   @Any
-   Instance<StatefulKnowledgeSession> ksessionSource;
+    @Inject
+    @Any
+    Instance<StatefulKnowledgeSession> ksessionSource;
 
-   private static final Logger log = LoggerFactory.getLogger(InsertFactInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(InsertFactInterceptor.class);
 
-   @AroundInvoke
-   public Object insertFact(InvocationContext ctx) throws Exception
-   {
-      boolean fire = false;
-      boolean untilHalt = false;
-      String entryPointName = null;
-      boolean allEntryPoints = false;
+    @AroundInvoke
+    public Object insertFact(InvocationContext ctx) throws Exception {
+        boolean fire = false;
+        boolean untilHalt = false;
+        String entryPointName = null;
+        boolean allEntryPoints = false;
 
-      Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
-      List<Annotation> annotationTypeList = new ArrayList<Annotation>();
+        Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
+        List<Annotation> annotationTypeList = new ArrayList<Annotation>();
 
-      for (Annotation nextAnnotation : methodAnnotations)
-      {
-         if (manager.isQualifier(nextAnnotation.annotationType()))
-         {
-            annotationTypeList.add(nextAnnotation);
-         }
-         if (manager.isInterceptorBinding(nextAnnotation.annotationType()))
-         {
-            if (nextAnnotation instanceof InsertFact)
-            {
-               fire = ((InsertFact) nextAnnotation).fire();
-               untilHalt = ((InsertFact) nextAnnotation).untilHalt();
-               entryPointName = ((InsertFact) nextAnnotation).entrypoint();
-               allEntryPoints = ((InsertFact) nextAnnotation).allEntryPoints();
+        for (Annotation nextAnnotation : methodAnnotations) {
+            if (manager.isQualifier(nextAnnotation.annotationType())) {
+                annotationTypeList.add(nextAnnotation);
             }
-         }
-      }
+            if (manager.isInterceptorBinding(nextAnnotation.annotationType())) {
+                if (nextAnnotation instanceof InsertFact) {
+                    fire = ((InsertFact) nextAnnotation).fire();
+                    untilHalt = ((InsertFact) nextAnnotation).untilHalt();
+                    entryPointName = ((InsertFact) nextAnnotation).entrypoint();
+                    allEntryPoints = ((InsertFact) nextAnnotation).allEntryPoints();
+                }
+            }
+        }
 
-      StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
-      if (ksession != null)
-      {
-         Object retObj = ctx.proceed();
-         if (entryPointName != null && entryPointName.length() > 0)
-         {
-            ksession.getWorkingMemoryEntryPoint(entryPointName).insert(retObj);
-         }
-         else if (allEntryPoints)
-         {
-            Iterator<? extends WorkingMemoryEntryPoint> iter =  ksession.getWorkingMemoryEntryPoints().iterator();
-            while(iter.hasNext()) {
-               WorkingMemoryEntryPoint ep = iter.next();
-               ep.insert(retObj);
+        StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
+        if (ksession != null) {
+            Object retObj = ctx.proceed();
+            if (entryPointName != null && entryPointName.length() > 0) {
+                ksession.getWorkingMemoryEntryPoint(entryPointName).insert(retObj);
+            } else if (allEntryPoints) {
+                Iterator<? extends WorkingMemoryEntryPoint> iter = ksession.getWorkingMemoryEntryPoints().iterator();
+                while (iter.hasNext()) {
+                    WorkingMemoryEntryPoint ep = iter.next();
+                    ep.insert(retObj);
+                }
+            } else {
+                ksession.insert(retObj);
             }
-         }
-         else
-         {
-            ksession.insert(retObj);
-         }
-         if (fire)
-         {
-            if (untilHalt)
-            {
-               ksession.fireUntilHalt();
+            if (fire) {
+                if (untilHalt) {
+                    ksession.fireUntilHalt();
+                } else {
+                    ksession.fireAllRules();
+                }
             }
-            else
-            {
-               ksession.fireAllRules();
-            }
-         }
-         return retObj;
-      }
-      else
-      {
-         log.info("Could not obtain StatefulKnowledgeSession.");
-         return ctx.proceed();
-      }
-   }
+            return retObj;
+        } else {
+            log.info("Could not obtain StatefulKnowledgeSession.");
+            return ctx.proceed();
+        }
+    }
 }

@@ -21,10 +21,6 @@
  */
 package org.jboss.seam.drools.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -32,26 +28,25 @@ import java.lang.annotation.Target;
 import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
  * Interceptor binding for inserting facts into the KnowledgeSession.
- * 
+ *
  * @author Tihomir Surdilovic
  */
 @InterceptorBinding
-@Target( { TYPE, METHOD })
+@Target({TYPE, METHOD})
 @Documented
 @Retention(RUNTIME)
-public @interface InsertFact
-{
-   @Nonbinding
-   boolean fire() default false;
+public @interface InsertFact {
+    @Nonbinding boolean fire() default false;
 
-   @Nonbinding
-   boolean untilHalt() default false;
+    @Nonbinding boolean untilHalt() default false;
 
-   @Nonbinding
-   String entrypoint() default "";
-   
-   @Nonbinding
-   boolean allEntryPoints() default false;
+    @Nonbinding String entrypoint() default "";
+
+    @Nonbinding boolean allEntryPoints() default false;
 }

@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.ksession;
 
 import org.drools.event.knowledgebase.DefaultKnowledgeBaseEventListener;
@@ -26,9 +26,8 @@ import org.drools.event.knowledgebase.KnowledgeBaseEventListener;
 import org.jboss.seam.drools.qualifiers.KBaseEventListener;
 
 @KBaseEventListener
-public class MySecondKnowledgeBaseEventListener extends DefaultKnowledgeBaseEventListener implements KnowledgeBaseEventListener
-{
-   public MySecondKnowledgeBaseEventListener() {
-      super();
-   }
+public class MySecondKnowledgeBaseEventListener extends DefaultKnowledgeBaseEventListener implements KnowledgeBaseEventListener {
+    public MySecondKnowledgeBaseEventListener() {
+        super();
+    }
 }

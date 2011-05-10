@@ -34,45 +34,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
 @ApplicationScoped
-public class SeamDelegate implements Globals
-{
-   private static final Logger log = LoggerFactory.getLogger(SeamDelegate.class);
-   
-   @Inject
-   BeanManager manager;
+public class SeamDelegate implements Globals {
+    private static final Logger log = LoggerFactory.getLogger(SeamDelegate.class);
 
-   private Globals delegate;
+    @Inject
+    BeanManager manager;
 
-   public Object get(String name)
-   {
-      Set<Bean<?>> beans = manager.getBeans(name);
-      
-      if (beans != null && beans.size() > 0)
-      {
-         Bean<?> bean = beans.iterator().next();
-         CreationalContext<?> context = manager.createCreationalContext(bean);
-         return manager.getReference(bean, bean.getBeanClass(), context);
-      }
-      else
-      {
-         log.info("Could not find beans named: " + name);
-         return delegate.get(name);
-      }
+    private Globals delegate;
 
-   }
+    public Object get(String name) {
+        Set<Bean<?>> beans = manager.getBeans(name);
 
-   public void set(String name, Object value)
-   {
-      delegate.set(name, value);
-   }
+        if (beans != null && beans.size() > 0) {
+            Bean<?> bean = beans.iterator().next();
+            CreationalContext<?> context = manager.createCreationalContext(bean);
+            return manager.getReference(bean, bean.getBeanClass(), context);
+        } else {
+            log.info("Could not find beans named: " + name);
+            return delegate.get(name);
+        }
 
-   public void setDelegate(Globals delegate)
-   {
-      this.delegate = delegate;
-   }
+    }
+
+    public void set(String name, Object value) {
+        delegate.set(name, value);
+    }
+
+    public void setDelegate(Globals delegate) {
+        this.delegate = delegate;
+    }
 
 }

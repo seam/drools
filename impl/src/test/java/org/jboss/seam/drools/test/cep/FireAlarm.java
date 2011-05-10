@@ -18,22 +18,19 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.cep;
 
-public class FireAlarm
-{
-   private boolean activated;
+public class FireAlarm {
+    private boolean activated;
 
-   public boolean isActivated()
-   {
-      return activated;
-   }
+    public boolean isActivated() {
+        return activated;
+    }
 
-   public void setActivated(boolean activated)
-   {
-      this.activated = activated;
-   }
-   
-   
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+
 }

@@ -22,32 +22,26 @@
 package org.jboss.seam.drools.test.customoperator;
 
 /**
- * 
  * @author Tihomir Surdilovic
  */
-public class MessageBean
-{
-   private String routingValue;
-   private String result;
+public class MessageBean {
+    private String routingValue;
+    private String result;
 
-   public String getRoutingValue()
-   {
-      return routingValue;
-   }
+    public String getRoutingValue() {
+        return routingValue;
+    }
 
-   public void setRoutingValue(String routingValue)
-   {
-      this.routingValue = routingValue;
-   }
+    public void setRoutingValue(String routingValue) {
+        this.routingValue = routingValue;
+    }
 
-   public String getResult()
-   {
-      return result;
-   }
+    public String getResult() {
+        return result;
+    }
 
-   public void setResult(String result)
-   {
-      this.result = result;
-   }
-   
+    public void setResult(String result) {
+        this.result = result;
+    }
+
 }

@@ -18,7 +18,7 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */ 
+ */
 package org.jboss.seam.drools.test.ksession;
 
 import org.drools.event.process.ProcessCompletedEvent;
@@ -29,55 +29,46 @@ import org.drools.event.process.ProcessStartedEvent;
 import org.jboss.seam.drools.qualifiers.KSessionEventListener;
 
 @KSessionEventListener
-public class MyKnowledgeSessionEventListener implements ProcessEventListener
-{
+public class MyKnowledgeSessionEventListener implements ProcessEventListener {
 
-   public void afterNodeLeft(ProcessNodeLeftEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    public void afterNodeLeft(ProcessNodeLeftEvent arg0) {
+        // TODO Auto-generated method stub
 
-   public void afterNodeTriggered(ProcessNodeTriggeredEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    }
 
-   public void afterProcessCompleted(ProcessCompletedEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    public void afterNodeTriggered(ProcessNodeTriggeredEvent arg0) {
+        // TODO Auto-generated method stub
 
-   public void afterProcessStarted(ProcessStartedEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    }
 
-   public void beforeNodeLeft(ProcessNodeLeftEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    public void afterProcessCompleted(ProcessCompletedEvent arg0) {
+        // TODO Auto-generated method stub
 
-   public void beforeNodeTriggered(ProcessNodeTriggeredEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    }
 
-   public void beforeProcessCompleted(ProcessCompletedEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
+    public void afterProcessStarted(ProcessStartedEvent arg0) {
+        // TODO Auto-generated method stub
 
-   public void beforeProcessStarted(ProcessStartedEvent arg0)
-   {
-      // TODO Auto-generated method stub
-      
-   }
-   
+    }
+
+    public void beforeNodeLeft(ProcessNodeLeftEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void beforeNodeTriggered(ProcessNodeTriggeredEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void beforeProcessCompleted(ProcessCompletedEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void beforeProcessStarted(ProcessStartedEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

@@ -42,60 +42,54 @@ import org.slf4j.LoggerFactory;
 
 @AbortProcess
 @Interceptor
-public class AbortProcessInterceptor
-{
-   @Inject
-   BeanManager manager;
+public class AbortProcessInterceptor {
+    @Inject
+    BeanManager manager;
 
-   @Inject
-   @Any
-   Instance<StatefulKnowledgeSession> ksessionSource;
+    @Inject
+    @Any
+    Instance<StatefulKnowledgeSession> ksessionSource;
 
-   private static final Logger log = LoggerFactory.getLogger(AbortProcessInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(AbortProcessInterceptor.class);
 
-   @AroundInvoke
-   public Object abortProcess(InvocationContext ctx) throws Exception
-   {
+    @AroundInvoke
+    public Object abortProcess(InvocationContext ctx) throws Exception {
 
-      String processName = null;
+        String processName = null;
 
-      Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
-      List<Annotation> annotationTypeList = new ArrayList<Annotation>();
+        Annotation[] methodAnnotations = ctx.getMethod().getAnnotations();
+        List<Annotation> annotationTypeList = new ArrayList<Annotation>();
 
-      for (Annotation nextAnnotation : methodAnnotations)
-      {
-         if (manager.isQualifier(nextAnnotation.annotationType()))
-         {
-            annotationTypeList.add(nextAnnotation);
-         }
-         if (manager.isInterceptorBinding(nextAnnotation.annotationType()))
-         {
-            if (nextAnnotation instanceof AbortProcess)
-            {
-               processName = ((AbortProcess) nextAnnotation).value();
+        for (Annotation nextAnnotation : methodAnnotations) {
+            if (manager.isQualifier(nextAnnotation.annotationType())) {
+                annotationTypeList.add(nextAnnotation);
             }
-         }
-      }
-      
-      StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[])annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
-      if(ksession != null) {
-         Object retObj = ctx.proceed();
-         if(processName != null && processName.length() > 0 ) {
-            Iterator<ProcessInstance> iter = ksession.getProcessInstances().iterator();
-            while(iter.hasNext()) {
-               ProcessInstance pi = iter.next();
-               if(pi.getProcessName().equals(processName)) {
-                  ksession.abortProcessInstance(pi.getId());
-               }
+            if (manager.isInterceptorBinding(nextAnnotation.annotationType())) {
+                if (nextAnnotation instanceof AbortProcess) {
+                    processName = ((AbortProcess) nextAnnotation).value();
+                }
             }
-         } else {
-            log.info("Invalid process name: " + processName);
-         }
-         return retObj;
-      } else {  
-         log.info("Could not obtain StatefulKnowledgeSession.");
-         return ctx.proceed();
-      }
-   }
+        }
+
+        StatefulKnowledgeSession ksession = ksessionSource.select((Annotation[]) annotationTypeList.toArray(new Annotation[annotationTypeList.size()])).get();
+        if (ksession != null) {
+            Object retObj = ctx.proceed();
+            if (processName != null && processName.length() > 0) {
+                Iterator<ProcessInstance> iter = ksession.getProcessInstances().iterator();
+                while (iter.hasNext()) {
+                    ProcessInstance pi = iter.next();
+                    if (pi.getProcessName().equals(processName)) {
+                        ksession.abortProcessInstance(pi.getId());
+                    }
+                }
+            } else {
+                log.info("Invalid process name: " + processName);
+            }
+            return retObj;
+        } else {
+            log.info("Could not obtain StatefulKnowledgeSession.");
+            return ctx.proceed();
+        }
+    }
 
 }
